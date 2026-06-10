@@ -1,4 +1,4 @@
-const GROQ_API_KEY = import.meta.env.VITE_GEMINI_API_KEY
+const GROQ_API_KEY = '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'
 
 export type Message = {
   role: 'user' | 'assistant'
