@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   CreditCard,
 } from 'lucide-react';
+import { ChatWidget } from '../components/ChatWidget';
 
 const stats = [
   { label: 'Conversations This Month', value: '127', change: '+12%', icon: MessageSquare },
@@ -39,6 +40,16 @@ const conversations: Conversation[] = [
 
 const embedCode = `<script src="https://widget.desklo.ai/v1.js" data-key="dk_live_xxxxxxxxxxxx"></script>`;
 
+const demoBusiness = {
+  name: "Acme Plumbing Co.",
+  services: "Drain cleaning, water heater install and repair, pipe repair, leak detection, emergency callouts",
+  hours: "Mon–Fri 7am–6pm, Sat 8am–2pm",
+  pricing: "Drain cleaning from $89, water heater install from $450, emergency callout fee $65",
+  booking_info: "Call (503) 555-0190 or book at acmeplumbing.com",
+  location: "Portland, OR and surrounding areas",
+  bot_name: "Acme Assistant",
+}
+
 export default function Dashboard() {
   const [copied, setCopied] = useState(false);
 
@@ -55,7 +66,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
                 <Bot size={16} className="text-white" />
               </div>
               <span className="text-lg font-bold tracking-tight text-gray-900">Desklo</span>
@@ -76,8 +87,8 @@ export default function Dashboard() {
           {stats.map((s) => (
             <div key={s.label} className="bg-white rounded-2xl border border-gray-100 p-5">
               <div className="flex items-center justify-between mb-3">
-                <div className="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center">
-                  <s.icon size={18} className="text-brand-500" />
+                <div className="w-9 h-9 rounded-xl bg-violet-50 flex items-center justify-center">
+                  <s.icon size={18} className="text-violet-600" />
                 </div>
                 {s.change && (
                   <span className="inline-flex items-center gap-0.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
@@ -109,17 +120,13 @@ export default function Dashboard() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-sm font-medium text-gray-900">{c.name}</span>
-                      <span
-                        className={`text-[10px] font-medium uppercase px-1.5 py-0.5 rounded ${
-                          c.channel === 'sms'
-                            ? 'bg-blue-50 text-blue-600'
-                            : 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
+                      <span className={`text-[10px] font-medium uppercase px-1.5 py-0.5 rounded ${
+                        c.channel === 'sms' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600'
+                      }`}>
                         {c.channel}
                       </span>
                       {c.lead && (
-                        <span className="text-[10px] font-medium uppercase px-1.5 py-0.5 rounded bg-brand-50 text-brand-600">
+                        <span className="text-[10px] font-medium uppercase px-1.5 py-0.5 rounded bg-violet-50 text-violet-600">
                           Lead
                         </span>
                       )}
@@ -136,7 +143,7 @@ export default function Dashboard() {
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
               <h3 className="text-sm font-semibold text-gray-900 mb-3">Embed Code</h3>
               <div className="relative">
-                <pre className="bg-gray-900 rounded-xl p-4 text-xs text-gray-300 overflow-x-auto font-mono leading-relaxed">
+                <pre className="bg-gray-900 rounded-xl p-4 text-xs text-gray-300 overflow-x-auto font-mono leading-relaxed whitespace-pre-wrap">
                   {embedCode}
                 </pre>
                 <button
@@ -164,18 +171,29 @@ export default function Dashboard() {
               <ul className="space-y-2 mb-5">
                 {['Chat widget', 'Lead capture', 'Dashboard', 'Monthly reports'].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-xs text-gray-500">
-                    <Check size={12} className="text-brand-500" />
+                    <Check size={12} className="text-violet-600" />
                     {f}
                   </li>
                 ))}
               </ul>
-              <button className="w-full py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors">
+              <button className="w-full py-2 text-sm font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700 transition-colors">
                 Upgrade to Pro
               </button>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 p-6">
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Test Your Bot</h3>
+              <p className="text-xs text-gray-400 mb-3">Click the purple button below to chat with your AI receptionist live.</p>
+              <div className="bg-violet-50 rounded-xl p-3 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-xs text-violet-700 font-medium">{demoBusiness.bot_name} is online</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <ChatWidget business={demoBusiness} color="#7B61FF" />
     </div>
   );
 }
