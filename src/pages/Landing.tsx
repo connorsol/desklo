@@ -103,7 +103,7 @@ function LiveDemo() {
 
   useEffect(() => {
     if (messagesEndRef.current) {
-  messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  messagesEndRef.current.scrollIntoView({ block: 'nearest' });
 }
   }, [messages]);
 
@@ -165,7 +165,7 @@ function LiveDemo() {
             </div>
 
             {/* Messages */}
-            <div className="h-72 overflow-y-auto p-4 space-y-3 bg-gray-50">
+            <div className="h-72 overflow-y-auto p-4 space-y-3 bg-gray-50 overscroll-none">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-xs rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
