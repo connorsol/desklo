@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Clock,
@@ -12,242 +12,8 @@ import {
   Zap,
   Bot,
   Globe,
-  Send,
-  Loader2,
+  Sparkles,
 } from 'lucide-react';
-
-const GROQ_API_KEY = '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';
-
-const DEMO_BUSINESSES = [
-  {
-    label: '🔧 Plumbing',
-    name: "Mike's Plumbing Co.",
-    services: "Drain cleaning, water heater install and repair, pipe repair, leak detection, emergency callouts",
-    hours: "Mon–Fri 7am–6pm, Sat 8am–2pm",
-    pricing: "Drain cleaning from $89, water heater install from $450, emergency callout fee $65",
-    booking_info: "Call (503) 555-0190 or book at mikesplumbing.com",
-    location: "Portland, OR",
-    bot_name: "Mike's Assistant",
-    suggestions: ["Do you fix water heaters?", "How much is drain cleaning?", "I have an emergency!", "Are you open Saturday?"],
-  },
-  {
-    label: '💇 Salon',
-    name: "Luxe Hair Studio",
-    services: "Haircuts, coloring, balayage, highlights, keratin treatments, blowouts, extensions",
-    hours: "Tue–Sat 9am–7pm, Sun 10am–4pm",
-    pricing: "Haircuts from $55, balayage from $150, blowout $45",
-    booking_info: "Book at luxehairstudio.com or text (503) 555-0282",
-    location: "Portland, OR",
-    bot_name: "Luxe Assistant",
-    suggestions: ["Book a balayage", "How much is a haircut?", "Do you do extensions?", "What are your hours?"],
-  },
-  {
-    label: '🦷 Dental',
-    name: "Bright Smile Dental",
-    services: "Cleanings, fillings, whitening, crowns, extractions, Invisalign, emergency dental care",
-    hours: "Mon–Thu 8am–5pm, Fri 8am–2pm",
-    pricing: "Cleaning from $99 (most insurance accepted), whitening from $299",
-    booking_info: "Call (503) 555-0341 or book at brightsmile.com",
-    location: "Portland, OR",
-    bot_name: "Bright Smile Assistant",
-    suggestions: ["Do you accept insurance?", "How much is whitening?", "I have a toothache", "Book a cleaning"],
-  },
-  {
-    label: '💪 Gym',
-    name: "Iron & Oak Gym",
-    services: "Open gym access, personal training, group classes (HIIT, yoga, spin), nutrition coaching",
-    hours: "Mon–Fri 5am–10pm, Sat–Sun 7am–8pm",
-    pricing: "Membership from $39/mo, personal training $75/session",
-    booking_info: "Sign up at ironandoak.com or visit 1420 NW Everett, Portland",
-    location: "Portland, OR",
-    bot_name: "Iron & Oak Assistant",
-    suggestions: ["How much is a membership?", "Do you have yoga?", "Is there a free trial?", "Personal training?"],
-  },
-];
-
-type Message = { role: 'user' | 'assistant'; content: string };
-
-async function askGroq(messages: Message[], business: typeof DEMO_BUSINESSES[0]): Promise<string> {
-  const systemPrompt = `You are ${business.bot_name}, the friendly AI receptionist for ${business.name}.
-Services: ${business.services}
-Hours: ${business.hours}
-Pricing: ${business.pricing}
-How to book: ${business.booking_info}
-Location: ${business.location}
-Keep replies to 2-3 sentences. Be warm and helpful. Never make up info not listed above.`;
-
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${GROQ_API_KEY}` },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [{ role: 'system', content: systemPrompt }, ...messages.map(m => ({ role: m.role, content: m.content }))],
-      max_tokens: 200,
-    }),
-  });
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? "I'm having a quick issue — please try again!";
-}
-
-function LiveDemo() {
-  const [selectedBiz, setSelectedBiz] = useState(0);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const business = DEMO_BUSINESSES[selectedBiz];
-
-  useEffect(() => {
-    setMessages([{ role: 'assistant', content: `Hi! 👋 I'm the AI receptionist for ${business.name}. How can I help you today?` }]);
-  }, [selectedBiz]);
-
-  useEffect(() => {
-    if (messagesEndRef.current) {
-  messagesEndRef.current.scrollIntoView({ block: 'nearest' });
-}
-  }, [messages]);
-
-  async function send(text?: string) {
-    const msg = (text ?? input).trim();
-    if (!msg || loading) return;
-    setInput('');
-    const updated: Message[] = [...messages, { role: 'user', content: msg }];
-    setMessages(updated);
-    setLoading(true);
-    try {
-      const reply = await askGroq(updated, business);
-      setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
-    } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, try again!" }]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <section className="py-24 px-6 bg-gray-50/80">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="text-sm font-medium text-brand-500 mb-2">Live Demo</p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-4">
-            See it in action — try it yourself
-          </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
-            Works for any business. Pick an industry below and chat with a live AI receptionist right now.
-          </p>
-        </div>
-
-        {/* Business selector */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {DEMO_BUSINESSES.map((b, i) => (
-            <button
-              key={i}
-              onClick={() => setSelectedBiz(i)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                selectedBiz === i
-                  ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/25'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:border-brand-300'
-              }`}
-            >
-              {b.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6 items-end">
-          {/* Chat window */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center gap-3 px-4 py-3 bg-brand-500">
-              <div className="w-2 h-2 rounded-full bg-green-300 animate-pulse" />
-              <span className="text-white font-semibold text-sm">{business.bot_name}</span>
-              <span className="text-white/70 text-xs">· Online 24/7</span>
-            </div>
-
-            {/* Messages */}
-            <div className="h-48 md:h-72 overflow-y-auto p-4 space-y-3 bg-gray-50">
-              {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-xs rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-                    msg.role === 'user'
-                      ? 'bg-brand-500 text-white rounded-br-sm'
-                      : 'bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm'
-                  }`}>
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-              {loading && (
-                <div className="flex justify-start">
-                  <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
-                    <div className="flex gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input */}
-            <div className="p-3 border-t border-gray-100 bg-white">
-              <div className="flex gap-2">
-                <input
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && send()}
-                  placeholder="Type a question..."
-                  className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-brand-300"
-                />
-                <button
-                  onClick={() => send()}
-                  disabled={loading || !input.trim()}
-                  className="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center disabled:opacity-40"
-                >
-                  {loading ? <Loader2 size={15} className="text-white animate-spin" /> : <Send size={14} className="text-white" />}
-                </button>
-              </div>
-              <p className="text-center text-gray-400 text-xs mt-1.5">Powered by Desklo AI</p>
-            </div>
-          </div>
-
-          {/* Right side — suggestions + info */}
-          <div className="space-y-4">
-            <div className="bg-white rounded-2xl border border-gray-100 p-5">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">Try asking:</p>
-              <div className="space-y-2">
-                {business.suggestions.map((s, i) => (
-                  <button
-                    key={i}
-                    onClick={() => send(s)}
-                    className="w-full text-left px-4 py-2.5 rounded-xl border border-gray-100 text-sm text-gray-700 hover:border-brand-300 hover:text-brand-600 transition-all"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-brand-50 rounded-2xl border border-brand-100 p-5">
-              <p className="text-sm font-semibold text-brand-700 mb-2">🚀 This could be your business</p>
-              <p className="text-sm text-brand-600 leading-relaxed">
-                Set up takes 5 minutes. Your AI receptionist answers instantly, captures leads, and works 24/7 — even while you sleep.
-              </p>
-              <Link
-                to="/onboarding"
-                className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-brand-500 text-white text-sm font-medium rounded-lg hover:bg-brand-600 transition-colors"
-              >
-                Set up yours free <ArrowRight size={14} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Banner() {
   return (
@@ -315,9 +81,37 @@ function Hero() {
           <Link to="/onboarding" className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-white bg-brand-500 rounded-xl hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40">
             Start Free Trial <ArrowRight size={18} />
           </Link>
-          <a href="#demo" className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-gray-700 bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all">
-            See Live Demo
-          </a>
+          <Link to="/demo" className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-gray-700 bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all">
+            Try Live Demo
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LiveDemo() {
+  return (
+    <section className="py-20 px-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-gradient-to-br from-violet-600 to-violet-700 rounded-3xl p-12 text-center text-white">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-medium mb-6">
+            <Sparkles size={12} />
+            No signup required
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            See it working for your business
+          </h2>
+          <p className="text-violet-200 text-lg max-w-xl mx-auto mb-8">
+            Enter your business name, services, and hours. Your personalized AI receptionist is live in 30 seconds.
+          </p>
+          <Link
+            to="/demo"
+            className="inline-flex items-center gap-2 bg-white text-violet-700 font-semibold px-8 py-4 rounded-xl hover:bg-violet-50 transition-colors text-base shadow-lg"
+          >
+            Try it free — no signup needed <ArrowRight size={18} />
+          </Link>
+          <p className="text-violet-300 text-sm mt-4">Works for any business type</p>
         </div>
       </div>
     </section>
@@ -331,7 +125,7 @@ function HowItWorks() {
     { num: '03', icon: Globe, title: 'Go Live on Your Website', desc: 'Add a single line of code and your AI receptionist is ready to work.' },
   ];
   return (
-    <section id="how-it-works" className="py-24 px-6">
+    <section id="how-it-works" className="py-24 px-6 bg-gray-50/80">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-sm font-medium text-brand-500 mb-2">How It Works</p>
@@ -364,7 +158,7 @@ function Features() {
     { icon: Settings, title: 'Done-for-You Setup', desc: "We handle the entire setup so you don't have to lift a finger." },
   ];
   return (
-    <section id="features" className="py-24 px-6 bg-gray-50/80">
+    <section id="features" className="py-24 px-6">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-sm font-medium text-brand-500 mb-2">Features</p>
@@ -392,7 +186,7 @@ function Pricing() {
     { name: 'Pro', price: 149, features: ['Everything in Starter', 'SMS number', 'Voice calls', 'After-hours alerts', 'Priority support'], popular: true },
   ];
   return (
-    <section id="pricing" className="py-24 px-6">
+    <section id="pricing" className="py-24 px-6 bg-gray-50/80">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-sm font-medium text-brand-500 mb-2">Pricing</p>
@@ -450,9 +244,7 @@ export default function Landing() {
       <Banner />
       <Nav />
       <Hero />
-      <div id="demo">
-        <LiveDemo />
-      </div>
+      <LiveDemo />
       <HowItWorks />
       <Features />
       <Pricing />
