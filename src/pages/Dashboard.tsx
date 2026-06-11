@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   CreditCard,
   Loader2,
+  Settings,
 } from 'lucide-react';
 import { ChatWidget } from '../components/ChatWidget';
 import { supabase } from '../lib/supabase';
@@ -50,11 +51,7 @@ export default function Dashboard() {
   async function loadBusiness() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        setLoading(false);
-        return;
-      }
+      if (!user) { setLoading(false); return; }
 
       setUserName(user.email ?? '');
 
@@ -64,10 +61,7 @@ export default function Dashboard() {
         .eq('owner_id', user.id)
         .single();
 
-      if (error || !data) {
-        setLoading(false);
-        return;
-      }
+      if (error || !data) { setLoading(false); return; }
 
       setBusiness({
         name: data.name,
@@ -107,7 +101,6 @@ export default function Dashboard() {
     );
   }
 
-  // Use real business data or fallback demo
   const activeBusiness: Business = business ?? {
     name: "Your Business",
     services: "Your services",
@@ -143,6 +136,10 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-4">
             <span className="text-xs text-gray-400 hidden md:block">{userName}</span>
+            <Link to="/settings" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+              <Settings size={15} />
+              Settings
+            </Link>
             <button
               onClick={handleSignOut}
               className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
@@ -155,7 +152,6 @@ export default function Dashboard() {
 
       <div className="max-w-7xl mx-auto px-6 py-8">
 
-        {/* Welcome banner if no business set up yet */}
         {!business && (
           <div className="bg-brand-50 border border-brand-200 rounded-2xl p-5 mb-8 flex items-center justify-between">
             <div>
