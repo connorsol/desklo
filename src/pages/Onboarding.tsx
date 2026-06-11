@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bot, ArrowRight, ArrowLeft, Palette, Sparkles } from 'lucide-react';
+import { Bot, ArrowRight, ArrowLeft, Palette, Sparkles, Loader2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 const industries = [
   'Plumbing', 'HVAC', 'Electrical', 'Salon', 'Dental',
@@ -9,12 +10,14 @@ const industries = [
 
 const industryEmojis: Record<string, string> = {
   Plumbing: '🔧', HVAC: '❄️', Electrical: '⚡', Salon: '✂️', Dental: '🦷',
-  Legal: '⚖️', 'Real Estate': '🏠', Gym: '🏋️', Restaurant: '🍽️', Other: '✨',
+  Legal: '⚖️', 'Real Estate': '🏠', Gym: '💪', Restaurant: '🍽️', Other: '✨',
 };
 
 export default function Onboarding() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
   const [industry, setIndustry] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [services, setServices] = useState('');
@@ -31,9 +34,64 @@ export default function Onboarding() {
     return true;
   };
 
-  const handleNext = () => {
-    if (step < 3) setStep(step + 1);
-    else navigate('/dashboard');
+  const handleNext = async () => {
+    if (step < 3) {
+      setStep(step + 1);
+      return;
+    }
+
+    // Step 3 — save to Supabase
+    setSaving(true);
+    setError('');
+
+    try {
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        // Not logged in — save to localStorage and redirect to signup
+        const businessData = {
+          industry,
+          name: businessName,
+          services,
+          hours,
+          pricing,
+          booking_info: booking,
+          location,
+          bot_name: botName,
+          widget_color: brandColor,
+        };
+        localStorage.setItem('pending_business', JSON.stringify(businessData));
+        navigate('/login?onboarding=true');
+        return;
+      }
+
+      // Logged in — save directly to Supabase
+      const { error: insertError } = await supabase
+        .from('businesses')
+        .upsert({
+          owner_id: user.id,
+          industry,
+          name: businessName,
+          services,
+          hours,
+          pricing,
+          booking_info: booking,
+          location,
+          bot_name: botName,
+          widget_color: brandColor,
+          plan: 'trial',
+        }, { onConflict: 'owner_id' });
+
+      if (insertError) throw insertError;
+
+      navigate('/dashboard');
+    } catch (err) {
+      console.error(err);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleBack = () => {
@@ -184,14 +242,12 @@ export default function Onboarding() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">Brand color</label>
                     <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <input
-                          type="color"
-                          value={brandColor}
-                          onChange={(e) => setBrandColor(e.target.value)}
-                          className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer appearance-none bg-transparent p-0.5"
-                        />
-                      </div>
+                      <input
+                        type="color"
+                        value={brandColor}
+                        onChange={(e) => setBrandColor(e.target.value)}
+                        className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer"
+                      />
                       <div className="flex gap-2">
                         {['#7B61FF', '#2563EB', '#059669', '#EA580C', '#DC2626', '#7C3AED'].map((c) => (
                           <button
@@ -249,6 +305,10 @@ export default function Onboarding() {
                   </div>
                 </div>
               </div>
+
+              {error && (
+                <p className="text-red-500 text-sm mt-4">{error}</p>
+              )}
             </div>
           )}
 
@@ -264,9 +324,10 @@ export default function Onboarding() {
             </button>
             <button
               onClick={handleNext}
-              disabled={!canNext()}
+              disabled={!canNext() || saving}
               className="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
+              {saving && <Loader2 size={14} className="animate-spin" />}
               {step === 3 ? 'Go to Dashboard' : 'Continue'}
               <ArrowRight size={16} />
             </button>
