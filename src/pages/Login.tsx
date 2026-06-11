@@ -12,15 +12,32 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState<'login' | 'signup'>(fromOnboarding ? 'signup' : 'login');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
-    // Check if already logged in
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) navigate('/dashboard');
     });
-  }, []);
+  }, [navigate]);
+
+  async function handleGoogleSignIn() {
+    setGoogleLoading(true);
+    setError('');
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+      setGoogleLoading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -32,7 +49,6 @@ export default function Login() {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
 
-        // After signup, save pending business data if exists
         const pending = localStorage.getItem('pending_business');
         if (pending) {
           const { data: { user } } = await supabase.auth.getUser();
@@ -48,6 +64,7 @@ export default function Login() {
             return;
           }
         }
+
         setSent(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -96,6 +113,22 @@ export default function Login() {
                 {mode === 'login' ? 'Welcome back' : 'Create your account'}
               </h2>
 
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                disabled={googleLoading || loading}
+                className="w-full border border-gray-200 bg-white text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors mb-4"
+              >
+                {googleLoading && <Loader2 size={14} className="animate-spin" />}
+                {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
+              </button>
+
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-px bg-gray-200 flex-1" />
+                <span className="text-xs text-gray-400">or</span>
+                <div className="h-px bg-gray-200 flex-1" />
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Email</label>
@@ -107,6 +140,7 @@ export default function Login() {
                     className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-400"
                   />
                 </div>
+
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">Password</label>
                   <input
@@ -122,7 +156,7 @@ export default function Login() {
 
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || googleLoading}
                   className="w-full bg-brand-500 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-brand-600 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
                 >
                   {loading && <Loader2 size={14} className="animate-spin" />}

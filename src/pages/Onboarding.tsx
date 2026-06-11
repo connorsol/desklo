@@ -34,22 +34,51 @@ export default function Onboarding() {
     return true;
   };
 
+  const handleGoogleLogin = async () => {
+    setSaving(true);
+    setError('');
+
+    const businessData = {
+      industry,
+      name: businessName,
+      services,
+      hours,
+      pricing,
+      booking_info: booking,
+      location,
+      bot_name: botName,
+      widget_color: brandColor,
+    };
+
+    localStorage.setItem('pending_business', JSON.stringify(businessData));
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    if (error) {
+      console.error(error);
+      setError('Google login failed. Please try again.');
+      setSaving(false);
+    }
+  };
+
   const handleNext = async () => {
     if (step < 3) {
       setStep(step + 1);
       return;
     }
 
-    // Step 3 — save to Supabase
     setSaving(true);
     setError('');
 
     try {
-      // Get current user
       const { data: { user }, error: userError } = await supabase.auth.getUser();
 
       if (userError || !user) {
-        // Not logged in — save to localStorage and redirect to signup
         const businessData = {
           industry,
           name: businessName,
@@ -66,7 +95,6 @@ export default function Onboarding() {
         return;
       }
 
-      // Logged in — save directly to Supabase
       const { error: insertError } = await supabase
         .from('businesses')
         .upsert({
@@ -312,7 +340,18 @@ export default function Onboarding() {
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-10">
+          {step === 3 && (
+            <button
+              onClick={handleGoogleLogin}
+              disabled={saving}
+              className="w-full mt-8 inline-flex items-center justify-center gap-2 px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {saving && <Loader2 size={14} className="animate-spin" />}
+              Continue with Google
+            </button>
+          )}
+
+          <div className="flex items-center justify-between mt-6">
             <button
               onClick={handleBack}
               className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors ${
