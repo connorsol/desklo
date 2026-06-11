@@ -154,7 +154,7 @@ function LiveDemo() {
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 items-start">
+        <div className="grid md:grid-cols-2 gap-6 items-end">
           {/* Chat window */}
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
             {/* Header */}
@@ -165,7 +165,7 @@ function LiveDemo() {
             </div>
 
             {/* Messages */}
-            <div className="h-72 overflow-y-auto p-4 space-y-3 bg-gray-50 overscroll-none">
+            <div className="h-48 md:h-72 overflow-y-auto p-4 space-y-3 bg-gray-50">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-xs rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
