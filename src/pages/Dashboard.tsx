@@ -44,9 +44,18 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('');
 
-  useEffect(() => {
-    loadBusiness();
+ useEffect(() => {
+    checkAuthAndLoad();
   }, []);
+
+  async function checkAuthAndLoad() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      window.location.href = '/login';
+      return;
+    }
+    loadBusiness();
+  }
 
   async function loadBusiness() {
     try {
