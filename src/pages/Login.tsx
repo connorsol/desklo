@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Loader2, Bot } from 'lucide-react';
+import { Loader2, Bot, ArrowLeft } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -10,34 +10,17 @@ export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [mode, setMode] = useState<'login' | 'signup'>(fromOnboarding ? 'signup' : 'login');
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
+    if (fromOnboarding) setMode('signup');
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) navigate('/dashboard');
     });
-  }, [navigate]);
-
-  async function handleGoogleSignIn() {
-    setGoogleLoading(true);
-    setError('');
-
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
-    });
-
-    if (error) {
-      setError(error.message);
-      setGoogleLoading(false);
-    }
-  }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,6 +28,15 @@ export default function Login() {
     setError('');
 
     try {
+      if (mode === 'forgot') {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        setSent(true);
+        return;
+      }
+
       if (mode === 'signup') {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
@@ -64,7 +56,6 @@ export default function Login() {
             return;
           }
         }
-
         setSent(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -94,39 +85,40 @@ export default function Login() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
           {sent ? (
             <div className="text-center">
-              <div className="text-4xl mb-3">📬</div>
+              <div className="text-4xl mb-3">
+                {mode === 'forgot' ? '📬' : '📬'}
+              </div>
               <h2 className="font-semibold text-gray-900 mb-1">Check your email</h2>
               <p className="text-sm text-gray-500">
-                We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account.
+                {mode === 'forgot'
+                  ? `We sent a password reset link to ${email}`
+                  : `We sent a confirmation link to ${email}`}
               </p>
+              <button
+                onClick={() => { setSent(false); setMode('login'); }}
+                className="mt-4 text-sm text-brand-500 hover:underline"
+              >
+                Back to sign in
+              </button>
             </div>
           ) : (
             <>
-              {fromOnboarding && (
+              {fromOnboarding && mode === 'signup' && (
                 <div className="bg-brand-50 rounded-xl p-3 mb-5 text-center">
                   <p className="text-sm text-brand-700 font-medium">Almost there! 🎉</p>
                   <p className="text-xs text-brand-600 mt-0.5">Create an account to save your bot and go live.</p>
                 </div>
               )}
 
-              <h2 className="font-semibold text-gray-900 mb-6 text-center">
-                {mode === 'login' ? 'Welcome back' : 'Create your account'}
-              </h2>
-
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                disabled={googleLoading || loading}
-                className="w-full border border-gray-200 bg-white text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors mb-4"
-              >
-                {googleLoading && <Loader2 size={14} className="animate-spin" />}
-                {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
-              </button>
-
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-px bg-gray-200 flex-1" />
-                <span className="text-xs text-gray-400">or</span>
-                <div className="h-px bg-gray-200 flex-1" />
+              <div className="flex items-center gap-2 mb-6">
+                {mode === 'forgot' && (
+                  <button onClick={() => setMode('login')} className="text-gray-400 hover:text-gray-600">
+                    <ArrowLeft size={16} />
+                  </button>
+                )}
+                <h2 className="font-semibold text-gray-900">
+                  {mode === 'login' ? 'Welcome back' : mode === 'signup' ? 'Create your account' : 'Reset your password'}
+                </h2>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -141,38 +133,52 @@ export default function Login() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Password</label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-400"
-                  />
-                </div>
+                {mode !== 'forgot' && (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Password</label>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-400"
+                    />
+                  </div>
+                )}
+
+                {mode === 'login' && (
+                  <button
+                    type="button"
+                    onClick={() => { setMode('forgot'); setError(''); }}
+                    className="text-xs text-brand-500 hover:underline"
+                  >
+                    Forgot your password?
+                  </button>
+                )}
 
                 {error && <p className="text-red-500 text-xs">{error}</p>}
 
                 <button
                   type="submit"
-                  disabled={loading || googleLoading}
+                  disabled={loading}
                   className="w-full bg-brand-500 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-brand-600 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
                 >
                   {loading && <Loader2 size={14} className="animate-spin" />}
-                  {mode === 'login' ? 'Sign in' : 'Create account — free for 14 days'}
+                  {mode === 'login' ? 'Sign in' : mode === 'signup' ? 'Create account — free for 14 days' : 'Send reset link'}
                 </button>
               </form>
 
-              <p className="text-center text-sm text-gray-500 mt-5">
-                {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-                <button
-                  onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-                  className="text-brand-500 font-medium hover:underline"
-                >
-                  {mode === 'login' ? 'Sign up free' : 'Sign in'}
-                </button>
-              </p>
+              {mode !== 'forgot' && (
+                <p className="text-center text-sm text-gray-500 mt-5">
+                  {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+                  <button
+                    onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+                    className="text-brand-500 font-medium hover:underline"
+                  >
+                    {mode === 'login' ? 'Sign up free' : 'Sign in'}
+                  </button>
+                </p>
+              )}
             </>
           )}
         </div>
