@@ -17,6 +17,8 @@ import { ChatWidget } from '../components/ChatWidget';
 import { supabase } from '../lib/supabase';
 import type { Business } from '../lib/gemini';
 
+const ADMIN_EMAILS = ['connorcarson222@gmail.com', 'ronanosborn8@gmail.com'];
+
 interface Conversation {
   id: string;
   channel: 'web' | 'sms';
@@ -44,7 +46,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('');
 
- useEffect(() => {
+  useEffect(() => {
     checkAuthAndLoad();
   }, []);
 
@@ -145,6 +147,11 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-4">
             <span className="text-xs text-gray-400 hidden md:block">{userName}</span>
+            {ADMIN_EMAILS.includes(userName) && (
+              <Link to="/admin" className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">
+                Admin
+              </Link>
+            )}
             <Link to="/settings" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors">
               <Settings size={15} />
               Settings

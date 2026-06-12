@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Demo from './pages/Demo';
 import Settings from './pages/Settings';
 import ResetPassword from './pages/ResetPassword';
+import Admin from './pages/Admin';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/demo" element={<Demo />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   );
