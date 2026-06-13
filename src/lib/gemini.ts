@@ -1,5 +1,4 @@
-const GROQ_API_KEY = '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'
-
+const GROQ_API_KEY = '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'
 export type Message = {
   role: 'user' | 'assistant'
   content: string
