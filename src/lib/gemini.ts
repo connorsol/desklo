@@ -1,4 +1,4 @@
-const GROQ_API_KEY = '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'
+import { GROQ_API_KEY } from '../config'
 
 export type Message = {
   role: 'user' | 'assistant'
