@@ -1,22 +1,27 @@
 import { useState, useRef, useEffect } from 'react'
 import { MessageCircle, X, Send, Loader2 } from 'lucide-react'
 import { sendMessage, type Message, type Business } from '../lib/gemini'
+import { supabase } from '../lib/supabase'
 
 type Props = {
   business: Business
   color?: string
+  businessId?: string
 }
 
-export function ChatWidget({ business, color = '#7B61FF' }: Props) {
+export function ChatWidget({ business, color = '#7B61FF', businessId }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [conversationId, setConversationId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ block: 'nearest' })
+    }
   }, [messages])
 
   useEffect(() => {
@@ -28,6 +33,48 @@ export function ChatWidget({ business, color = '#7B61FF' }: Props) {
     }
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 100)
   }, [isOpen])
+
+  async function createConversation(): Promise<string | null> {
+    if (!businessId) return null
+    try {
+      const { data } = await supabase
+        .from('conversations')
+        .insert({
+          business_id: businessId,
+          channel: 'chat',
+          visitor_id: crypto.randomUUID(),
+          is_after_hours: false,
+          is_lead: false,
+        })
+        .select('id')
+        .single()
+      return data?.id ?? null
+    } catch {
+      return null
+    }
+  }
+
+  async function saveMessages(convId: string, userMsg: string, botReply: string) {
+    try {
+      await supabase.from('messages').insert([
+        { conversation_id: convId, role: 'user', content: userMsg },
+        { conversation_id: convId, role: 'assistant', content: botReply },
+      ])
+
+      // Detect lead intent
+      const leadKeywords = ['book', 'appointment', 'schedule', 'emergency', 'price', 'cost', 'how much', 'available', 'quote']
+      const isLead = leadKeywords.some(k => userMsg.toLowerCase().includes(k))
+
+      if (isLead) {
+        await supabase
+          .from('conversations')
+          .update({ is_lead: true })
+          .eq('id', convId)
+      }
+    } catch (err) {
+      console.error('Failed to save messages:', err)
+    }
+  }
 
   async function handleSend() {
     const text = input.trim()
@@ -42,6 +89,17 @@ export function ChatWidget({ business, color = '#7B61FF' }: Props) {
     try {
       const reply = await sendMessage(updatedMessages, business)
       setMessages(prev => [...prev, { role: 'assistant', content: reply }])
+
+      // Save to Supabase
+      let convId = conversationId
+      if (!convId) {
+        convId = await createConversation()
+        if (convId) setConversationId(convId)
+      }
+      if (convId) {
+        await saveMessages(convId, text, reply)
+      }
+
     } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
@@ -75,20 +133,14 @@ export function ChatWidget({ business, color = '#7B61FF' }: Props) {
               <span className="text-white font-semibold text-sm">{business.bot_name}</span>
               <span className="text-white/70 text-xs">· Online</span>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white/80 hover:text-white transition-colors"
-            >
+            <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors">
               <X size={18} />
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
             {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
                   className={`max-w-xs rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                     msg.role === 'user'
@@ -150,10 +202,7 @@ export function ChatWidget({ business, color = '#7B61FF' }: Props) {
         style={{ background: color }}
         aria-label="Open chat"
       >
-        {isOpen
-          ? <X size={22} className="text-white" />
-          : <MessageCircle size={22} className="text-white" />
-        }
+        {isOpen ? <X size={22} className="text-white" /> : <MessageCircle size={22} className="text-white" />}
       </button>
     </div>
   )

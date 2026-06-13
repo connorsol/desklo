@@ -8,7 +8,6 @@ import {
   BarChart3,
   Copy,
   Check,
-  ArrowUpRight,
   CreditCard,
   Loader2,
   Settings,
@@ -28,15 +27,6 @@ interface Conversation {
   name: string;
 }
 
-const demoConversations: Conversation[] = [
-  { id: '1', channel: 'web', lead: true, time: '2m ago', message: 'Hi, I need a quote for a water heater installation...', name: 'Sarah M.' },
-  { id: '2', channel: 'sms', lead: true, time: '18m ago', message: "Can I schedule an appointment for tomorrow morning?", name: 'James T.' },
-  { id: '3', channel: 'web', lead: false, time: '1h ago', message: 'What are your business hours?', name: 'Maria L.' },
-  { id: '4', channel: 'web', lead: true, time: '3h ago', message: 'I have an emergency leak — how soon can someone come out?', name: 'David R.' },
-  { id: '5', channel: 'sms', lead: true, time: '5h ago', message: 'Do you offer free estimates for drain cleaning?', name: 'Kim P.' },
-  { id: '6', channel: 'web', lead: false, time: '8h ago', message: 'What areas do you serve?', name: 'Alex W.' },
-];
-
 const embedCode = `<script src="https://widget.desklo.ai/v1.js" data-key="dk_live_xxxxxxxxxxxx"></script>`;
 
 export default function Dashboard() {
@@ -45,6 +35,16 @@ export default function Dashboard() {
   const [widgetColor, setWidgetColor] = useState('#7B61FF');
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('');
+  const [businessId, setBusinessId] = useState<string | null>(null);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [selectedConvo, setSelectedConvo] = useState<string | null>(null);
+  const [convoMessages, setConvoMessages] = useState<{[key: string]: {role: string, content: string}[]}>({});
+  const [stats, setStats] = useState({
+    conversationsThisMonth: 0,
+    leadsTotal: 0,
+    afterHours: 0,
+    allTime: 0,
+  });
 
   useEffect(() => {
     checkAuthAndLoad();
@@ -56,14 +56,11 @@ export default function Dashboard() {
       window.location.href = '/login';
       return;
     }
-    loadBusiness();
+    await loadBusiness(user);
   }
 
-  async function loadBusiness() {
+  async function loadBusiness(user: any) {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { setLoading(false); return; }
-
       setUserName(user.email ?? '');
 
       const { data, error } = await supabase
@@ -85,10 +82,74 @@ export default function Dashboard() {
       });
 
       setWidgetColor(data.widget_color ?? '#7B61FF');
+      setBusinessId(data.id);
+      await loadConversations(data.id);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadConversations(bizId: string) {
+    try {
+      const { data } = await supabase
+        .from('conversations')
+        .select(`id, channel, is_lead, is_after_hours, created_at, messages(role, content)`)
+        .eq('business_id', bizId)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (data) {
+        const formatted = data.map((c: any) => {
+          const firstUserMsg = c.messages?.find((m: any) => m.role === 'user');
+          return {
+            id: c.id,
+            channel: c.channel as 'web' | 'sms',
+            lead: c.is_lead,
+            time: new Date(c.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            message: firstUserMsg?.content ?? 'New conversation',
+            name: 'Visitor',
+          };
+        });
+        setConversations(formatted);
+
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        setStats({
+          conversationsThisMonth: data.filter((c: any) => new Date(c.created_at) >= startOfMonth).length,
+          leadsTotal: data.filter((c: any) => c.is_lead).length,
+          afterHours: data.filter((c: any) => c.is_after_hours).length,
+          allTime: data.length,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function loadMessages(convoId: string) {
+    if (selectedConvo === convoId) {
+      setSelectedConvo(null);
+      return;
+    }
+    if (convoMessages[convoId]) {
+      setSelectedConvo(convoId);
+      return;
+    }
+    try {
+      const { data } = await supabase
+        .from('messages')
+        .select('role, content')
+        .eq('conversation_id', convoId)
+        .order('created_at', { ascending: true });
+
+      if (data) {
+        setConvoMessages(prev => ({ ...prev, [convoId]: data }));
+        setSelectedConvo(convoId);
+      }
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -122,11 +183,11 @@ export default function Dashboard() {
     bot_name: "Assistant",
   };
 
-  const stats = [
-    { label: 'Conversations This Month', value: '0', change: null, icon: MessageSquare },
-    { label: 'Leads Captured', value: '0', change: null, icon: UserPlus },
-    { label: 'After-Hours Conversations', value: '0', change: null, icon: Moon },
-    { label: 'Total All Time', value: '0', change: null, icon: BarChart3 },
+  const statCards = [
+    { label: 'Conversations This Month', value: stats.conversationsThisMonth, icon: MessageSquare },
+    { label: 'Leads Captured', value: stats.leadsTotal, icon: UserPlus },
+    { label: 'After-Hours Conversations', value: stats.afterHours, icon: Moon },
+    { label: 'Total All Time', value: stats.allTime, icon: BarChart3 },
   ];
 
   return (
@@ -184,18 +245,12 @@ export default function Dashboard() {
         )}
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {stats.map((s) => (
+          {statCards.map((s) => (
             <div key={s.label} className="bg-white rounded-2xl border border-gray-100 p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center">
                   <s.icon size={18} className="text-brand-500" />
                 </div>
-                {s.change && (
-                  <span className="inline-flex items-center gap-0.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
-                    {s.change}
-                    <ArrowUpRight size={10} />
-                  </span>
-                )}
               </div>
               <p className="text-2xl font-bold text-gray-900">{s.value}</p>
               <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
@@ -207,33 +262,57 @@ export default function Dashboard() {
           <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100">
             <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
               <h2 className="text-sm font-semibold text-gray-900">Recent Conversations</h2>
-              <span className="text-xs text-gray-400">{demoConversations.length} conversations</span>
+              <span className="text-xs text-gray-400">{conversations.length} conversations</span>
             </div>
             <div className="divide-y divide-gray-50">
-              {demoConversations.map((c) => (
-                <div key={c.id} className="px-6 py-4 flex items-start gap-4 hover:bg-gray-50/50 transition-colors cursor-pointer">
-                  <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-semibold text-gray-500">
-                      {c.name.split(' ').map((n) => n[0]).join('')}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-sm font-medium text-gray-900">{c.name}</span>
-                      <span className={`text-[10px] font-medium uppercase px-1.5 py-0.5 rounded ${
-                        c.channel === 'sms' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600'
-                      }`}>
-                        {c.channel}
-                      </span>
-                      {c.lead && (
-                        <span className="text-[10px] font-medium uppercase px-1.5 py-0.5 rounded bg-brand-50 text-brand-600">
-                          Lead
-                        </span>
-                      )}
-                      <span className="text-xs text-gray-400 ml-auto flex-shrink-0">{c.time}</span>
+              {conversations.length === 0 && (
+                <div className="px-6 py-10 text-center text-gray-400 text-sm">
+                  No conversations yet — embed the widget on your site to get started!
+                </div>
+              )}
+              {conversations.map((c) => (
+                <div key={c.id}>
+                  <div
+                    onClick={() => loadMessages(c.id)}
+                    className="px-6 py-4 flex items-start gap-4 hover:bg-gray-50/50 transition-colors cursor-pointer"
+                  >
+                    <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-semibold text-gray-500">V</span>
                     </div>
-                    <p className="text-sm text-gray-500 truncate">{c.message}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm font-medium text-gray-900">{c.name}</span>
+                        <span className={`text-[10px] font-medium uppercase px-1.5 py-0.5 rounded ${
+                          c.channel === 'sms' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {c.channel}
+                        </span>
+                        {c.lead && (
+                          <span className="text-[10px] font-medium uppercase px-1.5 py-0.5 rounded bg-brand-50 text-brand-600">
+                            Lead
+                          </span>
+                        )}
+                        <span className="text-xs text-gray-400 ml-auto flex-shrink-0">{c.time}</span>
+                      </div>
+                      <p className="text-sm text-gray-500 truncate">{c.message}</p>
+                    </div>
                   </div>
+
+                  {selectedConvo === c.id && convoMessages[c.id] && (
+                    <div className="px-6 pb-4 bg-gray-50 border-t border-gray-100 space-y-2 pt-3">
+                      {convoMessages[c.id].map((msg, i) => (
+                        <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`max-w-sm rounded-xl px-3 py-2 text-xs leading-relaxed ${
+                            msg.role === 'user'
+                              ? 'bg-brand-500 text-white'
+                              : 'bg-white text-gray-700 border border-gray-200'
+                          }`}>
+                            {msg.content}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -296,7 +375,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <ChatWidget business={activeBusiness} color={widgetColor} />
+      <ChatWidget business={activeBusiness} color={widgetColor} businessId={businessId ?? undefined} />
     </div>
   );
 }
