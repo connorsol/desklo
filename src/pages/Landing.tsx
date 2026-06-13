@@ -15,15 +15,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-function Banner() {
-  return (
-    <div className="bg-brand-500 text-white text-center text-sm py-2 px-4 font-medium">
-      Founding Member Offer — First 10 customers get locked in at $69/mo forever.{' '}
-      <Link to="/onboarding" className="underline hover:no-underline">Claim your spot →</Link>
-    </div>
-  );
-}
-
 function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
@@ -39,8 +30,9 @@ function Nav() {
           <a href="#features" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Features</a>
           <a href="#pricing" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
           <Link to="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Login</Link>
+          <Link to="/onboarding" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Sign up</Link>
           <Link to="/onboarding" className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors">
-            Start Free Trial
+            Get Started
           </Link>
         </div>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 text-gray-600" aria-label="Toggle menu">
@@ -54,7 +46,8 @@ function Nav() {
           <a href="#features" className="block text-sm text-gray-600 py-1">Features</a>
           <a href="#pricing" className="block text-sm text-gray-600 py-1">Pricing</a>
           <Link to="/login" className="block text-sm text-gray-600 py-1">Login</Link>
-          <Link to="/onboarding" className="block text-sm font-medium text-brand-500 py-1">Start Free Trial</Link>
+          <Link to="/onboarding" className="block text-sm text-gray-600 py-1">Sign up</Link>
+          <Link to="/onboarding" className="block text-sm font-medium text-brand-500 py-1">Get Started</Link>
         </div>
       )}
     </nav>
@@ -79,7 +72,7 @@ function Hero() {
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link to="/onboarding" className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-white bg-brand-500 rounded-xl hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40">
-            Start Free Trial <ArrowRight size={18} />
+            Get Started <ArrowRight size={18} />
           </Link>
           <Link to="/demo" className="inline-flex items-center gap-2 px-6 py-3 text-base font-medium text-gray-700 bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all">
             Try Live Demo
@@ -120,7 +113,7 @@ function LiveDemo() {
 
 function HowItWorks() {
   const steps = [
-    { num: '01', icon: UserPlus, title: 'Sign Up', desc: 'Create your account in under 30 seconds. No credit card required to start.' },
+    { num: '01', icon: UserPlus, title: 'Sign Up', desc: 'Create your account in under 30 seconds.' },
     { num: '02', icon: Settings, title: 'Train Your Bot in 5 Minutes', desc: 'Tell us about your business, services, and hours. Our AI handles the rest.' },
     { num: '03', icon: Globe, title: 'Go Live on Your Website', desc: 'Add a single line of code and your AI receptionist is ready to work.' },
   ];
@@ -152,9 +145,9 @@ function Features() {
   const features = [
     { icon: Clock, title: '24/7 Availability', desc: 'Your AI never sleeps, ensuring every visitor gets an instant response.' },
     { icon: UserPlus, title: 'Lead Capture', desc: 'Automatically collect names, emails, and phone numbers from every conversation.' },
-    { icon: MessageSquare, title: 'SMS Support', desc: 'Engage leads via text message right from the conversation thread.' },
+    { icon: MessageSquare, title: 'Chat Widget', desc: 'Embed a professional chat widget on your website in minutes.' },
     { icon: BarChart3, title: 'Monthly ROI Reports', desc: 'See exactly how many leads and bookings your AI generates each month.' },
-    { icon: Moon, title: 'After-Hours Coverage', desc: 'Capture leads while you sleep — no more missed after-hours calls.' },
+    { icon: Moon, title: 'After-Hours Coverage', desc: 'Capture leads while you sleep — no more missed after-hours inquiries.' },
     { icon: Settings, title: 'Done-for-You Setup', desc: "We handle the entire setup so you don't have to lift a finger." },
   ];
   return (
@@ -181,41 +174,38 @@ function Features() {
 }
 
 function Pricing() {
-  const plans = [
-    { name: 'Starter', price: 99, features: ['Chat widget', 'Lead capture', 'Dashboard', 'Monthly reports'], popular: false },
-    { name: 'Pro', price: 149, features: ['Everything in Starter', 'SMS number', 'Voice calls', 'After-hours alerts', 'Priority support'], popular: true },
-  ];
   return (
     <section id="pricing" className="py-24 px-6 bg-gray-50/80">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-lg mx-auto">
         <div className="text-center mb-16">
           <p className="text-sm font-medium text-brand-500 mb-2">Pricing</p>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">Simple, transparent pricing</h2>
         </div>
-        <div className="grid md:grid-cols-2 gap-6">
-          {plans.map((plan) => (
-            <div key={plan.name} className={`relative rounded-2xl p-8 ${plan.popular ? 'bg-gray-900 text-white ring-2 ring-brand-500' : 'bg-white border border-gray-100'}`}>
-              {plan.popular && (
-                <span className="absolute -top-3 left-8 px-3 py-1 text-xs font-medium bg-brand-500 text-white rounded-full">Most Popular</span>
-              )}
-              <h3 className={`text-lg font-semibold mb-1 ${plan.popular ? 'text-white' : 'text-gray-900'}`}>{plan.name}</h3>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className={`text-4xl font-bold ${plan.popular ? 'text-white' : 'text-gray-900'}`}>${plan.price}</span>
-                <span className={`text-sm ${plan.popular ? 'text-gray-400' : 'text-gray-500'}`}>/mo</span>
-              </div>
-              <ul className="space-y-3 mb-8">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-center gap-3 text-sm">
-                    <Check size={16} className={plan.popular ? 'text-brand-400' : 'text-brand-500'} />
-                    <span className={plan.popular ? 'text-gray-300' : 'text-gray-600'}>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link to="/onboarding" className="block w-full py-2.5 text-center text-sm font-medium rounded-lg transition-colors bg-brand-500 text-white hover:bg-brand-600">
-                Start Free Trial
-              </Link>
-            </div>
-          ))}
+        <div className="bg-gray-900 rounded-2xl p-8 ring-2 ring-brand-500 relative">
+          <span className="absolute -top-3 left-8 px-3 py-1 text-xs font-medium bg-brand-500 text-white rounded-full">Most Popular</span>
+          <h3 className="text-lg font-semibold text-white mb-1">Starter</h3>
+          <div className="flex items-baseline gap-1 mb-6">
+            <span className="text-4xl font-bold text-white">$99</span>
+            <span className="text-sm text-gray-400">/mo</span>
+          </div>
+          <ul className="space-y-3 mb-8">
+            {[
+              'Chat widget',
+              'Lead capture',
+              'Dashboard',
+              'Monthly reports',
+              'After-hours coverage',
+              'Done-for-you setup',
+            ].map((f) => (
+              <li key={f} className="flex items-center gap-3 text-sm">
+                <Check size={16} className="text-brand-400" />
+                <span className="text-gray-300">{f}</span>
+              </li>
+            ))}
+          </ul>
+          <Link to="/onboarding" className="block w-full py-2.5 text-center text-sm font-medium rounded-lg transition-colors bg-brand-500 text-white hover:bg-brand-600">
+            Get Started
+          </Link>
         </div>
       </div>
     </section>
@@ -241,7 +231,6 @@ function Footer() {
 export default function Landing() {
   return (
     <div className="min-h-screen bg-white">
-      <Banner />
       <Nav />
       <Hero />
       <LiveDemo />

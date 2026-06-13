@@ -341,8 +341,8 @@ export default function Dashboard() {
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Your Plan</h3>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Trial</p>
-                  <p className="text-xs text-gray-500">14 days free</p>
+                  <p className="text-sm font-medium text-gray-900">Starter</p>
+<p className="text-xs text-gray-500">$99/mo</p>
                 </div>
                 <CreditCard size={18} className="text-gray-300" />
               </div>
@@ -355,8 +355,8 @@ export default function Dashboard() {
                 ))}
               </ul>
               <button className="w-full py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors">
-                Upgrade to Pro
-              </button>
+  Manage Plan
+</button>
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
