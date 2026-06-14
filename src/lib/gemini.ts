@@ -1,6 +1,5 @@
 import { GROQ_API_KEY } from '../config'
-console.log('KEY VALUE:', import.meta.env.VITE_GEMINI_API_KEY)
-console.log('ALL ENV VARS:', import.meta.env)
+
 export type Message = {
   role: 'user' | 'assistant'
   content: string
