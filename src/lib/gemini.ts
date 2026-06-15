@@ -1,5 +1,3 @@
-import { GROQ_API_KEY } from '../config'
-
 export type Message = {
   role: 'user' | 'assistant'
   content: string
@@ -47,23 +45,20 @@ STRICT RULES:
 8. For emergencies give contact info immediately`
 
   const response = await fetch(
-    'https://api.groq.com/openai/v1/chat/completions',
+    'https://desklo-worker.connorcarson222.workers.dev',
     {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
         messages: [
           { role: 'system', content: systemPrompt },
           ...messages.map(m => ({
             role: m.role === 'assistant' ? 'assistant' : 'user',
             content: m.content
           }))
-        ],
-        max_tokens: 300
+        ]
       })
     }
   )
