@@ -26,7 +26,7 @@ export default function Onboarding() {
   const [booking, setBooking] = useState('');
   const [location, setLocation] = useState('');
   const [botName, setBotName] = useState('Assistant');
-  const [brandColor, setBrandColor] = useState('#7B61FF');
+  const [brandColor, setBrandColor] = useState('#2563eb');
 
   const canNext = () => {
     if (step === 1) return industry !== '';
@@ -37,82 +37,41 @@ export default function Onboarding() {
   const handleGoogleLogin = async () => {
     setSaving(true);
     setError('');
-
     const businessData = {
-      industry,
-      name: businessName,
-      services,
-      hours,
-      pricing,
-      booking_info: booking,
-      location,
-      bot_name: botName,
-      widget_color: brandColor,
+      industry, name: businessName, services, hours, pricing,
+      booking_info: booking, location, bot_name: botName, widget_color: brandColor,
     };
-
     localStorage.setItem('pending_business', JSON.stringify(businessData));
-
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
+      options: { redirectTo: `${window.location.origin}/dashboard` },
     });
-
     if (error) {
-      console.error(error);
       setError('Google login failed. Please try again.');
       setSaving(false);
     }
   };
 
   const handleNext = async () => {
-    if (step < 3) {
-      setStep(step + 1);
-      return;
-    }
-
+    if (step < 3) { setStep(step + 1); return; }
     setSaving(true);
     setError('');
-
     try {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-
       if (userError || !user) {
         const businessData = {
-          industry,
-          name: businessName,
-          services,
-          hours,
-          pricing,
-          booking_info: booking,
-          location,
-          bot_name: botName,
-          widget_color: brandColor,
+          industry, name: businessName, services, hours, pricing,
+          booking_info: booking, location, bot_name: botName, widget_color: brandColor,
         };
         localStorage.setItem('pending_business', JSON.stringify(businessData));
         navigate('/login?onboarding=true');
         return;
       }
-
-      const { error: insertError } = await supabase
-        .from('businesses')
-        .upsert({
-          owner_id: user.id,
-          industry,
-          name: businessName,
-          services,
-          hours,
-          pricing,
-          booking_info: booking,
-          location,
-          bot_name: botName,
-          widget_color: brandColor,
-          plan: 'trial',
-        }, { onConflict: 'owner_id' });
-
+      const { error: insertError } = await supabase.from('businesses').upsert({
+        owner_id: user.id, industry, name: businessName, services, hours, pricing,
+        booking_info: booking, location, bot_name: botName, widget_color: brandColor, plan: 'trial',
+      }, { onConflict: 'owner_id' });
       if (insertError) throw insertError;
-
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
@@ -122,169 +81,128 @@ export default function Onboarding() {
     }
   };
 
-  const handleBack = () => {
-    if (step > 1) setStep(step - 1);
+  const inputStyle = {
+    width: '100%',
+    background: '#0a0a0f',
+    border: '0.5px solid #1e2a3a',
+    borderRadius: 10,
+    padding: '10px 14px',
+    fontSize: 13,
+    color: '#fff',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="h-16 border-b border-gray-100 bg-white flex items-center px-6">
-        <div className="max-w-2xl mx-auto w-full flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
-              <Bot size={16} className="text-white" />
+    <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', flexDirection: 'column' }}>
+
+      {/* HEADER */}
+      <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 24px' }}>
+        <div style={{ maxWidth: 720, margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Bot size={16} color="#fff" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-gray-900">Desklo</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Desklo</span>
           </div>
-          <span className="text-sm text-gray-400">Step {step} of 3</span>
+          <span style={{ fontSize: 13, color: '#8899aa' }}>Step {step} of 3</span>
         </div>
       </header>
 
-      <div className="h-1 bg-gray-100">
-        <div
-          className="h-full bg-brand-500 transition-all duration-500 ease-out"
-          style={{ width: `${(step / 3) * 100}%` }}
-        />
+      {/* PROGRESS BAR */}
+      <div style={{ height: 2, background: '#1e2a3a' }}>
+        <div style={{ height: '100%', background: '#2563eb', width: `${(step / 3) * 100}%`, transition: 'width 0.5s ease' }} />
       </div>
 
-      <main className="flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-2xl">
+      {/* MAIN */}
+      <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
+        <div style={{ width: '100%', maxWidth: 680 }}>
+
+          {/* STEP 1 */}
           {step === 1 && (
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 mb-2">
-                What industry are you in?
-              </h1>
-              <p className="text-sm text-gray-500 mb-8">
-                This helps us tailor your AI receptionist to your business.
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 8 }}>What industry are you in?</h1>
+              <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 32 }}>This helps us tailor your AI receptionist to your business.</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
                 {industries.map((ind) => (
                   <button
                     key={ind}
                     onClick={() => setIndustry(ind)}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
-                      industry === ind
-                        ? 'border-brand-500 bg-brand-50'
-                        : 'border-gray-100 bg-white hover:border-gray-200'
-                    }`}
+                    style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                      padding: '16px 8px', borderRadius: 12, cursor: 'pointer',
+                      border: industry === ind ? '2px solid #2563eb' : '0.5px solid #1e2a3a',
+                      background: industry === ind ? 'rgba(37,99,235,0.1)' : '#0d1117',
+                      transition: 'all 0.15s',
+                    }}
                   >
-                    <span className="text-2xl">{industryEmojis[ind]}</span>
-                    <span className="text-xs font-medium text-gray-700">{ind}</span>
+                    <span style={{ fontSize: 24 }}>{industryEmojis[ind]}</span>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: industry === ind ? '#60a5fa' : '#8899aa' }}>{ind}</span>
                   </button>
                 ))}
               </div>
             </div>
           )}
 
+          {/* STEP 2 */}
           {step === 2 && (
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 mb-2">
-                Tell us about your business
-              </h1>
-              <p className="text-sm text-gray-500 mb-8">
-                This information trains your AI receptionist so it can answer customer questions accurately.
-              </p>
-              <div className="space-y-4">
+              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Tell us about your business</h1>
+              <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 32 }}>This information trains your AI receptionist to answer customer questions accurately.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Business name</label>
-                  <input
-                    value={businessName}
-                    onChange={(e) => setBusinessName(e.target.value)}
-                    placeholder="Acme Plumbing"
-                    className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all"
-                  />
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business name</label>
+                  <input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="Acme Plumbing" style={inputStyle} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Services offered</label>
-                  <textarea
-                    value={services}
-                    onChange={(e) => setServices(e.target.value)}
-                    placeholder="Drain cleaning, pipe repair, water heater installation..."
-                    rows={3}
-                    className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all resize-none"
-                  />
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Services offered</label>
+                  <textarea value={services} onChange={(e) => setServices(e.target.value)} placeholder="Drain cleaning, pipe repair, water heater installation..." rows={3} style={{ ...inputStyle, resize: 'none' }} />
                 </div>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Business hours</label>
-                    <input
-                      value={hours}
-                      onChange={(e) => setHours(e.target.value)}
-                      placeholder="Mon–Fri 8am–6pm"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all"
-                    />
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business hours</label>
+                    <input value={hours} onChange={(e) => setHours(e.target.value)} placeholder="Mon–Fri 8am–6pm" style={inputStyle} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Pricing info</label>
-                    <input
-                      value={pricing}
-                      onChange={(e) => setPricing(e.target.value)}
-                      placeholder="$75/hr, free estimates"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all"
-                    />
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Pricing info</label>
+                    <input value={pricing} onChange={(e) => setPricing(e.target.value)} placeholder="$75/hr, free estimates" style={inputStyle} />
                   </div>
                 </div>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">How to book / contact</label>
-                    <input
-                      value={booking}
-                      onChange={(e) => setBooking(e.target.value)}
-                      placeholder="Call 555-1234 or book online"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all"
-                    />
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>How to book / contact</label>
+                    <input value={booking} onChange={(e) => setBooking(e.target.value)} placeholder="Call 555-1234 or book online" style={inputStyle} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Location</label>
-                    <input
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder="Austin, TX"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all"
-                    />
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Location</label>
+                    <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Austin, TX" style={inputStyle} />
                   </div>
                 </div>
               </div>
             </div>
           )}
 
+          {/* STEP 3 */}
           {step === 3 && (
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 mb-2">
-                Customize your bot
-              </h1>
-              <p className="text-sm text-gray-500 mb-8">
-                Give your AI receptionist a name and match it to your brand.
-              </p>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-4">
+              <h1 style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Customize your bot</h1>
+              <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 32 }}>Give your AI receptionist a name and match it to your brand.</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Bot name</label>
-                    <input
-                      value={botName}
-                      onChange={(e) => setBotName(e.target.value)}
-                      placeholder="Assistant"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all"
-                    />
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Bot name</label>
+                    <input value={botName} onChange={(e) => setBotName(e.target.value)} placeholder="Assistant" style={inputStyle} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Brand color</label>
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="color"
-                        value={brandColor}
-                        onChange={(e) => setBrandColor(e.target.value)}
-                        className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer"
-                      />
-                      <div className="flex gap-2">
-                        {['#7B61FF', '#2563EB', '#059669', '#EA580C', '#DC2626', '#7C3AED'].map((c) => (
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 10 }}>Brand color</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} style={{ width: 40, height: 40, borderRadius: 8, cursor: 'pointer', border: '0.5px solid #1e2a3a' }} />
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        {['#2563EB', '#7B61FF', '#059669', '#EA580C', '#DC2626', '#7C3AED'].map((c) => (
                           <button
                             key={c}
                             onClick={() => setBrandColor(c)}
-                            className={`w-8 h-8 rounded-lg border-2 transition-all ${
-                              brandColor === c ? 'border-gray-900 scale-110' : 'border-transparent'
-                            }`}
-                            style={{ backgroundColor: c }}
+                            style={{ width: 32, height: 32, borderRadius: 8, background: c, border: brandColor === c ? '2px solid #fff' : '2px solid transparent', cursor: 'pointer', transform: brandColor === c ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.1s' }}
                           />
                         ))}
                       </div>
@@ -292,41 +210,34 @@ export default function Onboarding() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl border border-gray-100 p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Palette size={14} className="text-gray-400" />
-                    <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Preview</span>
+                {/* PREVIEW */}
+                <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 14, padding: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
+                    <Palette size={13} color="#8899aa" />
+                    <span style={{ fontSize: 11, fontWeight: 500, color: '#8899aa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Preview</span>
                   </div>
-                  <div className="rounded-xl overflow-hidden shadow-sm">
-                    <div className="px-4 py-3 flex items-center gap-3" style={{ backgroundColor: brandColor }}>
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                        <Sparkles size={14} className="text-white" />
+                  <div style={{ borderRadius: 12, overflow: 'hidden' }}>
+                    <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, background: brandColor }}>
+                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Sparkles size={14} color="#fff" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-white">{botName || 'Assistant'}</p>
-                        <p className="text-xs text-white/70">Online now</p>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{botName || 'Assistant'}</p>
+                        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>Online now</p>
                       </div>
                     </div>
-                    <div className="bg-gray-50 p-4 space-y-3">
-                      <div className="flex gap-2">
-                        <div
-                          className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-                          style={{ backgroundColor: brandColor }}
-                        >
-                          <Sparkles size={10} className="text-white" />
+                    <div style={{ background: '#0a0a0f', padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <div style={{ width: 24, height: 24, borderRadius: '50%', background: brandColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <Sparkles size={10} color="#fff" />
                         </div>
-                        <div className="bg-white rounded-xl rounded-tl-sm px-3 py-2 max-w-[80%]">
-                          <p className="text-xs text-gray-700 leading-relaxed">
-                            Hi! Welcome to {businessName || 'our business'}. How can I help you today?
-                          </p>
+                        <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: '12px 12px 12px 2px', padding: '8px 12px', maxWidth: '80%' }}>
+                          <p style={{ fontSize: 12, color: '#cdd9e8', lineHeight: 1.5 }}>Hi! Welcome to {businessName || 'our business'}. How can I help you today?</p>
                         </div>
                       </div>
-                      <div className="flex justify-end">
-                        <div
-                          className="rounded-xl rounded-tr-sm px-3 py-2 max-w-[80%]"
-                          style={{ backgroundColor: brandColor }}
-                        >
-                          <p className="text-xs text-white">I need to schedule a visit</p>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <div style={{ background: brandColor, borderRadius: '12px 12px 2px 12px', padding: '8px 12px', maxWidth: '80%' }}>
+                          <p style={{ fontSize: 12, color: '#fff' }}>I need to schedule a visit</p>
                         </div>
                       </div>
                     </div>
@@ -334,41 +245,35 @@ export default function Onboarding() {
                 </div>
               </div>
 
-              {error && (
-                <p className="text-red-500 text-sm mt-4">{error}</p>
-              )}
+              {error && <p style={{ fontSize: 13, color: '#f87171', marginTop: 16 }}>{error}</p>}
+
+              <button
+                onClick={handleGoogleLogin}
+                disabled={saving}
+                style={{ width: '100%', marginTop: 24, padding: '12px', background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 10, fontSize: 13, fontWeight: 500, color: '#cdd9e8', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: saving ? 0.5 : 1 }}
+              >
+                {saving && <Loader2 size={14} color="#cdd9e8" />}
+                Continue with Google
+              </button>
             </div>
           )}
 
-          {step === 3 && (
+          {/* NAV BUTTONS */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24 }}>
             <button
-              onClick={handleGoogleLogin}
-              disabled={saving}
-              className="w-full mt-8 inline-flex items-center justify-center gap-2 px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              onClick={() => setStep(step - 1)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 16px', background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 10, fontSize: 13, fontWeight: 500, color: '#8899aa', cursor: 'pointer', visibility: step === 1 ? 'hidden' : 'visible' }}
             >
-              {saving && <Loader2 size={14} className="animate-spin" />}
-              Continue with Google
-            </button>
-          )}
-
-          <div className="flex items-center justify-between mt-6">
-            <button
-              onClick={handleBack}
-              className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors ${
-                step === 1 ? 'invisible' : ''
-              }`}
-            >
-              <ArrowLeft size={16} />
-              Back
+              <ArrowLeft size={15} /> Back
             </button>
             <button
               onClick={handleNext}
               disabled={!canNext() || saving}
-              className="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 500, cursor: 'pointer', opacity: (!canNext() || saving) ? 0.4 : 1 }}
             >
-              {saving && <Loader2 size={14} className="animate-spin" />}
+              {saving && <Loader2 size={14} color="#fff" />}
               {step === 3 ? 'Go to Dashboard' : 'Continue'}
-              <ArrowRight size={16} />
+              <ArrowRight size={15} />
             </button>
           </div>
         </div>

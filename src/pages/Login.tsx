@@ -69,32 +69,45 @@ export default function Login() {
     }
   }
 
+  const inputStyle = {
+    width: '100%',
+    background: '#0a0a0f',
+    border: '0.5px solid #1e2a3a',
+    borderRadius: 10,
+    padding: '10px 14px',
+    fontSize: 13,
+    color: '#fff',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-50 to-white flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center">
-              <Bot size={18} className="text-white" />
+    <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div style={{ width: '100%', maxWidth: 360 }}>
+
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Bot size={18} color="#fff" />
             </div>
-            <span className="font-bold text-xl text-gray-900">Desklo</span>
+            <span style={{ fontSize: 20, fontWeight: 700, color: '#fff' }}>Desklo</span>
           </div>
-          <p className="text-gray-500 text-sm">Your 24/7 AI receptionist</p>
+          <p style={{ fontSize: 13, color: '#8899aa' }}>Your 24/7 AI receptionist</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16, padding: 32 }}>
           {sent ? (
-            <div className="text-center">
-              <div className="text-4xl mb-3">📬</div>
-              <h2 className="font-semibold text-gray-900 mb-1">Check your email</h2>
-              <p className="text-sm text-gray-500">
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 40, marginBottom: 12 }}>📬</div>
+              <h2 style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Check your email</h2>
+              <p style={{ fontSize: 13, color: '#8899aa' }}>
                 {mode === 'forgot'
                   ? `We sent a password reset link to ${email}`
                   : `We sent a confirmation link to ${email}`}
               </p>
               <button
                 onClick={() => { setSent(false); setMode('login'); }}
-                className="mt-4 text-sm text-brand-500 hover:underline"
+                style={{ marginTop: 16, fontSize: 13, color: '#60a5fa', background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 Back to sign in
               </button>
@@ -102,44 +115,44 @@ export default function Login() {
           ) : (
             <>
               {fromOnboarding && mode === 'signup' && (
-                <div className="bg-brand-50 rounded-xl p-3 mb-5 text-center">
-                  <p className="text-sm text-brand-700 font-medium">Almost there! 🎉</p>
-                  <p className="text-xs text-brand-600 mt-0.5">Create an account to save your bot and go live.</p>
+                <div style={{ background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 20, textAlign: 'center' }}>
+                  <p style={{ fontSize: 13, color: '#60a5fa', fontWeight: 500 }}>Almost there! 🎉</p>
+                  <p style={{ fontSize: 12, color: '#8899aa', marginTop: 4 }}>Create an account to save your bot and go live.</p>
                 </div>
               )}
 
-              <div className="flex items-center gap-2 mb-6">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
                 {mode === 'forgot' && (
-                  <button onClick={() => setMode('login')} className="text-gray-400 hover:text-gray-600">
+                  <button onClick={() => setMode('login')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8899aa', display: 'flex', alignItems: 'center' }}>
                     <ArrowLeft size={16} />
                   </button>
                 )}
-                <h2 className="font-semibold text-gray-900">
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#fff' }}>
                   {mode === 'login' ? 'Welcome back' : mode === 'signup' ? 'Create your account' : 'Reset your password'}
                 </h2>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Email</label>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Email</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-400"
+                    style={inputStyle}
                   />
                 </div>
 
                 {mode !== 'forgot' && (
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Password</label>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Password</label>
                     <input
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-400"
+                      style={inputStyle}
                     />
                   </div>
                 )}
@@ -148,30 +161,30 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => { setMode('forgot'); setError(''); }}
-                    className="text-xs text-brand-500 hover:underline"
+                    style={{ fontSize: 12, color: '#60a5fa', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
                   >
                     Forgot your password?
                   </button>
                 )}
 
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+                {error && <p style={{ fontSize: 12, color: '#f87171' }}>{error}</p>}
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-brand-500 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-brand-600 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
+                  style={{ width: '100%', background: '#2563eb', color: '#fff', padding: '10px', borderRadius: 10, fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? 0.5 : 1 }}
                 >
-                  {loading && <Loader2 size={14} className="animate-spin" />}
+                  {loading && <Loader2 size={14} color="#fff" />}
                   {mode === 'login' ? 'Sign in' : mode === 'signup' ? 'Create account' : 'Send reset link'}
                 </button>
               </form>
 
               {mode !== 'forgot' && (
-                <p className="text-center text-sm text-gray-500 mt-5">
+                <p style={{ textAlign: 'center', fontSize: 13, color: '#8899aa', marginTop: 20 }}>
                   {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
                   <button
                     onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-                    className="text-brand-500 font-medium hover:underline"
+                    style={{ fontSize: 13, color: '#60a5fa', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}
                   >
                     {mode === 'login' ? 'Sign up' : 'Sign in'}
                   </button>

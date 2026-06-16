@@ -9,7 +9,7 @@ type Props = {
   businessId?: string
 }
 
-export function ChatWidget({ business, color = '#7B61FF', businessId }: Props) {
+export function ChatWidget({ business, color = '#2563eb', businessId }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
@@ -60,16 +60,10 @@ export function ChatWidget({ business, color = '#7B61FF', businessId }: Props) {
         { conversation_id: convId, role: 'user', content: userMsg },
         { conversation_id: convId, role: 'assistant', content: botReply },
       ])
-
-      // Detect lead intent
       const leadKeywords = ['book', 'appointment', 'schedule', 'emergency', 'price', 'cost', 'how much', 'available', 'quote']
       const isLead = leadKeywords.some(k => userMsg.toLowerCase().includes(k))
-
       if (isLead) {
-        await supabase
-          .from('conversations')
-          .update({ is_lead: true })
-          .eq('id', convId)
+        await supabase.from('conversations').update({ is_lead: true }).eq('id', convId)
       }
     } catch (err) {
       console.error('Failed to save messages:', err)
@@ -79,32 +73,22 @@ export function ChatWidget({ business, color = '#7B61FF', businessId }: Props) {
   async function handleSend() {
     const text = input.trim()
     if (!text || isLoading) return
-
     setInput('')
     const userMsg: Message = { role: 'user', content: text }
     const updatedMessages = [...messages, userMsg]
     setMessages(updatedMessages)
     setIsLoading(true)
-
     try {
       const reply = await sendMessage(updatedMessages, business)
       setMessages(prev => [...prev, { role: 'assistant', content: reply }])
-
-      // Save to Supabase
       let convId = conversationId
       if (!convId) {
         convId = await createConversation()
         if (convId) setConversationId(convId)
       }
-      if (convId) {
-        await saveMessages(convId, text, reply)
-      }
-
+      if (convId) await saveMessages(convId, text, reply)
     } catch {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: "Sorry, I had a quick issue. Please try again!"
-      }])
+      setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I had a quick issue. Please try again!" }])
     } finally {
       setIsLoading(false)
     }
@@ -118,57 +102,65 @@ export function ChatWidget({ business, color = '#7B61FF', businessId }: Props) {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50">
+    <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 50 }}>
       {isOpen && (
-        <div
-          className="mb-3 w-80 rounded-2xl shadow-2xl border border-gray-200 bg-white flex flex-col overflow-hidden"
-          style={{ height: '480px' }}
-        >
-          <div
-            className="flex items-center justify-between px-4 py-3 flex-shrink-0"
-            style={{ background: color }}
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-300 animate-pulse" />
-              <span className="text-white font-semibold text-sm">{business.bot_name}</span>
-              <span className="text-white/70 text-xs">· Online</span>
+        <div style={{
+          marginBottom: 12,
+          width: 320,
+          height: 480,
+          borderRadius: 16,
+          border: '0.5px solid #1e2a3a',
+          background: '#0a0a0f',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          boxShadow: '0 24px 48px rgba(0,0,0,0.4)',
+        }}>
+          {/* HEADER */}
+          <div style={{ background: color, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#86efac' }} />
+              <span style={{ color: '#fff', fontWeight: 600, fontSize: 13 }}>{business.bot_name}</span>
+              <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>· Online</span>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors">
-              <X size={18} />
+            <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center' }}>
+              <X size={18} color="rgba(255,255,255,0.8)" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+          {/* MESSAGES */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 10, background: '#0a0a0f' }}>
             {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-xs rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-                    msg.role === 'user'
-                      ? 'text-white rounded-br-sm'
-                      : 'bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm'
-                  }`}
-                  style={msg.role === 'user' ? { background: color } : {}}
-                >
+              <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                <div style={{
+                  maxWidth: '80%',
+                  borderRadius: 14,
+                  padding: '10px 14px',
+                  fontSize: 13,
+                  lineHeight: 1.6,
+                  background: msg.role === 'user' ? color : '#0d1117',
+                  color: msg.role === 'user' ? '#fff' : '#cdd9e8',
+                  border: msg.role === 'user' ? 'none' : '0.5px solid #1e2a3a',
+                }}>
                   {msg.content}
                 </div>
               </div>
             ))}
             {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
-                  <div className="flex gap-1 items-center">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-                  </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 14, padding: '10px 14px', display: 'flex', gap: 4, alignItems: 'center' }}>
+                  {[0, 150, 300].map((delay) => (
+                    <span key={delay} style={{ width: 6, height: 6, borderRadius: '50%', background: '#8899aa', display: 'inline-block', animation: 'bounce 1s infinite', animationDelay: `${delay}ms` }} />
+                  ))}
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-3 border-t border-gray-100 bg-white flex-shrink-0">
-            <div className="flex gap-2 items-end">
+          {/* INPUT */}
+          <div style={{ padding: 12, borderTop: '0.5px solid #1e2a3a', background: '#0d1117', flexShrink: 0 }}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
               <textarea
                 ref={inputRef}
                 value={input}
@@ -176,33 +168,67 @@ export function ChatWidget({ business, color = '#7B61FF', businessId }: Props) {
                 onKeyDown={handleKey}
                 placeholder="Type a message…"
                 rows={1}
-                className="flex-1 resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-purple-300 max-h-28"
-                style={{ lineHeight: '1.5' }}
+                style={{
+                  flex: 1,
+                  resize: 'none',
+                  background: '#0a0a0f',
+                  border: '0.5px solid #1e2a3a',
+                  borderRadius: 10,
+                  padding: '8px 12px',
+                  fontSize: 13,
+                  color: '#fff',
+                  outline: 'none',
+                  lineHeight: 1.5,
+                  maxHeight: 112,
+                }}
               />
               <button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
-                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 disabled:opacity-40 transition-opacity"
-                style={{ background: color }}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 10,
+                  background: color,
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  opacity: (isLoading || !input.trim()) ? 0.4 : 1,
+                }}
               >
                 {isLoading
-                  ? <Loader2 size={16} className="text-white animate-spin" />
-                  : <Send size={14} className="text-white" />
+                  ? <Loader2 size={15} color="#fff" />
+                  : <Send size={14} color="#fff" />
                 }
               </button>
             </div>
-            <p className="text-center text-gray-400 text-xs mt-1.5">Powered by Desklo</p>
+            <p style={{ textAlign: 'center', fontSize: 11, color: '#8899aa', marginTop: 8 }}>Powered by Desklo</p>
           </div>
         </div>
       )}
 
+      {/* TOGGLE BUTTON */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full shadow-lg flex items-center justify-center ml-auto transition-transform hover:scale-105 active:scale-95"
-        style={{ background: color }}
+        style={{
+          width: 52,
+          height: 52,
+          borderRadius: '50%',
+          background: color,
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginLeft: 'auto',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+        }}
         aria-label="Open chat"
       >
-        {isOpen ? <X size={22} className="text-white" /> : <MessageCircle size={22} className="text-white" />}
+        {isOpen ? <X size={20} color="#fff" /> : <MessageCircle size={20} color="#fff" />}
       </button>
     </div>
   )

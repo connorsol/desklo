@@ -32,7 +32,7 @@ const embedCode = `<script src="https://widget.desklo.ai/v1.js" data-key="dk_liv
 export default function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [business, setBusiness] = useState<Business | null>(null);
-  const [widgetColor, setWidgetColor] = useState('#7B61FF');
+  const [widgetColor, setWidgetColor] = useState('#2563eb');
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('');
   const [businessId, setBusinessId] = useState<string | null>(null);
@@ -62,7 +62,6 @@ export default function Dashboard() {
   async function loadBusiness(user: any) {
     try {
       setUserName(user.email ?? '');
-
       const { data, error } = await supabase
         .from('businesses')
         .select('*')
@@ -81,7 +80,7 @@ export default function Dashboard() {
         bot_name: data.bot_name ?? 'Assistant',
       });
 
-      setWidgetColor(data.widget_color ?? '#7B61FF');
+      setWidgetColor(data.widget_color ?? '#2563eb');
       setBusinessId(data.id);
       await loadConversations(data.id);
     } catch (err) {
@@ -129,14 +128,8 @@ export default function Dashboard() {
   }
 
   async function loadMessages(convoId: string) {
-    if (selectedConvo === convoId) {
-      setSelectedConvo(null);
-      return;
-    }
-    if (convoMessages[convoId]) {
-      setSelectedConvo(convoId);
-      return;
-    }
+    if (selectedConvo === convoId) { setSelectedConvo(null); return; }
+    if (convoMessages[convoId]) { setSelectedConvo(convoId); return; }
     try {
       const { data } = await supabase
         .from('messages')
@@ -167,8 +160,8 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 size={24} className="animate-spin text-brand-500" />
+      <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Loader2 size={24} color="#2563eb" style={{ animation: 'spin 1s linear infinite' }} />
       </div>
     );
   }
@@ -190,123 +183,121 @@ export default function Dashboard() {
     { label: 'Total All Time', value: stats.allTime, icon: BarChart3 },
   ];
 
+  const card = { background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16 };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="h-16 border-b border-gray-100 bg-white flex items-center px-6 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
-                <Bot size={16} className="text-white" />
+    <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
+      {/* HEADER */}
+      <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 24px', position: 'sticky', top: 0, zIndex: 40 }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+              <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Bot size={16} color="#fff" />
               </div>
-              <span className="text-lg font-bold tracking-tight text-gray-900">Desklo</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Desklo</span>
             </Link>
-            <span className="hidden sm:block text-sm text-gray-400">|</span>
-            <span className="hidden sm:block text-sm font-medium text-gray-600">
-              {activeBusiness.name}
-            </span>
+            <span style={{ color: '#1e2a3a', fontSize: 18 }}>|</span>
+            <span style={{ fontSize: 13, fontWeight: 500, color: '#8899aa' }}>{activeBusiness.name}</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-gray-400 hidden md:block">{userName}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <span style={{ fontSize: 12, color: '#8899aa' }}>{userName}</span>
             {ADMIN_EMAILS.includes(userName) && (
-              <Link to="/admin" className="text-sm text-red-500 hover:text-red-700 font-medium transition-colors">
-                Admin
-              </Link>
+              <Link to="/admin" style={{ fontSize: 13, color: '#f87171', fontWeight: 500, textDecoration: 'none' }}>Admin</Link>
             )}
-            <Link to="/settings" className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition-colors">
-              <Settings size={15} />
-              Settings
+            <Link to="/settings" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>
+              <Settings size={14} /> Settings
             </Link>
-            <button
-              onClick={handleSignOut}
-              className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-            >
+            <button onClick={handleSignOut} style={{ fontSize: 13, color: '#8899aa', background: 'none', border: 'none', cursor: 'pointer' }}>
               Sign out
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
 
+        {/* SETUP BANNER */}
         {!business && (
-          <div className="bg-brand-50 border border-brand-200 rounded-2xl p-5 mb-8 flex items-center justify-between">
+          <div style={{ background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 14, padding: '16px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <p className="font-semibold text-brand-700">Welcome to Desklo! 👋</p>
-              <p className="text-sm text-brand-600 mt-0.5">Complete your setup to get your AI receptionist live.</p>
+              <p style={{ fontSize: 14, fontWeight: 600, color: '#60a5fa' }}>Welcome to Desklo! 👋</p>
+              <p style={{ fontSize: 13, color: '#8899aa', marginTop: 2 }}>Complete your setup to get your AI receptionist live.</p>
             </div>
-            <Link
-              to="/onboarding"
-              className="px-4 py-2 bg-brand-500 text-white text-sm font-medium rounded-lg hover:bg-brand-600 transition-colors flex-shrink-0"
-            >
+            <Link to="/onboarding" style={{ padding: '8px 16px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 8, textDecoration: 'none', flexShrink: 0 }}>
               Complete setup →
             </Link>
           </div>
         )}
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* STAT CARDS */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 24 }}>
           {statCards.map((s) => (
-            <div key={s.label} className="bg-white rounded-2xl border border-gray-100 p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center">
-                  <s.icon size={18} className="text-brand-500" />
-                </div>
+            <div key={s.label} style={{ ...card, padding: 20 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                <s.icon size={18} color="#60a5fa" />
               </div>
-              <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
+              <p style={{ fontSize: 24, fontWeight: 700, color: '#fff' }}>{s.value}</p>
+              <p style={{ fontSize: 11, color: '#8899aa', marginTop: 2 }}>{s.label}</p>
             </div>
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100">
-            <div className="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-gray-900">Recent Conversations</h2>
-              <span className="text-xs text-gray-400">{conversations.length} conversations</span>
+        {/* MAIN GRID */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 16 }}>
+
+          {/* CONVERSATIONS */}
+          <div style={{ ...card }}>
+            <div style={{ padding: '16px 20px', borderBottom: '0.5px solid #1e2a3a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Recent Conversations</h2>
+              <span style={{ fontSize: 11, color: '#8899aa' }}>{conversations.length} conversations</span>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div>
               {conversations.length === 0 && (
-                <div className="px-6 py-10 text-center text-gray-400 text-sm">
+                <div style={{ padding: '40px 20px', textAlign: 'center', fontSize: 13, color: '#8899aa' }}>
                   No conversations yet — embed the widget on your site to get started!
                 </div>
               )}
               {conversations.map((c) => (
-                <div key={c.id}>
+                <div key={c.id} style={{ borderBottom: '0.5px solid #1e2a3a' }}>
                   <div
                     onClick={() => loadMessages(c.id)}
-                    className="px-6 py-4 flex items-start gap-4 hover:bg-gray-50/50 transition-colors cursor-pointer"
+                    style={{ padding: '14px 20px', display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer' }}
                   >
-                    <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-semibold text-gray-500">V</span>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#1e2a3a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#8899aa' }}>V</span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-sm font-medium text-gray-900">{c.name}</span>
-                        <span className={`text-[10px] font-medium uppercase px-1.5 py-0.5 rounded ${
-                          c.channel === 'sms' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600'
-                        }`}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>{c.name}</span>
+                        <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', padding: '2px 6px', borderRadius: 4, background: '#1e2a3a', color: '#8899aa' }}>
                           {c.channel}
                         </span>
                         {c.lead && (
-                          <span className="text-[10px] font-medium uppercase px-1.5 py-0.5 rounded bg-brand-50 text-brand-600">
+                          <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', padding: '2px 6px', borderRadius: 4, background: 'rgba(37,99,235,0.15)', color: '#60a5fa' }}>
                             Lead
                           </span>
                         )}
-                        <span className="text-xs text-gray-400 ml-auto flex-shrink-0">{c.time}</span>
+                        <span style={{ fontSize: 11, color: '#8899aa', marginLeft: 'auto' }}>{c.time}</span>
                       </div>
-                      <p className="text-sm text-gray-500 truncate">{c.message}</p>
+                      <p style={{ fontSize: 12, color: '#8899aa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.message}</p>
                     </div>
                   </div>
 
                   {selectedConvo === c.id && convoMessages[c.id] && (
-                    <div className="px-6 pb-4 bg-gray-50 border-t border-gray-100 space-y-2 pt-3">
+                    <div style={{ padding: '12px 20px 16px', background: '#0a0a0f', borderTop: '0.5px solid #1e2a3a', display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {convoMessages[c.id].map((msg, i) => (
-                        <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-sm rounded-xl px-3 py-2 text-xs leading-relaxed ${
-                            msg.role === 'user'
-                              ? 'bg-brand-500 text-white'
-                              : 'bg-white text-gray-700 border border-gray-200'
-                          }`}>
+                        <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                          <div style={{
+                            maxWidth: '75%',
+                            borderRadius: 10,
+                            padding: '8px 12px',
+                            fontSize: 12,
+                            lineHeight: 1.5,
+                            background: msg.role === 'user' ? '#2563eb' : '#0d1117',
+                            color: msg.role === 'user' ? '#fff' : '#cdd9e8',
+                            border: msg.role === 'user' ? 'none' : '0.5px solid #1e2a3a',
+                          }}>
                             {msg.content}
                           </div>
                         </div>
@@ -318,57 +309,55 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Embed Code</h3>
-              <div className="relative">
-                <pre className="bg-gray-900 rounded-xl p-4 text-xs text-gray-300 overflow-x-auto font-mono leading-relaxed whitespace-pre-wrap">
+          {/* SIDEBAR */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+            {/* EMBED CODE */}
+            <div style={{ ...card, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 12 }}>Embed Code</h3>
+              <div style={{ position: 'relative' }}>
+                <pre style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: 14, fontSize: 11, color: '#8899aa', overflow: 'auto', fontFamily: 'monospace', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>
                   {embedCode}
                 </pre>
                 <button
                   onClick={handleCopy}
-                  className="absolute top-3 right-3 p-1.5 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+                  style={{ position: 'absolute', top: 10, right: 10, padding: 6, borderRadius: 6, background: '#1e2a3a', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                  {copied ? <Check size={13} color="#34d399" /> : <Copy size={13} color="#8899aa" />}
                 </button>
               </div>
-              <p className="text-xs text-gray-400 mt-3">
-                Add this before the closing &lt;/body&gt; tag on your website.
-              </p>
+              <p style={{ fontSize: 11, color: '#8899aa', marginTop: 10 }}>Add this before the closing &lt;/body&gt; tag on your website.</p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-4">Your Plan</h3>
-              <div className="flex items-center justify-between mb-4">
+            {/* PLAN */}
+            <div style={{ ...card, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 16 }}>Your Plan</h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Starter</p>
-<p className="text-xs text-gray-500">$99/mo</p>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Starter</p>
+                  <p style={{ fontSize: 12, color: '#8899aa' }}>$99/mo</p>
                 </div>
-                <CreditCard size={18} className="text-gray-300" />
+                <CreditCard size={18} color="#1e2a3a" />
               </div>
-              <ul className="space-y-2 mb-5">
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
                 {['Chat widget', 'Lead capture', 'Dashboard', 'Monthly reports'].map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-gray-500">
-                    <Check size={12} className="text-brand-500" />
-                    {f}
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#8899aa' }}>
+                    <Check size={12} color="#2563eb" /> {f}
                   </li>
                 ))}
               </ul>
-              <button className="w-full py-2 text-sm font-medium text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-colors">
-  Manage Plan
-</button>
+              <button style={{ width: '100%', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 8, cursor: 'pointer' }}>
+                Manage Plan
+              </button>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Test Your Bot</h3>
-              <p className="text-xs text-gray-400 mb-3">
-                Click the chat bubble to test your AI receptionist live.
-              </p>
-              <div className="bg-brand-50 rounded-xl p-3 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-xs text-brand-700 font-medium">
-                  {activeBusiness.bot_name} is online
-                </span>
+            {/* TEST BOT */}
+            <div style={{ ...card, padding: 20 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Test Your Bot</h3>
+              <p style={{ fontSize: 12, color: '#8899aa', marginBottom: 12 }}>Click the chat bubble to test your AI receptionist live.</p>
+              <div style={{ background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 10, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
+                <span style={{ fontSize: 12, color: '#60a5fa', fontWeight: 500 }}>{activeBusiness.bot_name} is online</span>
               </div>
             </div>
           </div>

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Bot, Send, Loader2, Sparkles } from 'lucide-react';
 
-const GROQ_API_KEY = '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';
+const WORKER_URL = 'https://desklo-worker.connorcarson222.workers.dev';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 
@@ -16,8 +16,8 @@ type BizInfo = {
 };
 
 const COLORS = [
-  { label: 'Purple', value: '#7B61FF' },
   { label: 'Blue', value: '#2563EB' },
+  { label: 'Purple', value: '#7B61FF' },
   { label: 'Green', value: '#059669' },
   { label: 'Red', value: '#DC2626' },
   { label: 'Orange', value: '#EA580C' },
@@ -32,19 +32,14 @@ Hours: ${biz.hours}
 Pricing: ${biz.pricing || 'Contact us for pricing'}
 Keep replies to 2-3 sentences. Be warm, helpful, and professional. Never make up info not provided. If pricing is not listed say to contact us for a quote.`;
 
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  const res = await fetch(WORKER_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${GROQ_API_KEY}`,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: systemPrompt },
         ...messages.map((m) => ({ role: m.role, content: m.content })),
       ],
-      max_tokens: 200,
     }),
   });
 
@@ -60,7 +55,7 @@ export default function Demo() {
     services: '',
     hours: '',
     pricing: '',
-    color: '#7B61FF',
+    color: '#2563EB',
   });
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -100,98 +95,90 @@ export default function Demo() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
-            <Bot size={16} className="text-white" />
+    <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
+      <nav style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '0.5px solid #1e2a3a', padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+          <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Bot size={16} color="#fff" />
           </div>
-          <span className="font-bold text-gray-900">Desklo</span>
+          <span style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>Desklo</span>
         </Link>
-        <Link to="/onboarding" className="text-sm text-violet-600 font-medium hover:underline flex items-center gap-1">
+        <Link to="/onboarding" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#60a5fa', textDecoration: 'none', fontWeight: 500 }}>
           Create real account <ArrowRight size={14} />
         </Link>
       </nav>
 
-      <div className="max-w-2xl mx-auto px-6 py-12">
+      <div style={{ maxWidth: 600, margin: '0 auto', padding: '48px 24px' }}>
         {step === 'form' && (
           <div>
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 text-violet-600 text-xs font-medium mb-4">
-                <Sparkles size={12} />
-                Free Demo — No signup required
+            <div style={{ textAlign: 'center', marginBottom: 40 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 999, background: 'rgba(37,99,235,0.15)', border: '0.5px solid rgba(37,99,235,0.3)', fontSize: 11, color: '#60a5fa', marginBottom: 16 }}>
+                <Sparkles size={11} /> Free Demo — No signup required
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                Try your AI receptionist
-              </h1>
-              <p className="text-gray-500">
-                Enter your business info and instantly chat with your own AI receptionist. Takes 30 seconds.
-              </p>
+              <h1 style={{ fontSize: 32, fontWeight: 700, color: '#fff', marginBottom: 10 }}>Try your AI receptionist</h1>
+              <p style={{ fontSize: 14, color: '#8899aa', lineHeight: 1.6 }}>Enter your business info and instantly chat with your own AI receptionist. Takes 30 seconds.</p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 p-8 space-y-5">
+            <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16, padding: 32, display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Business name *</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business name *</label>
                 <input
                   value={biz.businessName}
                   onChange={(e) => setBiz({ ...biz, businessName: e.target.value })}
                   placeholder="e.g. Mike's Plumbing Co."
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-violet-400"
+                  style={{ width: '100%', background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#fff', outline: 'none', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Receptionist name *</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Receptionist name *</label>
                 <input
                   value={biz.botName}
                   onChange={(e) => setBiz({ ...biz, botName: e.target.value })}
                   placeholder="e.g. Alex, Sam, or Mike's Assistant"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-violet-400"
+                  style={{ width: '100%', background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#fff', outline: 'none', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">What services do you offer?</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>What services do you offer?</label>
                 <textarea
                   value={biz.services}
                   onChange={(e) => setBiz({ ...biz, services: e.target.value })}
                   placeholder="e.g. Drain cleaning, water heater repair, emergency callouts..."
                   rows={3}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-violet-400 resize-none"
+                  style={{ width: '100%', background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#fff', outline: 'none', resize: 'none', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Business hours</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business hours</label>
                 <input
                   value={biz.hours}
                   onChange={(e) => setBiz({ ...biz, hours: e.target.value })}
                   placeholder="e.g. Mon–Fri 8am–6pm, Sat 9am–2pm"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-violet-400"
+                  style={{ width: '100%', background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#fff', outline: 'none', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Pricing (optional)</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Pricing (optional)</label>
                 <input
                   value={biz.pricing}
                   onChange={(e) => setBiz({ ...biz, pricing: e.target.value })}
                   placeholder="e.g. Water heater repair from $150, drain cleaning $89"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-violet-400"
+                  style={{ width: '100%', background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#fff', outline: 'none', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Brand color</label>
-                <div className="flex gap-2 flex-wrap">
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 10 }}>Brand color</label>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {COLORS.map((c) => (
                     <button
                       key={c.value}
                       onClick={() => setBiz({ ...biz, color: c.value })}
-                      className={`w-9 h-9 rounded-lg border-2 transition-transform hover:scale-110 ${
-                        biz.color === c.value ? 'border-gray-900 scale-110' : 'border-transparent'
-                      }`}
-                      style={{ background: c.value }}
+                      style={{ width: 36, height: 36, borderRadius: 8, background: c.value, border: biz.color === c.value ? '2px solid #fff' : '2px solid transparent', cursor: 'pointer', transform: biz.color === c.value ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.1s' }}
                       title={c.label}
                     />
                   ))}
@@ -199,7 +186,7 @@ export default function Demo() {
                     type="color"
                     value={biz.color}
                     onChange={(e) => setBiz({ ...biz, color: e.target.value })}
-                    className="w-9 h-9 rounded-lg cursor-pointer border border-gray-200"
+                    style={{ width: 36, height: 36, borderRadius: 8, cursor: 'pointer', border: '0.5px solid #1e2a3a' }}
                     title="Custom color"
                   />
                 </div>
@@ -208,8 +195,7 @@ export default function Demo() {
               <button
                 onClick={startDemo}
                 disabled={!biz.businessName || !biz.botName}
-                className="w-full py-3 rounded-xl text-white font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-40 transition-opacity hover:opacity-90"
-                style={{ background: biz.color }}
+                style={{ width: '100%', padding: '12px', borderRadius: 10, background: biz.color, color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (!biz.businessName || !biz.botName) ? 0.4 : 1 }}
               >
                 Launch my AI receptionist <ArrowRight size={16} />
               </button>
@@ -221,85 +207,77 @@ export default function Demo() {
           <div>
             <button
               onClick={() => setStep('form')}
-              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 mb-6"
+              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#8899aa', background: 'none', border: 'none', cursor: 'pointer', marginBottom: 24 }}
             >
               <ArrowLeft size={15} /> Edit business info
             </button>
 
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">Meet {biz.botName} 👋</h2>
-              <p className="text-gray-500 text-sm">Your AI receptionist for {biz.businessName} is live. Try asking it anything!</p>
+            <div style={{ textAlign: 'center', marginBottom: 24 }}>
+              <h2 style={{ fontSize: 24, fontWeight: 700, color: '#fff', marginBottom: 6 }}>Meet {biz.botName} 👋</h2>
+              <p style={{ fontSize: 13, color: '#8899aa' }}>Your AI receptionist for {biz.businessName} is live. Try asking it anything!</p>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-6">
-              <div className="flex items-center gap-3 px-4 py-3" style={{ background: biz.color }}>
-                <div className="w-2 h-2 rounded-full bg-green-300 animate-pulse" />
-                <span className="text-white font-semibold text-sm">{biz.botName}</span>
-                <span className="text-white/70 text-xs">· Online 24/7</span>
+            <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16, overflow: 'hidden', marginBottom: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: biz.color }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#86efac' }} />
+                <span style={{ color: '#fff', fontWeight: 600, fontSize: 13 }}>{biz.botName}</span>
+                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>· Online 24/7</span>
               </div>
 
-              <div className="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50">
+              <div style={{ height: 320, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 10, background: '#0a0a0f' }}>
                 {messages.map((msg, i) => (
-                  <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div
-                      className={`max-w-sm rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                        msg.role === 'user'
-                          ? 'text-white rounded-br-sm'
-                          : 'bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm'
-                      }`}
-                      style={msg.role === 'user' ? { background: biz.color } : {}}
-                    >
+                  <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                    <div style={{
+                      maxWidth: '80%',
+                      borderRadius: 14,
+                      padding: '10px 14px',
+                      fontSize: 13,
+                      lineHeight: 1.6,
+                      background: msg.role === 'user' ? biz.color : '#0d1117',
+                      color: msg.role === 'user' ? '#fff' : '#cdd9e8',
+                      border: msg.role === 'user' ? 'none' : '0.5px solid #1e2a3a',
+                    }}>
                       {msg.content}
                     </div>
                   </div>
                 ))}
                 {loading && (
-                  <div className="flex justify-start">
-                    <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
-                      <div className="flex gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-                      </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                    <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 14, padding: '10px 14px', display: 'flex', gap: 4 }}>
+                      {[0, 150, 300].map((delay) => (
+                        <span key={delay} style={{ width: 6, height: 6, borderRadius: '50%', background: '#8899aa', display: 'inline-block', animation: 'bounce 1s infinite', animationDelay: `${delay}ms` }} />
+                      ))}
                     </div>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="p-3 border-t border-gray-100 bg-white">
-                <div className="flex gap-2">
-                  <input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && send()}
-                    placeholder="Ask your receptionist anything..."
-                    className="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:border-violet-300"
-                  />
-                  <button
-                    onClick={() => send()}
-                    disabled={loading || !input.trim()}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center disabled:opacity-40"
-                    style={{ background: biz.color }}
-                  >
-                    {loading
-                      ? <Loader2 size={16} className="text-white animate-spin" />
-                      : <Send size={15} className="text-white" />
-                    }
-                  </button>
-                </div>
-                <p className="text-center text-gray-400 text-xs mt-1.5">Powered by Desklo AI</p>
+              <div style={{ padding: 12, borderTop: '0.5px solid #1e2a3a', background: '#0d1117', display: 'flex', gap: 8 }}>
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && send()}
+                  placeholder="Ask your receptionist anything..."
+                  style={{ flex: 1, background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: '#fff', outline: 'none' }}
+                />
+                <button
+                  onClick={() => send()}
+                  disabled={loading || !input.trim()}
+                  style={{ width: 40, height: 40, borderRadius: 10, background: biz.color, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: (loading || !input.trim()) ? 0.4 : 1 }}
+                >
+                  {loading ? <Loader2 size={16} color="#fff" /> : <Send size={15} color="#fff" />}
+                </button>
               </div>
+              <p style={{ textAlign: 'center', fontSize: 11, color: '#8899aa', padding: '6px 0 10px' }}>Powered by Desklo AI</p>
             </div>
 
-            <div className="bg-gradient-to-br from-violet-600 to-violet-700 rounded-2xl p-6 text-center text-white">
-              <h3 className="text-lg font-bold mb-1">Love what you see?</h3>
-              <p className="text-violet-200 text-sm mb-4">
-                Set up your real account and add this to your website in minutes. First 14 days free.
-              </p>
+            <div style={{ background: '#0d1827', border: '0.5px solid #1e3a5f', borderRadius: 16, padding: 24, textAlign: 'center' }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: '#fff', marginBottom: 6 }}>Love what you see?</h3>
+              <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 20 }}>Set up your real account and add this to your website in minutes. First 14 days free.</p>
               <Link
                 to="/onboarding"
-                className="inline-flex items-center gap-2 bg-white text-violet-700 font-medium text-sm px-6 py-2.5 rounded-xl hover:bg-violet-50 transition-colors"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, padding: '10px 20px', borderRadius: 10, textDecoration: 'none' }}
               >
                 Create my free account <ArrowRight size={15} />
               </Link>
