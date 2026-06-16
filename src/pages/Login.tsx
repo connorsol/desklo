@@ -69,6 +69,14 @@ export default function Login() {
     }
   }
 
+  async function handleGoogleLogin() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/dashboard` },
+    });
+    if (error) console.error(error);
+  }
+
   const inputStyle = {
     width: '100%',
     background: '#0a0a0f',
@@ -180,15 +188,31 @@ export default function Login() {
               </form>
 
               {mode !== 'forgot' && (
-                <p style={{ textAlign: 'center', fontSize: 13, color: '#8899aa', marginTop: 20 }}>
-                  {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
+                    <div style={{ flex: 1, height: '0.5px', background: '#1e2a3a' }} />
+                    <span style={{ fontSize: 12, color: '#8899aa' }}>or</span>
+                    <div style={{ flex: 1, height: '0.5px', background: '#1e2a3a' }} />
+                  </div>
+
                   <button
-                    onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-                    style={{ fontSize: 13, color: '#60a5fa', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}
+                    onClick={handleGoogleLogin}
+                    style={{ width: '100%', padding: '10px', background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, fontSize: 13, fontWeight: 500, color: '#cdd9e8', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
                   >
-                    {mode === 'login' ? 'Sign up' : 'Sign in'}
+                    <img src="https://www.google.com/favicon.ico" width={16} height={16} alt="Google" />
+                    Continue with Google
                   </button>
-                </p>
+
+                  <p style={{ textAlign: 'center', fontSize: 13, color: '#8899aa', marginTop: 20 }}>
+                    {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+                    <button
+                      onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+                      style={{ fontSize: 13, color: '#60a5fa', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}
+                    >
+                      {mode === 'login' ? 'Sign up' : 'Sign in'}
+                    </button>
+                  </p>
+                </>
               )}
             </>
           )}
