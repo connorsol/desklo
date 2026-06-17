@@ -7,6 +7,7 @@ import Demo from './pages/Demo';
 import Settings from './pages/Settings';
 import ResetPassword from './pages/ResetPassword';
 import Admin from './pages/Admin';
+import Install from './pages/Install';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/install" element={<Install />} />
       </Routes>
     </BrowserRouter>
   );

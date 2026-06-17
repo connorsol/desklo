@@ -328,9 +328,11 @@ export default function Dashboard() {
                   {copied ? <Check size={13} color="#34d399" /> : <Copy size={13} color="#8899aa" />}
                 </button>
               </div>
-              <p style={{ fontSize: 11, color: '#8899aa', marginTop: 10 }}>Add this before the closing &lt;/body&gt; tag on your website.</p>
-            </div>
-
+             <p style={{ fontSize: 11, color: '#8899aa', marginTop: 10 }}>Add this before the closing &lt;/body&gt; tag on your website.</p>
+  <Link to="/install" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 12, color: '#60a5fa', textDecoration: 'none' }}>
+    📖 View installation guide →
+  </Link>
+</div>
             {/* PLAN */}
             <div style={{ ...card, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 16 }}>Your Plan</h3>
