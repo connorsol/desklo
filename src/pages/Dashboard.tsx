@@ -27,8 +27,6 @@ interface Conversation {
   name: string;
 }
 
-const embedCode = `<script src="https://widget.desklo.ai/v1.js" data-key="dk_live_xxxxxxxxxxxx"></script>`;
-
 export default function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [business, setBusiness] = useState<Business | null>(null);
@@ -146,13 +144,6 @@ export default function Dashboard() {
     }
   }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(embedCode).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
   async function handleSignOut() {
     await supabase.auth.signOut();
     window.location.href = '/login';
@@ -184,6 +175,17 @@ export default function Dashboard() {
   ];
 
   const card = { background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16 };
+
+  const embedCode = businessId
+    ? `<script src="https://desklo.pages.dev/widget.js" data-key="${businessId}"></script>`
+    : `<script src="https://desklo.pages.dev/widget.js" data-key="loading..."></script>`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(embedCode).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
