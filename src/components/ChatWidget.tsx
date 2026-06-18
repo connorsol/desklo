@@ -11,6 +11,7 @@ type Props = {
 
 export function ChatWidget({ business, color = '#2563eb', businessId }: Props) {
   const [isOpen, setIsOpen] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -33,6 +34,13 @@ export function ChatWidget({ business, color = '#2563eb', businessId }: Props) {
     }
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 100)
   }, [isOpen])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isOpen) setShowTooltip(true)
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [])
 
   async function createConversation(): Promise<string | null> {
     if (!businessId) return null
@@ -101,8 +109,24 @@ export function ChatWidget({ business, color = '#2563eb', businessId }: Props) {
     }
   }
 
+  function handleToggle() {
+    setShowTooltip(false)
+    setIsOpen(!isOpen)
+  }
+
   return (
     <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 50 }}>
+      <style>{`
+        @keyframes desklo-pulse-ring {
+          0% { transform: scale(1); opacity: 0.6; }
+          100% { transform: scale(1.6); opacity: 0; }
+        }
+        @keyframes desklo-tooltip-in {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
       {isOpen && (
         <div style={{
           marginBottom: 12,
@@ -210,26 +234,70 @@ export function ChatWidget({ business, color = '#2563eb', businessId }: Props) {
         </div>
       )}
 
-      {/* TOGGLE BUTTON */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          width: 52,
-          height: 52,
-          borderRadius: '50%',
-          background: color,
-          border: 'none',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginLeft: 'auto',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-        }}
-        aria-label="Open chat"
-      >
-        {isOpen ? <X size={20} color="#fff" /> : <MessageCircle size={20} color="#fff" />}
-      </button>
+      {/* TOOLTIP */}
+      {!isOpen && showTooltip && (
+        <div
+          onClick={handleToggle}
+          style={{
+            position: 'absolute',
+            bottom: 64,
+            right: 0,
+            background: '#0d1117',
+            border: '0.5px solid #1e2a3a',
+            borderRadius: 12,
+            padding: '10px 16px',
+            fontSize: 13,
+            color: '#fff',
+            whiteSpace: 'nowrap',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+            cursor: 'pointer',
+            animation: 'desklo-tooltip-in 0.3s ease forwards',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          Got a question? Ask me! 👋
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowTooltip(false) }}
+            style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', padding: 0, display: 'flex', fontSize: 14 }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* TOGGLE BUTTON WITH PULSE */}
+      <div style={{ position: 'relative', width: 52, height: 52, marginLeft: 'auto' }}>
+        {!isOpen && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: '50%',
+            background: color,
+            animation: 'desklo-pulse-ring 2s ease-out infinite',
+          }} />
+        )}
+        <button
+          onClick={handleToggle}
+          style={{
+            position: 'relative',
+            width: 52,
+            height: 52,
+            borderRadius: '50%',
+            background: color,
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+          }}
+          aria-label="Open chat"
+        >
+          {isOpen ? <X size={20} color="#fff" /> : <MessageCircle size={20} color="#fff" />}
+        </button>
+      </div>
     </div>
   )
 }
