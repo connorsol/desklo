@@ -17,14 +17,39 @@ import {
   UserCheck,
 } from 'lucide-react';
 
+function SkipLink() {
+  return (
+    
+      <a href="#main-content"
+      style={{
+        position: 'absolute',
+        left: -9999,
+        top: 0,
+        background: '#2563eb',
+        color: '#fff',
+        padding: '12px 20px',
+        borderRadius: 8,
+        fontSize: 14,
+        fontWeight: 500,
+        textDecoration: 'none',
+        zIndex: 100,
+      }}
+      onFocus={(e) => { e.currentTarget.style.left = '16px'; e.currentTarget.style.top = '16px'; }}
+      onBlur={(e) => { e.currentTarget.style.left = '-9999px'; }}
+    >
+      Skip to main content
+    </a>
+  );
+}
+
 function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
-    <nav style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '0.5px solid #1e2a3a', position: 'sticky', top: 0, zIndex: 50 }}>
+    <nav style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '0.5px solid #1e2a3a', position: 'sticky', top: 0, zIndex: 50 }} aria-label="Main navigation">
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }} aria-label="Desklo home">
           <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Bot size={16} color="#fff" />
+            <Bot size={16} color="#fff" aria-hidden="true" />
           </div>
           <span style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>Desklo</span>
         </Link>
@@ -34,8 +59,14 @@ function Nav() {
           <Link to="/login" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Login</Link>
           <Link to="/onboarding" style={{ fontSize: 13, fontWeight: 500, color: '#fff', background: '#2563eb', padding: '6px 14px', borderRadius: 8, textDecoration: 'none' }}>Get Started</Link>
         </div>
-        <button onClick={() => setMobileOpen(!mobileOpen)} style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', padding: 8 }} className="md:hidden">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', padding: 8 }}
+          className="md:hidden"
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileOpen}
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
             {mobileOpen ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
           </svg>
         </button>
@@ -54,21 +85,21 @@ function Nav() {
 
 function Hero() {
   return (
-    <section style={{ padding: '80px 24px 60px', textAlign: 'center' }}>
+    <section style={{ padding: '80px 24px 60px', textAlign: 'center' }} aria-label="Introduction">
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 999, background: 'rgba(37,99,235,0.15)', border: '0.5px solid rgba(37,99,235,0.3)', fontSize: 11, color: '#60a5fa', marginBottom: 24 }}>
-          <Zap size={11} /> 24/7 AI Receptionist
+          <Zap size={11} aria-hidden="true" /> 24/7 AI Receptionist
         </div>
         <h1 style={{ fontSize: 'clamp(36px, 6vw, 56px)', fontWeight: 700, lineHeight: 1.08, color: '#fff', marginBottom: 16 }}>
           Never Miss a<br />
           <span style={{ color: '#2563eb' }}>Lead Again</span>
         </h1>
         <p style={{ fontSize: 15, color: '#8899aa', maxWidth: 480, margin: '0 auto 32px', lineHeight: 1.7 }}>
-          Desklo answers every customer question, captures leads, and books appointments — around the clock, so you never lose business while you sleep.
+          Desklo answers every customer question, captures leads, and books appointments — around the clock, so you don't have to.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link to="/onboarding" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 22px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
-            Get Started <ArrowRight size={16} />
+            Get Started <ArrowRight size={16} aria-hidden="true" />
           </Link>
           <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 22px', background: 'transparent', color: '#cdd9e8', fontSize: 13, border: '0.5px solid #1e2a3a', borderRadius: 10, textDecoration: 'none' }}>
             Try Live Demo
@@ -86,9 +117,9 @@ function Stats() {
     { num: '$0', label: 'Missed leads' },
   ];
   return (
-    <div style={{ margin: '0 24px 48px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: '#1e2a3a', border: '0.5px solid #1e2a3a', borderRadius: 14, overflow: 'hidden' }}>
+    <div style={{ margin: '0 24px 48px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: '#1e2a3a', border: '0.5px solid #1e2a3a', borderRadius: 14, overflow: 'hidden' }} role="list" aria-label="Key stats">
       {stats.map((s) => (
-        <div key={s.num} style={{ background: '#0d1117', padding: '24px 16px', textAlign: 'center' }}>
+        <div key={s.num} style={{ background: '#0d1117', padding: '24px 16px', textAlign: 'center' }} role="listitem">
           <div style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 4 }}>{s.num}</div>
           <div style={{ fontSize: 11, color: '#8899aa' }}>{s.label}</div>
         </div>
@@ -105,15 +136,15 @@ function WhyUs() {
     { icon: Settings, title: 'Done-for-you setup', desc: 'No tech skills needed. We set everything up for you in under 5 minutes — just tell us about your business and you\'re live.' },
   ];
   return (
-    <section style={{ padding: '48px 24px' }}>
+    <section style={{ padding: '48px 24px' }} aria-labelledby="why-us-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Why Desklo</p>
-        <h2 style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32 }}>Stop losing customers to missed messages</h2>
+        <h2 id="why-us-heading" style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32 }}>Stop losing customers to missed messages</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
           {benefits.map((b) => (
             <div key={b.title} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 20 }}>
               <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                <b.icon size={18} color="#60a5fa" />
+                <b.icon size={18} color="#60a5fa" aria-hidden="true" />
               </div>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 6 }}>{b.title}</h3>
               <p style={{ fontSize: 12, color: '#8899aa', lineHeight: 1.6 }}>{b.desc}</p>
@@ -127,18 +158,18 @@ function WhyUs() {
 
 function LiveDemo() {
   return (
-    <section style={{ padding: '0 24px 48px' }}>
+    <section style={{ padding: '0 24px 48px' }} aria-labelledby="live-demo-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ background: '#0d1827', border: '0.5px solid #1e3a5f', borderRadius: 16, padding: '40px 32px', textAlign: 'center' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 999, background: 'rgba(37,99,235,0.15)', border: '0.5px solid rgba(37,99,235,0.3)', fontSize: 11, color: '#60a5fa', marginBottom: 16 }}>
-            <Sparkles size={11} /> No signup required
+            <Sparkles size={11} aria-hidden="true" /> No signup required
           </div>
-          <h2 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 10 }}>See it working for your business</h2>
+          <h2 id="live-demo-heading" style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 10 }}>See it working for your business</h2>
           <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 24, maxWidth: 420, margin: '0 auto 24px' }}>
             Enter your business name, services, and hours. Your personalized AI receptionist is live in 30 seconds.
           </p>
           <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 22px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
-            Try it free — no signup needed <ArrowRight size={16} />
+            Try it free — no signup needed <ArrowRight size={16} aria-hidden="true" />
           </Link>
           <p style={{ fontSize: 11, color: '#8899aa', marginTop: 12 }}>Works for any business type</p>
         </div>
@@ -154,16 +185,16 @@ function HowItWorks() {
     { num: '03', icon: Globe, title: 'Go live on your website', desc: 'Add a single line of code and your AI receptionist is ready to work immediately.' },
   ];
   return (
-    <section id="how-it-works" style={{ padding: '48px 24px', background: '#0d1117' }}>
+    <section id="how-it-works" style={{ padding: '48px 24px', background: '#0d1117' }} aria-labelledby="how-it-works-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>How it works</p>
-        <h2 style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32 }}>Live in 3 simple steps</h2>
+        <h2 id="how-it-works-heading" style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32 }}>Live in 3 simple steps</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
           {steps.map((s) => (
             <div key={s.num} style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 20 }}>
-              <span style={{ fontSize: 11, color: '#2563eb', fontFamily: 'monospace', display: 'block', marginBottom: 10 }}>{s.num}</span>
+              <span style={{ fontSize: 11, color: '#2563eb', fontFamily: 'monospace', display: 'block', marginBottom: 10 }} aria-hidden="true">{s.num}</span>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-                <s.icon size={16} color="#60a5fa" />
+                <s.icon size={16} color="#60a5fa" aria-hidden="true" />
               </div>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 6 }}>{s.title}</h3>
               <p style={{ fontSize: 12, color: '#8899aa', lineHeight: 1.6 }}>{s.desc}</p>
@@ -185,15 +216,15 @@ function Features() {
     { icon: Settings, title: 'Done-for-you setup', desc: 'We handle everything so you don\'t lift a finger.' },
   ];
   return (
-    <section id="features" style={{ padding: '48px 24px' }}>
+    <section id="features" style={{ padding: '48px 24px' }} aria-labelledby="features-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Features</p>
-        <h2 style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32 }}>Everything you need to capture leads</h2>
+        <h2 id="features-heading" style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32 }}>Everything you need to capture leads</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
           {features.map((f) => (
             <div key={f.title} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 20 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(37,99,235,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-                <f.icon size={16} color="#60a5fa" />
+                <f.icon size={16} color="#60a5fa" aria-hidden="true" />
               </div>
               <h3 style={{ fontSize: 12, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{f.title}</h3>
               <p style={{ fontSize: 11, color: '#8899aa', lineHeight: 1.6 }}>{f.desc}</p>
@@ -207,10 +238,10 @@ function Features() {
 
 function Pricing() {
   return (
-    <section id="pricing" style={{ padding: '48px 24px', background: '#0d1117' }}>
+    <section id="pricing" style={{ padding: '48px 24px', background: '#0d1117' }} aria-labelledby="pricing-heading">
       <div style={{ maxWidth: 400, margin: '0 auto' }}>
         <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'center' }}>Pricing</p>
-        <h2 style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32, textAlign: 'center' }}>Simple, transparent pricing</h2>
+        <h2 id="pricing-heading" style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32, textAlign: 'center' }}>Simple, transparent pricing</h2>
         <div style={{ background: '#0a0a0f', border: '2px solid #2563eb', borderRadius: 16, padding: 32, position: 'relative' }}>
           <span style={{ position: 'absolute', top: -12, left: 24, background: '#2563eb', color: '#fff', fontSize: 11, fontWeight: 500, padding: '3px 10px', borderRadius: 999 }}>Most Popular</span>
           <div style={{ fontSize: 14, color: '#8899aa', marginBottom: 8 }}>Starter</div>
@@ -218,7 +249,7 @@ function Pricing() {
           <ul style={{ listStyle: 'none', marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 10 }}>
             {['Chat widget', 'Lead capture', 'Dashboard', 'Monthly reports', 'After-hours coverage', 'Done-for-you setup'].map((f) => (
               <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#cdd9e8' }}>
-                <Check size={15} color="#2563eb" /> {f}
+                <Check size={15} color="#2563eb" aria-hidden="true" /> {f}
               </li>
             ))}
           </ul>
@@ -234,19 +265,19 @@ function Pricing() {
 function Footer() {
   return (
     <footer style={{ borderTop: '0.5px solid #1e2a3a', padding: '24px' }}>
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Bot size={14} color="#fff" />
+            <Bot size={14} color="#fff" aria-hidden="true" />
           </div>
           <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Desklo</span>
         </div>
-        <div style={{ display: 'flex', gap: 20 }}>
+        <nav style={{ display: 'flex', gap: 20, justifySelf: 'center' }} aria-label="Legal">
           <Link to="/privacy" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Privacy Policy</Link>
           <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
           <a href="mailto:desklosupport@gmail.com" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
-        </div>
-        <p style={{ fontSize: 12, color: '#8899aa' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
+        </nav>
+        <p style={{ fontSize: 12, color: '#8899aa', justifySelf: 'end' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
       </div>
     </footer>
   );
@@ -255,14 +286,17 @@ function Footer() {
 export default function Landing() {
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
+      <SkipLink />
       <Nav />
-      <Hero />
-      <Stats />
-      <WhyUs />
-      <LiveDemo />
-      <HowItWorks />
-      <Features />
-      <Pricing />
+      <main id="main-content">
+        <Hero />
+        <Stats />
+        <WhyUs />
+        <LiveDemo />
+        <HowItWorks />
+        <Features />
+        <Pricing />
+      </main>
       <Footer />
     </div>
   );
