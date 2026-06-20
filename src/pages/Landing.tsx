@@ -233,14 +233,21 @@ function Pricing() {
 
 function Footer() {
   return (
-    <footer style={{ borderTop: '0.5px solid #1e2a3a', padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 0 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Bot size={14} color="#fff" />
+    <footer style={{ borderTop: '0.5px solid #1e2a3a', padding: '24px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Bot size={14} color="#fff" />
+          </div>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Desklo</span>
         </div>
-        <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Desklo</span>
+        <div style={{ display: 'flex', gap: 20 }}>
+          <Link to="/privacy" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Privacy Policy</Link>
+          <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
+          <a href="mailto:desklosupport@gmail.com" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
+        </div>
+        <p style={{ fontSize: 12, color: '#8899aa' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
       </div>
-      <p style={{ fontSize: 12, color: '#8899aa' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
     </footer>
   );
 }

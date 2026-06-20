@@ -8,6 +8,8 @@ import Settings from './pages/Settings';
 import ResetPassword from './pages/ResetPassword';
 import Admin from './pages/Admin';
 import Install from './pages/Install';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 
 export default function App() {
   return (
@@ -22,6 +24,8 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/install" element={<Install />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </BrowserRouter>
   );
