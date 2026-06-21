@@ -49,7 +49,7 @@ export default function Login() {
             await supabase.from('businesses').upsert({
               owner_id: user.id,
               ...biz,
-              plan: 'starter',
+              plan: 'trial',
             }, { onConflict: 'owner_id' });
             localStorage.removeItem('pending_business');
             navigate('/dashboard');

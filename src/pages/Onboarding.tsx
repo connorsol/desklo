@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Bot, ArrowRight, ArrowLeft, Palette, Sparkles, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
+const WORKER_URL = 'https://desklo-worker.connorcarson222.workers.dev';
+
 const industries = [
   'Plumbing', 'HVAC', 'Electrical', 'Salon', 'Dental',
   'Legal', 'Real Estate', 'Gym', 'Restaurant', 'Other',
@@ -52,6 +54,20 @@ export default function Onboarding() {
     }
   };
 
+  async function redirectToCheckout(email: string, businessId: string) {
+    const res = await fetch(`${WORKER_URL}/create-checkout-session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, businessId }),
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error('No checkout URL returned');
+    }
+  }
+
   const handleNext = async () => {
     if (step < 3) { setStep(step + 1); return; }
     setSaving(true);
@@ -67,16 +83,22 @@ export default function Onboarding() {
         navigate('/login?onboarding=true');
         return;
       }
-      const { error: insertError } = await supabase.from('businesses').upsert({
-        owner_id: user.id, industry, name: businessName, services, hours, pricing,
-        booking_info: booking, location, bot_name: botName, widget_color: brandColor, plan: 'trial',
-      }, { onConflict: 'owner_id' });
+      const { data: insertedBusiness, error: insertError } = await supabase
+        .from('businesses')
+        .upsert({
+          owner_id: user.id, industry, name: businessName, services, hours, pricing,
+          booking_info: booking, location, bot_name: botName, widget_color: brandColor, plan: 'trial',
+        }, { onConflict: 'owner_id' })
+        .select('id')
+        .single();
+
       if (insertError) throw insertError;
-      navigate('/dashboard');
+
+      // Redirect straight to Stripe checkout instead of the dashboard
+      await redirectToCheckout(user.email ?? '', insertedBusiness.id);
     } catch (err) {
       console.error(err);
       setError('Something went wrong. Please try again.');
-    } finally {
       setSaving(false);
     }
   };
@@ -272,7 +294,7 @@ export default function Onboarding() {
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 500, cursor: 'pointer', opacity: (!canNext() || saving) ? 0.4 : 1 }}
             >
               {saving && <Loader2 size={14} color="#fff" />}
-              {step === 3 ? 'Go to Dashboard' : 'Continue'}
+              {step === 3 ? 'Continue to Payment' : 'Continue'}
               <ArrowRight size={15} />
             </button>
           </div>

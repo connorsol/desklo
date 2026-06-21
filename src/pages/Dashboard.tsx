@@ -17,6 +17,7 @@ import { supabase } from '../lib/supabase';
 import type { Business } from '../lib/gemini';
 
 const ADMIN_EMAILS = ['connorcarson222@gmail.com', 'ronanosborn8@gmail.com'];
+const WORKER_URL = 'https://desklo-worker.connorcarson222.workers.dev';
 
 interface Conversation {
   id: string;
@@ -32,8 +33,12 @@ export default function Dashboard() {
   const [business, setBusiness] = useState<Business | null>(null);
   const [widgetColor, setWidgetColor] = useState('#2563eb');
   const [loading, setLoading] = useState(true);
+  const [redirecting, setRedirecting] = useState(false);
   const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [businessId, setBusinessId] = useState<string | null>(null);
+  const [plan, setPlan] = useState<string>('trial');
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConvo, setSelectedConvo] = useState<string | null>(null);
   const [convoMessages, setConvoMessages] = useState<{[key: string]: {role: string, content: string}[]}>({});
@@ -49,17 +54,30 @@ export default function Dashboard() {
   }, []);
 
   async function checkAuthAndLoad() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+  const { data: { session } } = await supabase.auth.getSession();
+  console.log('Initial session check:', session);
+
+  if (!session) {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const { data: { session: retrySession } } = await supabase.auth.getSession();
+    console.log('Retry session check:', retrySession);
+
+    if (!retrySession) {
+      console.log('No session found after retry, redirecting to login');
       window.location.href = '/login';
       return;
     }
-    await loadBusiness(user);
+    await loadBusiness(retrySession.user);
+    return;
   }
+
+  await loadBusiness(session.user);
+}
 
   async function loadBusiness(user: any) {
     try {
       setUserName(user.email ?? '');
+      setUserEmail(user.email ?? '');
       const { data, error } = await supabase
         .from('businesses')
         .select('*')
@@ -67,6 +85,29 @@ export default function Dashboard() {
         .single();
 
       if (error || !data) { setLoading(false); return; }
+
+      const businessPlan = data.plan ?? 'trial';
+      const isAdmin = ADMIN_EMAILS.includes(user.email ?? '');
+      const isPaidPlan = businessPlan === 'starter' || businessPlan === 'pro';
+
+      if (!isPaidPlan && !isAdmin) {
+        setRedirecting(true);
+        try {
+          const res = await fetch(`${WORKER_URL}/create-checkout-session`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: user.email, businessId: data.id }),
+          });
+          const checkoutData = await res.json();
+          if (checkoutData.url) {
+            window.location.href = checkoutData.url;
+            return;
+          }
+        } catch (err) {
+          console.error('Failed to redirect to checkout:', err);
+        }
+        setRedirecting(false);
+      }
 
       setBusiness({
         name: data.name,
@@ -80,6 +121,7 @@ export default function Dashboard() {
 
       setWidgetColor(data.widget_color ?? '#2563eb');
       setBusinessId(data.id);
+      setPlan(businessPlan);
       await loadConversations(data.id);
     } catch (err) {
       console.error(err);
@@ -149,10 +191,33 @@ export default function Dashboard() {
     window.location.href = '/login';
   }
 
-  if (loading) {
+  async function handleManagePlan() {
+    if (!businessId) return;
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch(`${WORKER_URL}/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, businessId }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('No checkout URL returned', data);
+        setCheckoutLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
+      setCheckoutLoading(false);
+    }
+  }
+
+  if (loading || redirecting) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
         <Loader2 size={24} color="#2563eb" style={{ animation: 'spin 1s linear infinite' }} />
+        {redirecting && <p style={{ fontSize: 13, color: '#8899aa' }}>Redirecting to checkout...</p>}
       </div>
     );
   }
@@ -186,6 +251,8 @@ export default function Dashboard() {
       setTimeout(() => setCopied(false), 2000);
     });
   };
+
+  const isPaid = plan === 'starter' || plan === 'pro';
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
@@ -338,8 +405,8 @@ export default function Dashboard() {
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 16 }}>Your Plan</h3>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                 <div>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Starter</p>
-                  <p style={{ fontSize: 12, color: '#8899aa' }}>$99/mo</p>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>{isPaid ? 'Starter' : 'Free Trial'}</p>
+                  <p style={{ fontSize: 12, color: '#8899aa' }}>{isPaid ? '$99/mo' : 'Upgrade to unlock'}</p>
                 </div>
                 <CreditCard size={18} color="#1e2a3a" />
               </div>
@@ -350,8 +417,12 @@ export default function Dashboard() {
                   </li>
                 ))}
               </ul>
-              <button style={{ width: '100%', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 8, cursor: 'pointer' }}>
-                Manage Plan
+              <button
+                onClick={handleManagePlan}
+                disabled={checkoutLoading}
+                style={{ width: '100%', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 8, cursor: 'pointer', opacity: checkoutLoading ? 0.6 : 1 }}
+              >
+                {checkoutLoading ? 'Loading...' : isPaid ? 'Manage Plan' : 'Subscribe Now'}
               </button>
             </div>
 
