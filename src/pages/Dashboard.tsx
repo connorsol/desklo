@@ -11,6 +11,8 @@ import {
   CreditCard,
   Loader2,
   Settings,
+  Menu,
+  X,
 } from 'lucide-react';
 import { ChatWidget } from '../components/ChatWidget';
 import { supabase } from '../lib/supabase';
@@ -28,6 +30,16 @@ interface Conversation {
   name: string;
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 export default function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [business, setBusiness] = useState<Business | null>(null);
@@ -42,6 +54,7 @@ export default function Dashboard() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConvo, setSelectedConvo] = useState<string | null>(null);
   const [convoMessages, setConvoMessages] = useState<{[key: string]: {role: string, content: string}[]}>({});
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState({
     conversationsThisMonth: 0,
     leadsTotal: 0,
@@ -49,30 +62,26 @@ export default function Dashboard() {
     allTime: 0,
   });
 
+  const isMobile = useIsMobile();
+
   useEffect(() => {
     checkAuthAndLoad();
   }, []);
 
   async function checkAuthAndLoad() {
-  const { data: { session } } = await supabase.auth.getSession();
-  console.log('Initial session check:', session);
-
-  if (!session) {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const { data: { session: retrySession } } = await supabase.auth.getSession();
-    console.log('Retry session check:', retrySession);
-
-    if (!retrySession) {
-      console.log('No session found after retry, redirecting to login');
-      window.location.href = '/login';
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data: { session: retrySession } } = await supabase.auth.getSession();
+      if (!retrySession) {
+        window.location.href = '/login';
+        return;
+      }
+      await loadBusiness(retrySession.user);
       return;
     }
-    await loadBusiness(retrySession.user);
-    return;
+    await loadBusiness(session.user);
   }
-
-  await loadBusiness(session.user);
-}
 
   async function loadBusiness(user: any) {
     try {
@@ -204,7 +213,6 @@ export default function Dashboard() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        console.error('No checkout URL returned', data);
         setCheckoutLoading(false);
       }
     } catch (err) {
@@ -235,15 +243,15 @@ export default function Dashboard() {
   const statCards = [
     { label: 'Conversations This Month', value: stats.conversationsThisMonth, icon: MessageSquare },
     { label: 'Leads Captured', value: stats.leadsTotal, icon: UserPlus },
-    { label: 'After-Hours Conversations', value: stats.afterHours, icon: Moon },
+    { label: 'After-Hours', value: stats.afterHours, icon: Moon },
     { label: 'Total All Time', value: stats.allTime, icon: BarChart3 },
   ];
 
   const card = { background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16 };
 
   const embedCode = businessId
-  ? `<script>window.DESKLO_KEY = '${businessId}';</script>\n<script src="https://desklo.pages.dev/widget.js"></script>`
-  : `<script>window.DESKLO_KEY = 'loading...';</script>\n<script src="https://desklo.pages.dev/widget.js"></script>`;
+    ? `<script>window.DESKLO_KEY = '${businessId}';</script>\n<script src="https://desklo.pages.dev/widget.js"></script>`
+    : `<script>window.DESKLO_KEY = 'loading...';</script>\n<script src="https://desklo.pages.dev/widget.js"></script>`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(embedCode).then(() => {
@@ -253,42 +261,84 @@ export default function Dashboard() {
   };
 
   const isPaid = plan === 'starter' || plan === 'pro';
+  const isAdmin = ADMIN_EMAILS.includes(userName);
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
+
       {/* HEADER */}
-      <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 24px', position: 'sticky', top: 0, zIndex: 40 }}>
+      <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 20px', position: 'sticky', top: 0, zIndex: 40 }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+
+          {/* Left: logo + business name */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', flexShrink: 0 }}>
               <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Bot size={16} color="#fff" />
               </div>
               <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Desklo</span>
             </Link>
-            <span style={{ color: '#1e2a3a', fontSize: 18 }}>|</span>
-            <span style={{ fontSize: 13, fontWeight: 500, color: '#8899aa' }}>{activeBusiness.name}</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <span style={{ fontSize: 12, color: '#8899aa' }}>{userName}</span>
-            {ADMIN_EMAILS.includes(userName) && (
-              <Link to="/admin" style={{ fontSize: 13, color: '#f87171', fontWeight: 500, textDecoration: 'none' }}>Admin</Link>
+            {!isMobile && (
+              <>
+                <span style={{ color: '#1e2a3a', fontSize: 18, flexShrink: 0 }}>|</span>
+                <span style={{ fontSize: 13, fontWeight: 500, color: '#8899aa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 180 }}>
+                  {activeBusiness.name}
+                </span>
+              </>
             )}
-            <Link to="/settings" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>
-              <Settings size={14} /> Settings
-            </Link>
-            <button onClick={handleSignOut} style={{ fontSize: 13, color: '#8899aa', background: 'none', border: 'none', cursor: 'pointer' }}>
-              Sign out
-            </button>
           </div>
+
+          {/* Desktop right nav */}
+          {!isMobile && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontSize: 12, color: '#8899aa', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>{userName}</span>
+              {isAdmin && (
+                <Link to="/admin" style={{ fontSize: 13, color: '#f87171', fontWeight: 500, textDecoration: 'none' }}>Admin</Link>
+              )}
+              <Link to="/settings" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>
+                <Settings size={14} /> Settings
+              </Link>
+              <button onClick={handleSignOut} style={{ fontSize: 13, color: '#8899aa', background: 'none', border: 'none', cursor: 'pointer' }}>
+                Sign out
+              </button>
+            </div>
+          )}
+
+          {/* Mobile hamburger */}
+          {isMobile && (
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', padding: 6 }}
+              aria-label="Menu"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          )}
         </div>
       </header>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
+      {/* Mobile dropdown menu */}
+      {isMobile && mobileMenuOpen && (
+        <div style={{ background: '#0d1117', borderBottom: '0.5px solid #1e2a3a', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 56, zIndex: 39 }}>
+          <div style={{ fontSize: 12, color: '#8899aa' }}>{userName}</div>
+          <div style={{ height: '0.5px', background: '#1e2a3a' }} />
+          {isAdmin && (
+            <Link to="/admin" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: 14, color: '#f87171', fontWeight: 500, textDecoration: 'none' }}>Admin Panel</Link>
+          )}
+          <Link to="/settings" onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>
+            <Settings size={15} /> Settings
+          </Link>
+          <button onClick={handleSignOut} style={{ textAlign: 'left', fontSize: 14, color: '#8899aa', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            Sign out
+          </button>
+        </div>
+      )}
+
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '20px 16px' : '32px 24px' }}>
 
         {/* SETUP BANNER */}
         {!business && (
-          <div style={{ background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 14, padding: '16px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 14, padding: '16px 20px', marginBottom: 20, display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: 12 }}>
             <div>
               <p style={{ fontSize: 14, fontWeight: 600, color: '#60a5fa' }}>Welcome to Desklo! 👋</p>
               <p style={{ fontSize: 13, color: '#8899aa', marginTop: 2 }}>Complete your setup to get your AI receptionist live.</p>
@@ -300,20 +350,20 @@ export default function Dashboard() {
         )}
 
         {/* STAT CARDS */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 20 }}>
           {statCards.map((s) => (
-            <div key={s.label} style={{ ...card, padding: 20 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
-                <s.icon size={18} color="#60a5fa" />
+            <div key={s.label} style={{ ...card, padding: isMobile ? 16 : 20 }}>
+              <div style={{ width: 34, height: 34, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                <s.icon size={17} color="#60a5fa" />
               </div>
-              <p style={{ fontSize: 24, fontWeight: 700, color: '#fff' }}>{s.value}</p>
-              <p style={{ fontSize: 11, color: '#8899aa', marginTop: 2 }}>{s.label}</p>
+              <p style={{ fontSize: isMobile ? 22 : 24, fontWeight: 700, color: '#fff' }}>{s.value}</p>
+              <p style={{ fontSize: isMobile ? 10 : 11, color: '#8899aa', marginTop: 2 }}>{s.label}</p>
             </div>
           ))}
         </div>
 
-        {/* MAIN GRID */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 16 }}>
+        {/* MAIN GRID — stacks on mobile */}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 340px', gap: 16 }}>
 
           {/* CONVERSATIONS */}
           <div style={{ ...card }}>
@@ -337,7 +387,7 @@ export default function Dashboard() {
                       <span style={{ fontSize: 12, fontWeight: 600, color: '#8899aa' }}>V</span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
                         <span style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>{c.name}</span>
                         <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', padding: '2px 6px', borderRadius: 4, background: '#1e2a3a', color: '#8899aa' }}>
                           {c.channel}
@@ -395,11 +445,12 @@ export default function Dashboard() {
                   {copied ? <Check size={13} color="#34d399" /> : <Copy size={13} color="#8899aa" />}
                 </button>
               </div>
-             <p style={{ fontSize: 11, color: '#8899aa', marginTop: 10 }}>Add this before the closing &lt;/body&gt; tag on your website.</p>
-  <Link to="/install" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 12, color: '#60a5fa', textDecoration: 'none' }}>
-    📖 View installation guide →
-  </Link>
-</div>
+              <p style={{ fontSize: 11, color: '#8899aa', marginTop: 10 }}>Add this before the closing &lt;/body&gt; tag on your website.</p>
+              <Link to="/install" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 12, color: '#60a5fa', textDecoration: 'none' }}>
+                📖 View installation guide →
+              </Link>
+            </div>
+
             {/* PLAN */}
             <div style={{ ...card, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 16 }}>Your Plan</h3>

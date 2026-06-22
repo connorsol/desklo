@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Bot,
@@ -17,10 +17,20 @@ import {
   UserCheck,
 } from 'lucide-react';
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 function SkipLink() {
   return (
-    
-      <a href="#main-content"
+    <a
+      href="#main-content"
       style={{
         position: 'absolute',
         left: -9999,
@@ -44,39 +54,50 @@ function SkipLink() {
 
 function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useIsMobile();
+
   return (
     <nav style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '0.5px solid #1e2a3a', position: 'sticky', top: 0, zIndex: 50 }} aria-label="Main navigation">
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 20px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }} aria-label="Desklo home">
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Bot size={16} color="#fff" aria-hidden="true" />
           </div>
           <span style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>Desklo</span>
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }} className="hidden md:flex">
-          <a href="#features" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Features</a>
-          <a href="#pricing" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Pricing</a>
-          <Link to="/login" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Login</Link>
-          <Link to="/onboarding" style={{ fontSize: 13, fontWeight: 500, color: '#fff', background: '#2563eb', padding: '6px 14px', borderRadius: 8, textDecoration: 'none' }}>Get Started</Link>
-        </div>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', padding: 8 }}
-          className="md:hidden"
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={mobileOpen}
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-            {mobileOpen ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
-          </svg>
-        </button>
+
+        {/* Desktop nav */}
+        {!isMobile && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            <a href="#features" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Features</a>
+            <a href="#pricing" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Pricing</a>
+            <Link to="/login" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Login</Link>
+            <Link to="/onboarding" style={{ fontSize: 13, fontWeight: 500, color: '#fff', background: '#2563eb', padding: '6px 14px', borderRadius: 8, textDecoration: 'none' }}>Get Started</Link>
+          </div>
+        )}
+
+        {/* Mobile hamburger */}
+        {isMobile && (
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', padding: 8 }}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              {mobileOpen ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
+            </svg>
+          </button>
+        )}
       </div>
-      {mobileOpen && (
-        <div style={{ borderTop: '0.5px solid #1e2a3a', background: '#0a0a0f', padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <a href="#features" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Features</a>
-          <a href="#pricing" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Pricing</a>
-          <Link to="/login" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Login</Link>
-          <Link to="/onboarding" style={{ fontSize: 13, color: '#60a5fa', textDecoration: 'none' }}>Get Started</Link>
+
+      {/* Mobile menu dropdown */}
+      {isMobile && mobileOpen && (
+        <div style={{ borderTop: '0.5px solid #1e2a3a', background: '#0a0a0f', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <a href="#features" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Features</a>
+          <a href="#pricing" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Pricing</a>
+          <Link to="/login" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Login</Link>
+          <Link to="/onboarding" onClick={() => setMobileOpen(false)} style={{ display: 'block', textAlign: 'center', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 14, fontWeight: 500, borderRadius: 8, textDecoration: 'none' }}>Get Started</Link>
         </div>
       )}
     </nav>
@@ -84,24 +105,25 @@ function Nav() {
 }
 
 function Hero() {
+  const isMobile = useIsMobile();
   return (
-    <section style={{ padding: '80px 24px 60px', textAlign: 'center' }} aria-label="Introduction">
+    <section style={{ padding: isMobile ? '56px 20px 40px' : '80px 24px 60px', textAlign: 'center' }} aria-label="Introduction">
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 999, background: 'rgba(37,99,235,0.15)', border: '0.5px solid rgba(37,99,235,0.3)', fontSize: 11, color: '#60a5fa', marginBottom: 24 }}>
           <Zap size={11} aria-hidden="true" /> 24/7 AI Receptionist
         </div>
-        <h1 style={{ fontSize: 'clamp(36px, 6vw, 56px)', fontWeight: 700, lineHeight: 1.08, color: '#fff', marginBottom: 16 }}>
+        <h1 style={{ fontSize: isMobile ? 36 : 'clamp(36px, 6vw, 56px)', fontWeight: 700, lineHeight: 1.1, color: '#fff', marginBottom: 16 }}>
           Never Miss a<br />
           <span style={{ color: '#2563eb' }}>Lead Again</span>
         </h1>
-        <p style={{ fontSize: 15, color: '#8899aa', maxWidth: 480, margin: '0 auto 32px', lineHeight: 1.7 }}>
+        <p style={{ fontSize: isMobile ? 14 : 15, color: '#8899aa', maxWidth: 480, margin: '0 auto 32px', lineHeight: 1.7 }}>
           Desklo answers every customer question, captures leads, and books appointments — around the clock, so you don't have to.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link to="/onboarding" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 22px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
+          <Link to="/onboarding" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
             Get Started <ArrowRight size={16} aria-hidden="true" />
           </Link>
-          <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 22px', background: 'transparent', color: '#cdd9e8', fontSize: 13, border: '0.5px solid #1e2a3a', borderRadius: 10, textDecoration: 'none' }}>
+          <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', background: 'transparent', color: '#cdd9e8', fontSize: 13, border: '0.5px solid #1e2a3a', borderRadius: 10, textDecoration: 'none' }}>
             Try Live Demo
           </Link>
         </div>
@@ -111,17 +133,18 @@ function Hero() {
 }
 
 function Stats() {
+  const isMobile = useIsMobile();
   const stats = [
     { num: '24/7', label: 'Always online' },
     { num: '30s', label: 'Setup time' },
     { num: '$0', label: 'Missed leads' },
   ];
   return (
-    <div style={{ margin: '0 24px 48px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: '#1e2a3a', border: '0.5px solid #1e2a3a', borderRadius: 14, overflow: 'hidden' }} role="list" aria-label="Key stats">
+    <div style={{ margin: isMobile ? '0 16px 40px' : '0 24px 48px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: '#1e2a3a', border: '0.5px solid #1e2a3a', borderRadius: 14, overflow: 'hidden' }} role="list" aria-label="Key stats">
       {stats.map((s) => (
-        <div key={s.num} style={{ background: '#0d1117', padding: '24px 16px', textAlign: 'center' }} role="listitem">
-          <div style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 4 }}>{s.num}</div>
-          <div style={{ fontSize: 11, color: '#8899aa' }}>{s.label}</div>
+        <div key={s.num} style={{ background: '#0d1117', padding: isMobile ? '18px 8px' : '24px 16px', textAlign: 'center' }} role="listitem">
+          <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 700, color: '#fff', marginBottom: 4 }}>{s.num}</div>
+          <div style={{ fontSize: isMobile ? 10 : 11, color: '#8899aa' }}>{s.label}</div>
         </div>
       ))}
     </div>
@@ -129,6 +152,7 @@ function Stats() {
 }
 
 function WhyUs() {
+  const isMobile = useIsMobile();
   const benefits = [
     { icon: Clock, title: 'Always available, never tired', desc: 'While your competitors go to sleep, Desklo keeps working — answering questions and capturing leads at 3am just as well as 3pm.' },
     { icon: DollarSign, title: 'Cheaper than hiring staff', desc: 'A part-time receptionist costs $1,500+/month. Desklo gives you 24/7 coverage for $99/month — saving you over $1,400 every month.' },
@@ -136,11 +160,11 @@ function WhyUs() {
     { icon: Settings, title: 'Done-for-you setup', desc: 'No tech skills needed. We set everything up for you in under 5 minutes — just tell us about your business and you\'re live.' },
   ];
   return (
-    <section style={{ padding: '48px 24px' }} aria-labelledby="why-us-heading">
+    <section style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="why-us-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Why Desklo</p>
-        <h2 id="why-us-heading" style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32 }}>Stop losing customers to missed messages</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+        <h2 id="why-us-heading" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 700, color: '#fff', marginBottom: 24 }}>Stop losing customers to missed messages</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
           {benefits.map((b) => (
             <div key={b.title} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 20 }}>
               <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
@@ -157,14 +181,15 @@ function WhyUs() {
 }
 
 function LiveDemo() {
+  const isMobile = useIsMobile();
   return (
-    <section style={{ padding: '0 24px 48px' }} aria-labelledby="live-demo-heading">
+    <section style={{ padding: isMobile ? '0 16px 40px' : '0 24px 48px' }} aria-labelledby="live-demo-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ background: '#0d1827', border: '0.5px solid #1e3a5f', borderRadius: 16, padding: '40px 32px', textAlign: 'center' }}>
+        <div style={{ background: '#0d1827', border: '0.5px solid #1e3a5f', borderRadius: 16, padding: isMobile ? '28px 20px' : '40px 32px', textAlign: 'center' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 999, background: 'rgba(37,99,235,0.15)', border: '0.5px solid rgba(37,99,235,0.3)', fontSize: 11, color: '#60a5fa', marginBottom: 16 }}>
             <Sparkles size={11} aria-hidden="true" /> No signup required
           </div>
-          <h2 id="live-demo-heading" style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 10 }}>See it working for your business</h2>
+          <h2 id="live-demo-heading" style={{ fontSize: isMobile ? 20 : 22, fontWeight: 700, color: '#fff', marginBottom: 10 }}>See it working for your business</h2>
           <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 24, maxWidth: 420, margin: '0 auto 24px' }}>
             Enter your business name, services, and hours. Your personalized AI receptionist is live in 30 seconds.
           </p>
@@ -179,17 +204,18 @@ function LiveDemo() {
 }
 
 function HowItWorks() {
+  const isMobile = useIsMobile();
   const steps = [
     { num: '01', icon: UserPlus, title: 'Sign up', desc: 'Create your account in under 30 seconds. No credit card required to get started.' },
     { num: '02', icon: Settings, title: 'Train your bot in 5 minutes', desc: 'Tell us about your business, services, and hours. Our AI handles the rest.' },
     { num: '03', icon: Globe, title: 'Go live on your website', desc: 'Add a single line of code and your AI receptionist is ready to work immediately.' },
   ];
   return (
-    <section id="how-it-works" style={{ padding: '48px 24px', background: '#0d1117' }} aria-labelledby="how-it-works-heading">
+    <section id="how-it-works" style={{ padding: isMobile ? '36px 16px' : '48px 24px', background: '#0d1117' }} aria-labelledby="how-it-works-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>How it works</p>
-        <h2 id="how-it-works-heading" style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32 }}>Live in 3 simple steps</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+        <h2 id="how-it-works-heading" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 700, color: '#fff', marginBottom: 24 }}>Live in 3 simple steps</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
           {steps.map((s) => (
             <div key={s.num} style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 20 }}>
               <span style={{ fontSize: 11, color: '#2563eb', fontFamily: 'monospace', display: 'block', marginBottom: 10 }} aria-hidden="true">{s.num}</span>
@@ -207,6 +233,7 @@ function HowItWorks() {
 }
 
 function Features() {
+  const isMobile = useIsMobile();
   const features = [
     { icon: Clock, title: '24/7 availability', desc: 'Every visitor gets an instant response, day or night.' },
     { icon: UserPlus, title: 'Lead capture', desc: 'Automatically collect names, emails, and phone numbers.' },
@@ -216,13 +243,13 @@ function Features() {
     { icon: Settings, title: 'Done-for-you setup', desc: 'We handle everything so you don\'t lift a finger.' },
   ];
   return (
-    <section id="features" style={{ padding: '48px 24px' }} aria-labelledby="features-heading">
+    <section id="features" style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="features-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Features</p>
-        <h2 id="features-heading" style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32 }}>Everything you need to capture leads</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+        <h2 id="features-heading" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 700, color: '#fff', marginBottom: 24 }}>Everything you need to capture leads</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
           {features.map((f) => (
-            <div key={f.title} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 20 }}>
+            <div key={f.title} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 16 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(37,99,235,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                 <f.icon size={16} color="#60a5fa" aria-hidden="true" />
               </div>
@@ -237,12 +264,13 @@ function Features() {
 }
 
 function Pricing() {
+  const isMobile = useIsMobile();
   return (
-    <section id="pricing" style={{ padding: '48px 24px', background: '#0d1117' }} aria-labelledby="pricing-heading">
+    <section id="pricing" style={{ padding: isMobile ? '36px 16px' : '48px 24px', background: '#0d1117' }} aria-labelledby="pricing-heading">
       <div style={{ maxWidth: 400, margin: '0 auto' }}>
         <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'center' }}>Pricing</p>
-        <h2 id="pricing-heading" style={{ fontSize: 26, fontWeight: 700, color: '#fff', marginBottom: 32, textAlign: 'center' }}>Simple, transparent pricing</h2>
-        <div style={{ background: '#0a0a0f', border: '2px solid #2563eb', borderRadius: 16, padding: 32, position: 'relative' }}>
+        <h2 id="pricing-heading" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 700, color: '#fff', marginBottom: 32, textAlign: 'center' }}>Simple, transparent pricing</h2>
+        <div style={{ background: '#0a0a0f', border: '2px solid #2563eb', borderRadius: 16, padding: isMobile ? 24 : 32, position: 'relative' }}>
           <span style={{ position: 'absolute', top: -12, left: 24, background: '#2563eb', color: '#fff', fontSize: 11, fontWeight: 500, padding: '3px 10px', borderRadius: 999 }}>Most Popular</span>
           <div style={{ fontSize: 14, color: '#8899aa', marginBottom: 8 }}>Starter</div>
           <div style={{ fontSize: 40, fontWeight: 700, color: '#fff', marginBottom: 24 }}>$99<span style={{ fontSize: 14, color: '#8899aa' }}>/mo</span></div>
@@ -263,22 +291,40 @@ function Pricing() {
 }
 
 function Footer() {
+  const isMobile = useIsMobile();
   return (
-    <footer style={{ borderTop: '0.5px solid #1e2a3a', padding: '24px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Bot size={14} color="#fff" aria-hidden="true" />
+    <footer style={{ borderTop: '0.5px solid #1e2a3a', padding: isMobile ? '24px 16px' : '24px' }}>
+      {isMobile ? (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, textAlign: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Bot size={14} color="#fff" aria-hidden="true" />
+            </div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Desklo</span>
           </div>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Desklo</span>
+          <nav style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }} aria-label="Legal">
+            <Link to="/privacy" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Privacy Policy</Link>
+            <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
+            <a href="mailto:desklosupport@gmail.com" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
+          </nav>
+          <p style={{ fontSize: 12, color: '#8899aa' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
         </div>
-        <nav style={{ display: 'flex', gap: 20, justifySelf: 'center' }} aria-label="Legal">
-          <Link to="/privacy" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Privacy Policy</Link>
-          <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
-          <a href="mailto:desklosupport@gmail.com" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
-        </nav>
-        <p style={{ fontSize: 12, color: '#8899aa', justifySelf: 'end' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
-      </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Bot size={14} color="#fff" aria-hidden="true" />
+            </div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Desklo</span>
+          </div>
+          <nav style={{ display: 'flex', gap: 20, justifySelf: 'center' }} aria-label="Legal">
+            <Link to="/privacy" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Privacy Policy</Link>
+            <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
+            <a href="mailto:desklosupport@gmail.com" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
+          </nav>
+          <p style={{ fontSize: 12, color: '#8899aa', justifySelf: 'end' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
+        </div>
+      )}
     </footer>
   );
 }

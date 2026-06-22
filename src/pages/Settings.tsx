@@ -3,8 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Bot, ArrowLeft, Loader2, Check, Sparkles, Mail, Lock, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 export default function Settings() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -150,13 +161,19 @@ export default function Settings() {
     boxSizing: 'border-box' as const,
   };
 
-  const card = { background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16, padding: 24, marginBottom: 16 };
+  const card = {
+    background: '#0d1117',
+    border: '0.5px solid #1e2a3a',
+    borderRadius: 16,
+    padding: isMobile ? 18 : 24,
+    marginBottom: 16,
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
 
       {/* HEADER */}
-      <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 24px', position: 'sticky', top: 0, zIndex: 40 }}>
+      <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 20px', position: 'sticky', top: 0, zIndex: 40 }}>
         <div style={{ maxWidth: 760, margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
             <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -170,10 +187,10 @@ export default function Settings() {
         </div>
       </header>
 
-      <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 24px' }}>
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: isMobile ? '24px 16px' : '40px 24px' }}>
 
-        <div style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#fff' }}>Settings</h1>
+        <div style={{ marginBottom: 28 }}>
+          <h1 style={{ fontSize: isMobile ? 20 : 24, fontWeight: 700, color: '#fff' }}>Settings</h1>
           <p style={{ fontSize: 13, color: '#8899aa', marginTop: 4 }}>Update your business info, bot customization, and account details.</p>
         </div>
 
@@ -189,7 +206,8 @@ export default function Settings() {
               <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Services offered</label>
               <textarea value={services} onChange={(e) => setServices(e.target.value)} rows={3} style={{ ...inputStyle, resize: 'none' }} />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            {/* Hours + Pricing — stack on mobile */}
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business hours</label>
                 <input value={hours} onChange={(e) => setHours(e.target.value)} style={inputStyle} />
@@ -199,7 +217,8 @@ export default function Settings() {
                 <input value={pricing} onChange={(e) => setPricing(e.target.value)} style={inputStyle} />
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            {/* Booking + Location — stack on mobile */}
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>How to book / contact</label>
                 <input value={booking} onChange={(e) => setBooking(e.target.value)} style={inputStyle} />
@@ -215,7 +234,11 @@ export default function Settings() {
         {/* BOT CUSTOMIZATION */}
         <div style={card}>
           <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 20 }}>Bot customization</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+
+          {/* Stack on mobile, side by side on desktop */}
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 24 }}>
+
+            {/* Left: controls */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Bot name</label>
@@ -223,18 +246,27 @@ export default function Settings() {
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 10 }}>Brand color</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} style={{ width: 40, height: 40, borderRadius: 8, cursor: 'pointer', border: '0.5px solid #1e2a3a' }} />
-                  <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <input
+                    type="color"
+                    value={brandColor}
+                    onChange={(e) => setBrandColor(e.target.value)}
+                    style={{ width: 40, height: 40, borderRadius: 8, cursor: 'pointer', border: '0.5px solid #1e2a3a', flexShrink: 0 }}
+                  />
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     {['#2563EB', '#7B61FF', '#059669', '#EA580C', '#DC2626', '#7C3AED'].map((c) => (
-                      <button key={c} onClick={() => setBrandColor(c)} style={{ width: 28, height: 28, borderRadius: 8, background: c, border: brandColor === c ? '2px solid #fff' : '2px solid transparent', cursor: 'pointer' }} />
+                      <button
+                        key={c}
+                        onClick={() => setBrandColor(c)}
+                        style={{ width: 28, height: 28, borderRadius: 8, background: c, border: brandColor === c ? '2px solid #fff' : '2px solid transparent', cursor: 'pointer' }}
+                      />
                     ))}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* PREVIEW */}
+            {/* Right: preview */}
             <div style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
                 <Sparkles size={12} color="#8899aa" />
@@ -249,8 +281,8 @@ export default function Settings() {
                   </div>
                 </div>
                 <div style={{ background: '#0d1117', padding: 12 }}>
-                  <div style={{ background: '#1e2a3a', borderRadius: '10px 10px 10px 2px', padding: '8px 12px', display: 'inline-block' }}>
-                    <p style={{ fontSize: 12, color: '#cdd9e8', lineHeight: 1.5 }}>
+                  <div style={{ background: '#1e2a3a', borderRadius: '10px 10px 10px 2px', padding: '8px 12px', display: 'inline-block', maxWidth: '100%' }}>
+                    <p style={{ fontSize: 12, color: '#cdd9e8', lineHeight: 1.5, wordBreak: 'break-word' }}>
                       Hi! 👋 I'm {botName || 'your assistant'} for {businessName || 'your business'}. How can I help?
                     </p>
                   </div>
@@ -345,7 +377,7 @@ export default function Settings() {
           ) : (
             <div style={{ background: 'rgba(248,113,113,0.05)', border: '0.5px solid #3a1e1e', borderRadius: 10, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
               <p style={{ fontSize: 13, fontWeight: 500, color: '#f87171' }}>Are you sure? This will delete everything.</p>
-              <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                 <button
                   onClick={handleDeleteAccount}
                   disabled={deleteLoading}
