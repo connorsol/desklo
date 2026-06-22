@@ -58,40 +58,45 @@ function FloatingChatWidget({ biz, messages, input, setInput, send, loading, mes
 }) {
   const [open, setOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const isMobile = window.innerWidth < 500;
 
-  // Show tooltip after 2s, then auto-open chat after 4s
+  // Mobile: just show tooltip at 2s, never auto-open
+  // Desktop: show tooltip at 2s, auto-open at 4s
   useEffect(() => {
     const t1 = setTimeout(() => setShowTooltip(true), 2000);
-    const t2 = setTimeout(() => { setShowTooltip(false); setOpen(true); }, 4000);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    const t2 = !isMobile ? setTimeout(() => { setShowTooltip(false); setOpen(true); }, 4000) : null;
+    return () => { clearTimeout(t1); if (t2) clearTimeout(t2); };
   }, []);
 
+  // On mobile the chat window fills most of the screen width
+  const chatWidth = isMobile ? Math.min(window.innerWidth - 32, 320) : 340;
+
   return (
-    <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
+    <div style={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
 
       {/* Chat window */}
       {open && (
         <div style={{
-          width: 340,
+          width: chatWidth,
           background: '#fff',
           borderRadius: 16,
           overflow: 'hidden',
           boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
           display: 'flex',
           flexDirection: 'column',
-          maxHeight: 480,
+          maxHeight: isMobile ? 360 : 480,
         }}>
           {/* Header */}
-          <div style={{ padding: '12px 16px', background: biz.color, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Bot size={16} color="#fff" />
+          <div style={{ padding: '10px 14px', background: biz.color, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Bot size={14} color="#fff" />
               </div>
               <div>
-                <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: 0 }}>{biz.botName}</p>
+                <p style={{ fontSize: 12, fontWeight: 600, color: '#fff', margin: 0 }}>{biz.botName}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#86efac' }} />
-                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', margin: 0 }}>Online now</p>
+                  <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#86efac' }} />
+                  <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.8)', margin: 0 }}>Online now</p>
                 </div>
               </div>
             </div>
@@ -99,19 +104,19 @@ function FloatingChatWidget({ biz, messages, input, setInput, send, loading, mes
               onClick={() => setOpen(false)}
               style={{ background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 6, padding: 4, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <X size={14} color="#fff" />
+              <X size={13} color="#fff" />
             </button>
           </div>
 
           {/* Messages */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: 14, display: 'flex', flexDirection: 'column', gap: 10, background: '#f8f9fb', maxHeight: 300 }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: 12, display: 'flex', flexDirection: 'column', gap: 8, background: '#f8f9fb', maxHeight: isMobile ? 220 : 300 }}>
             {messages.map((msg, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
                 <div style={{
-                  maxWidth: '80%',
+                  maxWidth: '82%',
                   borderRadius: msg.role === 'user' ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
-                  padding: '9px 13px',
-                  fontSize: 13,
+                  padding: '8px 11px',
+                  fontSize: 12,
                   lineHeight: 1.5,
                   background: msg.role === 'user' ? biz.color : '#fff',
                   color: msg.role === 'user' ? '#fff' : '#1a1a2e',
@@ -123,9 +128,9 @@ function FloatingChatWidget({ biz, messages, input, setInput, send, loading, mes
             ))}
             {loading && (
               <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <div style={{ background: '#fff', borderRadius: '14px 14px 14px 2px', padding: '10px 14px', display: 'flex', gap: 4, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+                <div style={{ background: '#fff', borderRadius: '14px 14px 14px 2px', padding: '8px 12px', display: 'flex', gap: 4, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
                   {[0, 150, 300].map((delay) => (
-                    <span key={delay} style={{ width: 6, height: 6, borderRadius: '50%', background: '#aab', display: 'inline-block', animation: 'bounce 1s infinite', animationDelay: `${delay}ms` }} />
+                    <span key={delay} style={{ width: 5, height: 5, borderRadius: '50%', background: '#aab', display: 'inline-block', animation: 'bounce 1s infinite', animationDelay: `${delay}ms` }} />
                   ))}
                 </div>
               </div>
@@ -134,23 +139,23 @@ function FloatingChatWidget({ biz, messages, input, setInput, send, loading, mes
           </div>
 
           {/* Input */}
-          <div style={{ padding: '10px 12px', borderTop: '1px solid #eee', background: '#fff', display: 'flex', gap: 8 }}>
+          <div style={{ padding: '8px 10px', borderTop: '1px solid #eee', background: '#fff', display: 'flex', gap: 6 }}>
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && send()}
               placeholder="Type a message..."
-              style={{ flex: 1, background: '#f3f4f6', border: 'none', borderRadius: 8, padding: '9px 12px', fontSize: 13, color: '#1a1a2e', outline: 'none' }}
+              style={{ flex: 1, background: '#f3f4f6', border: 'none', borderRadius: 8, padding: '8px 10px', fontSize: 12, color: '#1a1a2e', outline: 'none' }}
             />
             <button
               onClick={() => send()}
               disabled={loading || !input.trim()}
-              style={{ width: 36, height: 36, borderRadius: 8, background: biz.color, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: (loading || !input.trim()) ? 0.4 : 1, flexShrink: 0 }}
+              style={{ width: 32, height: 32, borderRadius: 8, background: biz.color, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: (loading || !input.trim()) ? 0.4 : 1, flexShrink: 0 }}
             >
-              <Send size={14} color="#fff" />
+              <Send size={13} color="#fff" />
             </button>
           </div>
-          <p style={{ textAlign: 'center', fontSize: 10, color: '#aaa', padding: '4px 0 8px', background: '#fff' }}>Powered by Desklo</p>
+          <p style={{ textAlign: 'center', fontSize: 10, color: '#aaa', padding: '3px 0 6px', background: '#fff' }}>Powered by Desklo</p>
         </div>
       )}
 
@@ -160,23 +165,23 @@ function FloatingChatWidget({ biz, messages, input, setInput, send, loading, mes
           background: '#0d1117',
           border: '1px solid #1e2a3a',
           borderRadius: 12,
-          padding: '10px 16px',
-          fontSize: 13,
+          padding: '8px 12px',
+          fontSize: 12,
           color: '#fff',
           whiteSpace: 'nowrap',
           boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
+          gap: 6,
           animation: 'desklo-fade-in 0.3s ease forwards',
         }}
           onClick={() => { setShowTooltip(false); setOpen(true); }}
         >
-          <span>Got a question? Ask me! 👋</span>
+          <span>{isMobile ? 'Your AI receptionist lives here 👇' : 'Got a question? Ask me! 👋'}</span>
           <button
             onClick={(e) => { e.stopPropagation(); setShowTooltip(false); }}
-            style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: 0 }}
+            style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', fontSize: 14, lineHeight: 1, padding: 0 }}
           >×</button>
         </div>
       )}
@@ -185,8 +190,8 @@ function FloatingChatWidget({ biz, messages, input, setInput, send, loading, mes
       <button
         onClick={() => { setShowTooltip(false); setOpen(!open); }}
         style={{
-          width: 56,
-          height: 56,
+          width: 52,
+          height: 52,
           borderRadius: '50%',
           background: biz.color,
           border: 'none',
@@ -200,7 +205,7 @@ function FloatingChatWidget({ biz, messages, input, setInput, send, loading, mes
         onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'}
         onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
       >
-        {open ? <X size={22} color="#fff" /> : <MessageCircle size={22} color="#fff" />}
+        {open ? <X size={20} color="#fff" /> : <MessageCircle size={20} color="#fff" />}
       </button>
     </div>
   );
@@ -225,33 +230,29 @@ function FakeWebsite({ biz, onBack, messages, input, setInput, send, loading, me
       <style>{`@keyframes desklo-fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
 
       {/* PREVIEW BANNER */}
-      <div style={{ background: '#1a1a2e', borderBottom: '2px solid #2563eb', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, position: 'sticky', top: 0, zIndex: 999 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ background: '#2563eb', borderRadius: 6, padding: '3px 8px', fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '0.06em' }}>EXAMPLE WEBSITE</div>
-          <span style={{ fontSize: 12, color: '#8899aa' }}>This is a preview of how Desklo appears on your site — try clicking the chat bubble! 👇</span>
+      <div style={{ background: '#1a1a2e', borderBottom: '2px solid #2563eb', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, position: 'sticky', top: 0, zIndex: 999 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+          <div style={{ background: '#2563eb', borderRadius: 6, padding: '3px 8px', fontSize: 10, fontWeight: 700, color: '#fff', letterSpacing: '0.06em', flexShrink: 0 }}>EXAMPLE</div>
+          <span style={{ fontSize: 11, color: '#8899aa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>This is how Desklo looks on your site 👇</span>
         </div>
         <button
           onClick={onBack}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#60a5fa', background: 'none', border: '0.5px solid #1e3a5f', borderRadius: 6, padding: '5px 12px', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#60a5fa', background: 'none', border: '0.5px solid #1e3a5f', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', flexShrink: 0 }}
         >
-          <ArrowLeft size={12} /> Edit info
+          <ArrowLeft size={11} /> Edit
         </button>
       </div>
 
       {/* FAKE NAV */}
-      <nav style={{ background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '0 32px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 34, height: 34, borderRadius: 8, background: biz.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: 16 }}>🏠</span>
+      <nav style={{ background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '0 16px', height: 54, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+          <div style={{ width: 30, height: 30, borderRadius: 8, background: biz.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontSize: 14 }}>🏠</span>
           </div>
-          <span style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>{biz.businessName}</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 160 }}>{biz.businessName}</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <span style={{ fontSize: 13, color: '#666', cursor: 'pointer' }}>Services</span>
-          <span style={{ fontSize: 13, color: '#666', cursor: 'pointer' }}>About</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: biz.color, color: '#fff', fontSize: 13, fontWeight: 500, padding: '7px 16px', borderRadius: 8, cursor: 'pointer' }}>
-            <Phone size={13} /> Call Us
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: biz.color, color: '#fff', fontSize: 12, fontWeight: 500, padding: '6px 14px', borderRadius: 8, cursor: 'pointer', flexShrink: 0 }}>
+          <Phone size={12} /> Call Us
         </div>
       </nav>
 
@@ -318,27 +319,28 @@ function FakeWebsite({ biz, onBack, messages, input, setInput, send, loading, me
         </div>
       </div>
 
-      {/* ARROW POINTING TO CHAT BUBBLE */}
-      <div style={{
-        position: 'fixed',
-        bottom: 90,
-        right: 88,
-        zIndex: 998,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 2,
-        pointerEvents: 'none',
-      }}>
-        <div style={{ background: '#1a1a2e', border: '1px solid #2563eb', borderRadius: 10, padding: '8px 14px', fontSize: 12, color: '#60a5fa', fontWeight: 500, whiteSpace: 'nowrap' }}>
-          Your AI receptionist lives here 👇
+      {/* ARROW POINTING TO CHAT BUBBLE — desktop only */}
+      {window.innerWidth >= 500 && (
+        <div style={{
+          position: 'fixed',
+          bottom: 90,
+          right: 88,
+          zIndex: 998,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 2,
+          pointerEvents: 'none',
+        }}>
+          <div style={{ background: '#1a1a2e', border: '1px solid #2563eb', borderRadius: 10, padding: '8px 14px', fontSize: 12, color: '#60a5fa', fontWeight: 500, whiteSpace: 'nowrap' }}>
+            Your AI receptionist lives here 👇
+          </div>
+          <svg width="50" height="36" viewBox="0 0 50 36" style={{ marginLeft: 24 }}>
+            <path d="M 10 2 Q 30 2 40 30" stroke="#2563eb" strokeWidth="2" fill="none" strokeDasharray="4 2" />
+            <polygon points="34,30 44,32 38,22" fill="#2563eb" />
+          </svg>
         </div>
-        {/* Arrow curving down-right toward the bubble */}
-        <svg width="50" height="36" viewBox="0 0 50 36" style={{ marginLeft: 24 }}>
-          <path d="M 10 2 Q 30 2 40 30" stroke="#2563eb" strokeWidth="2" fill="none" strokeDasharray="4 2" />
-          <polygon points="34,30 44,32 38,22" fill="#2563eb" />
-        </svg>
-      </div>
+      )}
 
       {/* CTA BANNER AT BOTTOM */}
       <div style={{ background: '#0d1117', borderTop: '1px solid #1e2a3a', padding: '24px 32px', textAlign: 'center' }}>
