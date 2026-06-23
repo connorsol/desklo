@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Bot, ArrowRight, Copy, Check } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 export default function Welcome() {
+  const navigate = useNavigate();
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [botName, setBotName] = useState('Assistant');
   const [businessName, setBusinessName] = useState('');
@@ -11,13 +12,33 @@ export default function Welcome() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadBusiness();
+    async function init() {
+      // Grab token from URL if present
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+      const refreshToken = params.get('refresh');
+
+      if (token) {
+        // Restore session from token, then clean URL
+        await supabase.auth.setSession({
+          access_token: token,
+          refresh_token: refreshToken ?? '',
+        });
+        window.history.replaceState({}, '', '/welcome');
+      }
+
+      await loadBusiness();
+    }
+    init();
   }, []);
 
   async function loadBusiness() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       const { data } = await supabase
         .from('businesses')
         .select('id, name, bot_name')
@@ -60,7 +81,7 @@ export default function Welcome() {
     },
     {
       num: '03',
-      title: 'You\'re live!',
+      title: "You're live!",
       desc: `${botName} will start answering customer questions immediately, 24/7.`,
     },
   ];
@@ -141,6 +162,12 @@ export default function Welcome() {
               Go to dashboard
             </Link>
           </div>
+
+          {!businessId && !loading && (
+            <p style={{ textAlign: 'center', fontSize: 11, color: '#8899aa', marginTop: 16 }}>
+              Your embed code is available in your dashboard after logging in.
+            </p>
+          )}
 
         </div>
       </main>

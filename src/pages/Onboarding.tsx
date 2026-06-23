@@ -55,10 +55,15 @@ export default function Onboarding() {
   };
 
   async function redirectToCheckout(email: string, businessId: string) {
+    // Get current session tokens to pass through Stripe redirect
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token ?? '';
+    const refresh = session?.refresh_token ?? '';
+
     const res = await fetch(`${WORKER_URL}/create-checkout-session`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, businessId }),
+      body: JSON.stringify({ email, businessId, token, refresh }),
     });
     const data = await res.json();
     if (data.url) {
@@ -94,7 +99,6 @@ export default function Onboarding() {
 
       if (insertError) throw insertError;
 
-      // Redirect straight to Stripe checkout instead of the dashboard
       await redirectToCheckout(user.email ?? '', insertedBusiness.id);
     } catch (err) {
       console.error(err);
