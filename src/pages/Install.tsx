@@ -248,7 +248,7 @@ export default function Install() {
         {/* HELP */}
         <div style={{ marginTop: 24, padding: '16px 20px', background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <p style={{ fontSize: 13, color: '#8899aa' }}>Need help? We'll set it up for you for free.</p>
-          <a href="mailto:connorcarson222@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#60a5fa', textDecoration: 'none', fontWeight: 500 }}>
+          <a href="https://mail.google.com/mail/?view=cm&to=desklosupport@gmail.com" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#60a5fa', textDecoration: 'none', fontWeight: 500 }}>
             Contact support <ExternalLink size={12} />
           </a>
         </div>

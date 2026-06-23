@@ -66,7 +66,6 @@ function Nav() {
           <span style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>Desklo</span>
         </Link>
 
-        {/* Desktop nav */}
         {!isMobile && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <a href="#features" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Features</a>
@@ -76,7 +75,6 @@ function Nav() {
           </div>
         )}
 
-        {/* Mobile hamburger */}
         {isMobile && (
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -91,7 +89,6 @@ function Nav() {
         )}
       </div>
 
-      {/* Mobile menu dropdown */}
       {isMobile && mobileOpen && (
         <div style={{ borderTop: '0.5px solid #1e2a3a', background: '#0a0a0f', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
           <a href="#features" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Features</a>
@@ -305,7 +302,7 @@ function Footer() {
           <nav style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }} aria-label="Legal">
             <Link to="/privacy" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Privacy Policy</Link>
             <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
-            <a href="mailto:desklosupport@gmail.com" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
+            <a href="https://mail.google.com/mail/?view=cm&to=desklosupport@gmail.com" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
           </nav>
           <p style={{ fontSize: 12, color: '#8899aa' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
         </div>
@@ -320,7 +317,7 @@ function Footer() {
           <nav style={{ display: 'flex', gap: 20, justifySelf: 'center' }} aria-label="Legal">
             <Link to="/privacy" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Privacy Policy</Link>
             <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
-            <a href="mailto:desklosupport@gmail.com" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
+            <a href="https://mail.google.com/mail/?view=cm&to=desklosupport@gmail.com" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
           </nav>
           <p style={{ fontSize: 12, color: '#8899aa', justifySelf: 'end' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
         </div>
