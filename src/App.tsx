@@ -10,6 +10,7 @@ import Admin from './pages/Admin';
 import Install from './pages/Install';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
+import Welcome from './pages/Welcome';
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/install" element={<Install />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/welcome" element={<Welcome />} />
       </Routes>
     </BrowserRouter>
   );
