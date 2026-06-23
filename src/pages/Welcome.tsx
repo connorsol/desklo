@@ -57,7 +57,7 @@ export default function Welcome() {
   }
 
   const embedCode = businessId
-    ? `<script>window.DESKLO_KEY = '${businessId}';</script>\n<script src="https://desklo.pages.dev/widget.js"></script>`
+    ? `<script>window.DESKLO_KEY = '${businessId}';</script>\n<script src="https://deskloai.com/widget.js"></script>`
     : '';
 
   const handleCopy = () => {

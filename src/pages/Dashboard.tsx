@@ -250,8 +250,8 @@ export default function Dashboard() {
   const card = { background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16 };
 
   const embedCode = businessId
-    ? `<script>window.DESKLO_KEY = '${businessId}';</script>\n<script src="https://desklo.pages.dev/widget.js"></script>`
-    : `<script>window.DESKLO_KEY = 'loading...';</script>\n<script src="https://desklo.pages.dev/widget.js"></script>`;
+    ? `<script>window.DESKLO_KEY = '${businessId}';</script>\n<script src="https://deskloai.com/widget.js"></script>`
+    : `<script>window.DESKLO_KEY = 'loading...';</script>\n<script src="https://deskloai.com/widget.js"></script>`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(embedCode).then(() => {
