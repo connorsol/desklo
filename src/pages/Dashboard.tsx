@@ -18,7 +18,7 @@ import { ChatWidget } from '../components/ChatWidget';
 import { supabase } from '../lib/supabase';
 import type { Business } from '../lib/gemini';
 
-const ADMIN_EMAILS = ['connorcarson222@gmail.com', 'ronanosborn8@gmail.com'];
+const ADMIN_EMAILS = ['connorcarson222@gmail.com', 'ronanosborn8@gmail.com', 'iidoug2002@gmail.com'];
 const WORKER_URL = 'https://desklo-worker.connorcarson222.workers.dev';
 
 interface Conversation {
