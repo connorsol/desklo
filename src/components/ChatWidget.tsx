@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 type Props = {
   business?: any
@@ -7,39 +7,28 @@ type Props = {
 }
 
 export function ChatWidget({ businessId }: Props) {
-  const injected = useRef(false)
-
   useEffect(() => {
-    if (!businessId || injected.current) return
-    injected.current = true
+    if (!businessId) return
 
-    // Remove any existing desklo widget
-    const existing = document.getElementById('desklo-widget')
-    if (existing) existing.remove()
+    // Clean up any existing widget
+    document.getElementById('desklo-widget')?.remove()
+    document.getElementById('desklo-widget-script')?.remove()
+    document.getElementById('desklo-widget-style')?.remove()
 
-    // Remove existing widget script
-    const existingScript = document.getElementById('desklo-widget-script')
-    if (existingScript) existingScript.remove()
-
-    // Set the business key FIRST
+    // Set business key
     ;(window as any).DESKLO_KEY = businessId
 
-    // Small delay to ensure DESKLO_KEY is set before widget loads
-    setTimeout(() => {
-      const script = document.createElement('script')
-      script.id = 'desklo-widget-script'
-      script.src = '/widget.js'
-      script.async = true
-      document.body.appendChild(script)
-    }, 100)
+    const script = document.createElement('script')
+    script.id = 'desklo-widget-script'
+    script.src = '/widget.js'
+    script.async = true
+    document.body.appendChild(script)
 
     return () => {
-      const w = document.getElementById('desklo-widget')
-      if (w) w.remove()
-      const s = document.getElementById('desklo-widget-script')
-      if (s) s.remove()
+      document.getElementById('desklo-widget')?.remove()
+      document.getElementById('desklo-widget-script')?.remove()
+      document.getElementById('desklo-widget-style')?.remove()
       delete (window as any).DESKLO_KEY
-      injected.current = false
     }
   }, [businessId])
 
