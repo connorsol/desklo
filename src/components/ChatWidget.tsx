@@ -28,7 +28,7 @@ export function ChatWidget({ businessId }: Props) {
     setTimeout(() => {
       const script = document.createElement('script')
       script.id = 'desklo-widget-script'
-      script.src = '/widget.js'
+      script.src = `/widget.js?v=${Date.now()}`
       script.async = true
       document.body.appendChild(script)
     }, 100)
