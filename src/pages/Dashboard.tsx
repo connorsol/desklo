@@ -268,7 +268,7 @@ export default function Dashboard() {
 
       {/* HEADER */}
       <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 16px', position: 'sticky', top: 0, zIndex: 40 }}>
-        <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ width: '100%', maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', flexShrink: 0 }}>
               <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -330,7 +330,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div style={{ padding: isMobile ? '16px 12px' : '32px 24px', maxWidth: 1200, margin: '0 auto', boxSizing: 'border-box' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '16px 12px' : '32px 24px', boxSizing: 'border-box' }}>
 
         {/* SETUP BANNER */}
         {!business && (
@@ -348,9 +348,9 @@ export default function Dashboard() {
         {/* STAT CARDS */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 16 }}>
           {statCards.map((s) => (
-            <div key={s.label} style={{ ...card, padding: 16 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-                <s.icon size={16} color="#60a5fa" />
+            <div key={s.label} style={{ ...card, padding: isMobile ? 16 : 20 }}>
+              <div style={{ width: 34, height: 34, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                <s.icon size={17} color="#60a5fa" />
               </div>
               <p style={{ fontSize: isMobile ? 20 : 24, fontWeight: 700, color: '#fff' }}>{s.value}</p>
               <p style={{ fontSize: 10, color: '#8899aa', marginTop: 2, lineHeight: 1.4 }}>{s.label}</p>
@@ -358,8 +358,8 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* MAIN CONTENT — stacks on mobile */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* MAIN GRID — sidebar on desktop, stacked on mobile */}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 340px', gap: 16 }}>
 
           {/* CONVERSATIONS */}
           <div style={{ ...card, overflow: 'hidden' }}>
@@ -427,19 +427,19 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* SIDEBAR CARDS — horizontal on desktop, stacked on mobile */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: 16 }}>
+          {/* SIDEBAR */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
             {/* EMBED CODE */}
-            <div style={{ ...card, padding: 16 }}>
+            <div style={{ ...card, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 12 }}>Embed Code</h3>
               <div style={{ position: 'relative' }}>
-                <pre style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: 12, fontSize: 11, color: '#8899aa', overflow: 'auto', fontFamily: 'monospace', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>
+                <pre style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: 14, fontSize: 11, color: '#8899aa', overflow: 'auto', fontFamily: 'monospace', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>
                   {embedCode}
                 </pre>
                 <button
                   onClick={handleCopy}
-                  style={{ position: 'absolute', top: 8, right: 8, padding: 6, borderRadius: 6, background: '#1e2a3a', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ position: 'absolute', top: 10, right: 10, padding: 6, borderRadius: 6, background: '#1e2a3a', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   {copied ? <Check size={13} color="#34d399" /> : <Copy size={13} color="#8899aa" />}
                 </button>
@@ -451,7 +451,7 @@ export default function Dashboard() {
             </div>
 
             {/* PLAN */}
-            <div style={{ ...card, padding: 16 }}>
+            <div style={{ ...card, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 16 }}>Your Plan</h3>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                 <div>
@@ -477,7 +477,7 @@ export default function Dashboard() {
             </div>
 
             {/* TEST BOT */}
-            <div style={{ ...card, padding: 16 }}>
+            <div style={{ ...card, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Test Your Bot</h3>
               <p style={{ fontSize: 12, color: '#8899aa', marginBottom: 12 }}>Click the chat bubble to test your AI receptionist live.</p>
               <div style={{ background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 10, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
