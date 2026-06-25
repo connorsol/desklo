@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Bot, ArrowLeft, Copy, Check, ExternalLink } from 'lucide-react';
+import { Bot, ArrowLeft, Copy, Check, ExternalLink, X, ZoomIn } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 const platforms = [
@@ -10,6 +10,17 @@ const platforms = [
   { id: 'shopify', name: 'Shopify', icon: '🛍️' },
   { id: 'other', name: 'Other / Custom', icon: '💻' },
 ];
+
+const wixStepImages: Record<number, string> = {
+  0: '/install/wix_step1.png',
+  1: '/install/wix_step1.png',
+  2: '/install/wix_step2_3.png',
+  3: '/install/wix_step4_7.png',
+  4: '/install/wix_step4_7.png',
+  5: '/install/wix_step4_7.png',
+  6: '/install/wix_step4_7.png',
+  7: '/install/wix_step8.png',
+};
 
 const steps: Record<string, { title: string; description: string; highlight?: string }[]> = {
   wix: [
@@ -24,25 +35,25 @@ const steps: Record<string, { title: string; description: string; highlight?: st
   ],
   wordpress: [
     { title: 'Log in to WordPress', description: 'Go to your WordPress admin panel at yoursite.com/wp-admin.' },
-    { title: 'Install a header/footer plugin', description: 'Go to Plugins → Add New. Search for "WPCode" (or "Insert Headers and Footers"). Click Install, then Activate. This is the safe way to add code — editing theme files directly can break on updates.', highlight: 'WPCode' },
-    { title: 'Open the plugin settings', description: 'In the left sidebar, go to Code Snippets → Header & Footer (the exact menu name depends on which plugin you installed).' },
-    { title: 'Paste the embed code', description: 'Paste both lines of your embed code into the "Footer" section. This places it just before the closing </body> tag on every page.', highlight: 'Footer' },
+    { title: 'Install a header/footer plugin', description: 'Go to Plugins → Add New. Search for "WPCode" (or "Insert Headers and Footers"). Click Install, then Activate.', highlight: 'WPCode' },
+    { title: 'Open the plugin settings', description: 'In the left sidebar, go to Code Snippets → Header & Footer.' },
+    { title: 'Paste the embed code', description: 'Paste both lines of your embed code into the "Footer" section.', highlight: 'Footer' },
     { title: 'Save changes', description: 'Click Save. Your AI receptionist is now live on your site!' },
   ],
   squarespace: [
-    { title: 'Check your plan', description: 'Code Injection requires a Business plan or higher. If you\'re on the Personal plan, you\'ll need to upgrade first — go to Settings → Billing to check.', highlight: 'Business plan' },
+    { title: 'Check your plan', description: "Code Injection requires a Business plan or higher.", highlight: 'Business plan' },
     { title: 'Open your Squarespace dashboard', description: 'Log in to your Squarespace account and open your site.' },
     { title: 'Go to Settings → Advanced', description: 'Click Settings in the left sidebar, then click "Advanced".' },
     { title: 'Click Code Injection', description: 'Click "Code Injection" to open the code editor.', highlight: 'Code Injection' },
-    { title: 'Paste into Footer', description: 'Paste both lines of your embed code into the Footer field. This loads it just before the closing </body> tag.', highlight: 'Footer' },
+    { title: 'Paste into Footer', description: 'Paste both lines of your embed code into the Footer field.', highlight: 'Footer' },
     { title: 'Save', description: 'Click Save in the top right. Your AI receptionist is now live!' },
   ],
   shopify: [
     { title: 'Open Shopify admin', description: 'Log in to your Shopify store at yourstore.myshopify.com/admin.' },
     { title: 'Go to Online Store → Themes', description: 'In the left sidebar click Online Store, then Themes.' },
-    { title: 'Click Actions → Edit code', description: 'Next to your active (published) theme, click Actions, then Edit code.', highlight: 'Edit code' },
+    { title: 'Click Actions → Edit code', description: 'Next to your active theme, click Actions, then Edit code.', highlight: 'Edit code' },
     { title: 'Open theme.liquid', description: 'In the Layout folder on the left, find and click theme.liquid.' },
-    { title: 'Paste the embed code', description: 'Paste both lines of your embed code just before the closing </body> tag near the bottom of the file.', highlight: '</body>' },
+    { title: 'Paste the embed code', description: 'Paste both lines just before the closing </body> tag.', highlight: '</body>' },
     { title: 'Save', description: 'Click Save in the top right. Your AI receptionist is now live!' },
   ],
   other: [
@@ -58,6 +69,7 @@ export default function Install() {
   const [copied, setCopied] = useState(false);
   const [businessId, setBusinessId] = useState<string | null>(null);
   const [activeStep, setActiveStep] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -80,9 +92,32 @@ export default function Install() {
   };
 
   const currentSteps = steps[activePlatform];
+  const currentImage = activePlatform === 'wix' ? wixStepImages[activeStep] : null;
 
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
+
+      {/* LIGHTBOX */}
+      {lightboxOpen && currentImage && (
+        <div
+          onClick={() => setLightboxOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, cursor: 'zoom-out' }}
+        >
+          <button
+            onClick={() => setLightboxOpen(false)}
+            style={{ position: 'absolute', top: 20, right: 20, background: '#1e2a3a', border: 'none', borderRadius: 8, padding: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <X size={20} color="#fff" />
+          </button>
+          <img
+            src={currentImage}
+            alt="Step screenshot"
+            style={{ maxWidth: '100%', maxHeight: '90vh', borderRadius: 12, objectFit: 'contain' }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
       {/* HEADER */}
       <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 24px', position: 'sticky', top: 0, zIndex: 40 }}>
         <div style={{ maxWidth: 900, margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -131,19 +166,14 @@ export default function Install() {
             {platforms.map((p) => (
               <button
                 key={p.id}
-                onClick={() => { setActivePlatform(p.id); setActiveStep(0); }}
+                onClick={() => { setActivePlatform(p.id); setActiveStep(0); setLightboxOpen(false); }}
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: 10,
+                  padding: '8px 16px', borderRadius: 10,
                   border: activePlatform === p.id ? '2px solid #2563eb' : '0.5px solid #1e2a3a',
                   background: activePlatform === p.id ? 'rgba(37,99,235,0.1)' : '#0d1117',
                   color: activePlatform === p.id ? '#60a5fa' : '#8899aa',
-                  fontSize: 13,
-                  fontWeight: activePlatform === p.id ? 600 : 400,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
+                  fontSize: 13, fontWeight: activePlatform === p.id ? 600 : 400,
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
                 }}
               >
                 <span>{p.icon}</span> {p.name}
@@ -166,29 +196,20 @@ export default function Install() {
               {currentSteps.map((step, i) => (
                 <div
                   key={i}
-                  onClick={() => setActiveStep(i)}
+                  onClick={() => { setActiveStep(i); setLightboxOpen(false); }}
                   style={{
-                    padding: '14px 20px',
-                    cursor: 'pointer',
+                    padding: '14px 20px', cursor: 'pointer',
                     borderBottom: '0.5px solid #1e2a3a',
                     background: activeStep === i ? 'rgba(37,99,235,0.08)' : 'transparent',
                     borderLeft: activeStep === i ? '2px solid #2563eb' : '2px solid transparent',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
+                    display: 'flex', alignItems: 'center', gap: 12,
                   }}
                 >
                   <div style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
+                    width: 24, height: 24, borderRadius: '50%',
                     background: activeStep === i ? '#2563eb' : i < activeStep ? 'rgba(52,211,153,0.2)' : '#1e2a3a',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    fontSize: 11,
-                    fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0, fontSize: 11, fontWeight: 700,
                     color: activeStep === i ? '#fff' : i < activeStep ? '#34d399' : '#8899aa',
                   }}>
                     {i < activeStep ? '✓' : i + 1}
@@ -213,16 +234,34 @@ export default function Install() {
                   {currentSteps[activeStep].description}
                 </p>
                 {currentSteps[activeStep].highlight && (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 8, padding: '8px 14px' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 8, padding: '8px 14px', marginBottom: 20 }}>
                     <span style={{ fontSize: 12, color: '#60a5fa' }}>Look for:</span>
                     <code style={{ fontSize: 13, color: '#fff', fontFamily: 'monospace', fontWeight: 600 }}>{currentSteps[activeStep].highlight}</code>
+                  </div>
+                )}
+
+                {/* SCREENSHOT */}
+                {currentImage && (
+                  <div
+                    onClick={() => setLightboxOpen(true)}
+                    style={{ position: 'relative', marginTop: 8, borderRadius: 12, overflow: 'hidden', border: '0.5px solid #1e2a3a', cursor: 'zoom-in' }}
+                  >
+                    <img
+                      src={currentImage}
+                      alt={`Step ${activeStep + 1} screenshot`}
+                      style={{ width: '100%', display: 'block', imageRendering: 'auto' }}
+                    />
+                    <div style={{ position: 'absolute', bottom: 10, right: 10, background: 'rgba(0,0,0,0.6)', borderRadius: 6, padding: '4px 8px', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <ZoomIn size={12} color="#fff" />
+                      <span style={{ fontSize: 11, color: '#fff' }}>Click to expand</span>
+                    </div>
                   </div>
                 )}
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 32 }}>
                 <button
-                  onClick={() => setActiveStep(Math.max(0, activeStep - 1))}
+                  onClick={() => { setActiveStep(Math.max(0, activeStep - 1)); setLightboxOpen(false); }}
                   disabled={activeStep === 0}
                   style={{ padding: '8px 16px', background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 8, fontSize: 13, color: '#8899aa', cursor: activeStep === 0 ? 'not-allowed' : 'pointer', opacity: activeStep === 0 ? 0.4 : 1 }}
                 >
@@ -230,7 +269,7 @@ export default function Install() {
                 </button>
                 {activeStep < currentSteps.length - 1 ? (
                   <button
-                    onClick={() => setActiveStep(activeStep + 1)}
+                    onClick={() => { setActiveStep(activeStep + 1); setLightboxOpen(false); }}
                     style={{ padding: '8px 20px', background: '#2563eb', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 500, color: '#fff', cursor: 'pointer' }}
                   >
                     Next step →
