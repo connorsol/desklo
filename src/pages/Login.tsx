@@ -63,7 +63,6 @@ export default function Login() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
-        // Check if user has MFA enabled
         const { data: factorsData } = await supabase.auth.mfa.listFactors();
         const totpFactor = factorsData?.totp?.find(f => f.status === 'verified');
 
@@ -288,6 +287,15 @@ export default function Login() {
             </>
           )}
         </div>
+
+        {/* SUPPORT EMAIL */}
+        <p style={{ textAlign: 'center', fontSize: 12, color: '#8899aa', marginTop: 20 }}>
+          Need help?{' '}
+          <a href="mailto:desklosupport@gmail.com" style={{ color: '#60a5fa', textDecoration: 'none' }}>
+            desklosupport@gmail.com
+          </a>
+        </p>
+
       </div>
     </div>
   );

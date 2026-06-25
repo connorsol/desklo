@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bot, ArrowRight, ArrowLeft, Palette, Sparkles, Loader2 } from 'lucide-react';
+import { Bot, ArrowRight, ArrowLeft, Palette, Sparkles, Loader2, Info } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 const WORKER_URL = 'https://desklo-worker.connorcarson222.workers.dev';
@@ -55,11 +55,9 @@ export default function Onboarding() {
   };
 
   async function redirectToCheckout(email: string, businessId: string) {
-    // Get current session tokens to pass through Stripe redirect
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token ?? '';
     const refresh = session?.refresh_token ?? '';
-
     const res = await fetch(`${WORKER_URL}/create-checkout-session`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -96,9 +94,7 @@ export default function Onboarding() {
         }, { onConflict: 'owner_id' })
         .select('id')
         .single();
-
       if (insertError) throw insertError;
-
       await redirectToCheckout(user.email ?? '', insertedBusiness.id);
     } catch (err) {
       console.error(err);
@@ -117,6 +113,13 @@ export default function Onboarding() {
     color: '#fff',
     outline: 'none',
     boxSizing: 'border-box' as const,
+  };
+
+  const helperText = {
+    fontSize: 11,
+    color: '#8899aa',
+    marginTop: 5,
+    lineHeight: 1.5,
   };
 
   return (
@@ -174,34 +177,57 @@ export default function Onboarding() {
           {step === 2 && (
             <div>
               <h1 style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Tell us about your business</h1>
-              <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 32 }}>This information trains your AI receptionist to answer customer questions accurately.</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 16 }}>This information is what your AI receptionist uses to answer customer questions. The more accurate and detailed you are, the better your bot will perform.</p>
+
+              {/* INFO BANNER */}
+              <div style={{ display: 'flex', gap: 10, background: 'rgba(37,99,235,0.08)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 10, padding: '12px 14px', marginBottom: 24 }}>
+                <Info size={15} color="#60a5fa" style={{ flexShrink: 0, marginTop: 1 }} />
+                <p style={{ fontSize: 12, color: '#60a5fa', lineHeight: 1.6, margin: 0 }}>
+                  💡 <strong>Tip:</strong> List every service you offer, your exact hours, and real pricing for each service. Your AI will use this to answer customer questions accurately — if the info is missing or vague, the bot won't know what to say.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business name</label>
-                  <input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="Acme Plumbing" style={inputStyle} />
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business name <span style={{ color: '#f87171' }}>*</span></label>
+                  <input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="e.g. Mike's Plumbing" style={inputStyle} />
                 </div>
+
                 <div>
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Services offered</label>
-                  <textarea value={services} onChange={(e) => setServices(e.target.value)} placeholder="Drain cleaning, pipe repair, water heater installation..." rows={3} style={{ ...inputStyle, resize: 'none' }} />
+                  <textarea
+                    value={services}
+                    onChange={(e) => setServices(e.target.value)}
+                    placeholder="List every service you offer. e.g.&#10;- Drain cleaning&#10;- Pipe repair and replacement&#10;- Water heater installation&#10;- Emergency plumbing&#10;- Sewer line inspection"
+                    rows={5}
+                    style={{ ...inputStyle, resize: 'none' }}
+                  />
+                  <p style={helperText}>List all services individually — this is how your AI knows what you offer when customers ask.</p>
                 </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div>
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business hours</label>
-                    <input value={hours} onChange={(e) => setHours(e.target.value)} placeholder="Mon–Fri 8am–6pm" style={inputStyle} />
+                    <input value={hours} onChange={(e) => setHours(e.target.value)} placeholder="e.g. Mon–Fri 8am–6pm, Sat 9am–2pm, Closed Sunday" style={inputStyle} />
+                    <p style={helperText}>Include every day of the week so the bot never gives wrong hours.</p>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Pricing info</label>
-                    <input value={pricing} onChange={(e) => setPricing(e.target.value)} placeholder="$75/hr, free estimates" style={inputStyle} />
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Pricing</label>
+                    <input value={pricing} onChange={(e) => setPricing(e.target.value)} placeholder="e.g. Drain cleaning $150, Water heater install $800–$1,200, Free estimates" style={inputStyle} />
+                    <p style={helperText}>List pricing per service so customers get accurate quotes from your bot.</p>
                   </div>
                 </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div>
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>How to book / contact</label>
-                    <input value={booking} onChange={(e) => setBooking(e.target.value)} placeholder="Call 555-1234 or book online" style={inputStyle} />
+                    <input value={booking} onChange={(e) => setBooking(e.target.value)} placeholder="e.g. Book through this chat, call 555-1234, or visit our website" style={inputStyle} />
+                    <p style={helperText}>Let customers know how to reach you or book outside of the chat.</p>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Location</label>
-                    <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Austin, TX" style={inputStyle} />
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Location / service area</label>
+                    <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Austin, TX — serving Travis and Williamson County" style={inputStyle} />
+                    <p style={helperText}>Include your city and any surrounding areas you serve.</p>
                   </div>
                 </div>
               </div>
@@ -218,6 +244,7 @@ export default function Onboarding() {
                   <div>
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Bot name</label>
                     <input value={botName} onChange={(e) => setBotName(e.target.value)} placeholder="Assistant" style={inputStyle} />
+                    <p style={helperText}>Give your bot a friendly name like "Alex" or "Sarah".</p>
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 10 }}>Brand color</label>
@@ -258,7 +285,7 @@ export default function Onboarding() {
                           <Sparkles size={10} color="#fff" />
                         </div>
                         <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: '12px 12px 12px 2px', padding: '8px 12px', maxWidth: '80%' }}>
-                          <p style={{ fontSize: 12, color: '#cdd9e8', lineHeight: 1.5 }}>Hi! Welcome to {businessName || 'our business'}. How can I help you today?</p>
+                          <p style={{ fontSize: 12, color: '#cdd9e8', lineHeight: 1.5 }}>Hi! Welcome to {businessName || 'your business'}. How can I help you today?</p>
                         </div>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

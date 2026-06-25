@@ -153,8 +153,8 @@ function WhyUs() {
   const benefits = [
     { icon: Clock, title: 'Always available, never tired', desc: 'While your competitors go to sleep, Desklo keeps working — answering questions and capturing leads at 3am just as well as 3pm.' },
     { icon: DollarSign, title: 'Cheaper than hiring staff', desc: 'A part-time receptionist costs $1,500+/month. Desklo gives you 24/7 coverage for $99/month — saving you over $1,400 every month.' },
-    { icon: UserCheck, title: 'Never lose a lead again', desc: '80% of customers go to a competitor if they don\'t get a response within 5 minutes. Desklo responds in seconds, every time.' },
-    { icon: Settings, title: 'Done-for-you setup', desc: 'No tech skills needed. We set everything up for you in under 5 minutes — just tell us about your business and you\'re live.' },
+    { icon: UserCheck, title: 'Never lose a lead again', desc: "80% of customers go to a competitor if they don't get a response within 5 minutes. Desklo responds in seconds, every time." },
+    { icon: Settings, title: 'Done-for-you setup', desc: "No tech skills needed. We set everything up for you in under 5 minutes — just tell us about your business and you're live." },
   ];
   return (
     <section style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="why-us-heading">
@@ -237,7 +237,7 @@ function Features() {
     { icon: MessageSquare, title: 'Chat widget', desc: 'Embed a professional chat widget on your site in minutes.' },
     { icon: BarChart3, title: 'Monthly ROI reports', desc: 'See exactly how many leads your AI generates each month.' },
     { icon: Moon, title: 'After-hours coverage', desc: 'Capture leads while you sleep — no missed inquiries.' },
-    { icon: Settings, title: 'Done-for-you setup', desc: 'We handle everything so you don\'t lift a finger.' },
+    { icon: Settings, title: 'Done-for-you setup', desc: "We handle everything so you don't lift a finger." },
   ];
   return (
     <section id="features" style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="features-heading">
@@ -304,22 +304,32 @@ function Footer() {
             <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
             <a href="https://mail.google.com/mail/?view=cm&to=desklosupport@gmail.com" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
           </nav>
+          <p style={{ fontSize: 12, color: '#8899aa' }}>
+            Need help?{' '}
+            <a href="mailto:desklosupport@gmail.com" style={{ color: '#60a5fa', textDecoration: 'none' }}>desklosupport@gmail.com</a>
+          </p>
           <p style={{ fontSize: 12, color: '#8899aa' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Bot size={14} color="#fff" aria-hidden="true" />
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Bot size={14} color="#fff" aria-hidden="true" />
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Desklo</span>
             </div>
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Desklo</span>
+            <nav style={{ display: 'flex', gap: 20, justifySelf: 'center' }} aria-label="Legal">
+              <Link to="/privacy" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Privacy Policy</Link>
+              <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
+              <a href="https://mail.google.com/mail/?view=cm&to=desklosupport@gmail.com" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
+            </nav>
+            <p style={{ fontSize: 12, color: '#8899aa', justifySelf: 'end' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
           </div>
-          <nav style={{ display: 'flex', gap: 20, justifySelf: 'center' }} aria-label="Legal">
-            <Link to="/privacy" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Privacy Policy</Link>
-            <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
-            <a href="https://mail.google.com/mail/?view=cm&to=desklosupport@gmail.com" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
-          </nav>
-          <p style={{ fontSize: 12, color: '#8899aa', justifySelf: 'end' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
+          <p style={{ fontSize: 12, color: '#8899aa', textAlign: 'center' }}>
+            Need help?{' '}
+            <a href="mailto:desklosupport@gmail.com" style={{ color: '#60a5fa', textDecoration: 'none' }}>desklosupport@gmail.com</a>
+          </p>
         </div>
       )}
     </footer>

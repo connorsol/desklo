@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bot, ArrowLeft, Loader2, Check, Sparkles, Mail, Lock, Trash2, Shield } from 'lucide-react';
+import { Bot, ArrowLeft, Loader2, Check, Sparkles, Mail, Lock, Trash2, Shield, Info } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 function useIsMobile() {
@@ -42,7 +42,6 @@ export default function Settings() {
   const [passwordSaved, setPasswordSaved] = useState(false);
   const [passwordError, setPasswordError] = useState('');
 
-  // 2FA state
   const [mfaEnabled, setMfaEnabled] = useState(false);
   const [mfaLoading, setMfaLoading] = useState(false);
   const [mfaStep, setMfaStep] = useState<'idle' | 'setup'>('idle');
@@ -75,7 +74,6 @@ export default function Settings() {
         setBrandColor(data.widget_color ?? '#2563eb');
       }
 
-      // Check MFA status
       const { data: factorsData } = await supabase.auth.mfa.listFactors();
       const verified = factorsData?.totp?.find((f: any) => f.status === 'verified');
       setMfaEnabled(!!verified);
@@ -164,14 +162,12 @@ export default function Settings() {
     try {
       const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });
       if (challengeError) throw challengeError;
-
       const { error: verifyError } = await supabase.auth.mfa.verify({
         factorId,
         challengeId: challengeData.id,
         code: mfaCode,
       });
       if (verifyError) throw verifyError;
-
       setMfaEnabled(true);
       setMfaStep('idle');
       setMfaCode('');
@@ -254,6 +250,13 @@ export default function Settings() {
     marginBottom: 16,
   };
 
+  const helperText = {
+    fontSize: 11,
+    color: '#8899aa',
+    marginTop: 5,
+    lineHeight: 1.5,
+  } as const;
+
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
 
@@ -281,34 +284,57 @@ export default function Settings() {
 
         {/* BUSINESS INFO */}
         <div style={card}>
-          <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 20 }}>Business information</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 8 }}>Business information</h2>
+          <p style={{ fontSize: 12, color: '#8899aa', marginBottom: 12, lineHeight: 1.6 }}>This is what your AI receptionist uses to answer customer questions. Keep it accurate and detailed — the more info you provide, the better your bot performs.</p>
+
+          <div style={{ display: 'flex', gap: 10, background: 'rgba(37,99,235,0.08)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 10, padding: '12px 14px', marginBottom: 20 }}>
+            <Info size={15} color="#60a5fa" style={{ flexShrink: 0, marginTop: 1 }} />
+            <p style={{ fontSize: 12, color: '#60a5fa', lineHeight: 1.6, margin: 0 }}>
+              💡 <strong>Tip:</strong> List every service you offer with its price, your exact hours for each day, and your full service area. If a customer asks something your bot doesn't have info on, it won't be able to answer accurately.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business name</label>
               <input value={businessName} onChange={(e) => setBusinessName(e.target.value)} style={inputStyle} />
             </div>
+
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Services offered</label>
-              <textarea value={services} onChange={(e) => setServices(e.target.value)} rows={3} style={{ ...inputStyle, resize: 'none' }} />
+              <textarea
+                value={services}
+                onChange={(e) => setServices(e.target.value)}
+                placeholder="List every service you offer. e.g.&#10;- Drain cleaning&#10;- Pipe repair and replacement&#10;- Water heater installation&#10;- Emergency plumbing&#10;- Sewer line inspection"
+                rows={5}
+                style={{ ...inputStyle, resize: 'none' }}
+              />
+              <p style={helperText}>List all services individually — your AI uses this to tell customers exactly what you offer.</p>
             </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business hours</label>
-                <input value={hours} onChange={(e) => setHours(e.target.value)} style={inputStyle} />
+                <input value={hours} onChange={(e) => setHours(e.target.value)} placeholder="e.g. Mon–Fri 8am–6pm, Sat 9am–2pm, Closed Sunday" style={inputStyle} />
+                <p style={helperText}>Include every day so customers always get accurate hours.</p>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Pricing info</label>
-                <input value={pricing} onChange={(e) => setPricing(e.target.value)} style={inputStyle} />
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Pricing</label>
+                <input value={pricing} onChange={(e) => setPricing(e.target.value)} placeholder="e.g. Drain cleaning $150, Water heater install $800–$1,200, Free estimates" style={inputStyle} />
+                <p style={helperText}>List pricing per service so your bot can give accurate quotes.</p>
               </div>
             </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>How to book / contact</label>
-                <input value={booking} onChange={(e) => setBooking(e.target.value)} style={inputStyle} />
+                <input value={booking} onChange={(e) => setBooking(e.target.value)} placeholder="e.g. Book through this chat, call 555-1234, or visit our website" style={inputStyle} />
+                <p style={helperText}>Let customers know how to reach you outside of this chat.</p>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Location</label>
-                <input value={location} onChange={(e) => setLocation(e.target.value)} style={inputStyle} />
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Location / service area</label>
+                <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Austin, TX — serving Travis and Williamson County" style={inputStyle} />
+                <p style={helperText}>Include your city and surrounding areas you serve.</p>
               </div>
             </div>
           </div>
@@ -322,6 +348,7 @@ export default function Settings() {
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Bot name</label>
                 <input value={botName} onChange={(e) => setBotName(e.target.value)} style={inputStyle} />
+                <p style={helperText}>Give your bot a friendly name like "Alex" or "Sarah".</p>
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 10 }}>Brand color</label>
@@ -436,13 +463,11 @@ export default function Settings() {
               </span>
             )}
           </div>
-
           <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 16, lineHeight: 1.6 }}>
             {mfaEnabled
               ? 'Your account is protected with two-factor authentication.'
               : 'Add an extra layer of security. Requires Google Authenticator or any TOTP app.'}
           </p>
-
           {mfaStep === 'setup' && qrCode && (
             <div style={{ marginBottom: 8 }}>
               <p style={{ fontSize: 12, color: '#cdd9e8', marginBottom: 12, lineHeight: 1.6 }}>
@@ -483,7 +508,6 @@ export default function Settings() {
               </div>
             </div>
           )}
-
           {mfaStep === 'idle' && (
             <button
               onClick={mfaEnabled ? handleDisableMfa : handleSetupMfa}
@@ -493,10 +517,7 @@ export default function Settings() {
                 background: mfaEnabled ? 'transparent' : '#2563eb',
                 border: mfaEnabled ? '0.5px solid #3a1e1e' : 'none',
                 color: mfaEnabled ? '#f87171' : '#fff',
-                fontSize: 13,
-                fontWeight: 500,
-                borderRadius: 10,
-                cursor: 'pointer',
+                fontSize: 13, fontWeight: 500, borderRadius: 10, cursor: 'pointer',
                 opacity: mfaLoading ? 0.5 : 1,
               }}
             >
@@ -512,7 +533,6 @@ export default function Settings() {
             <h2 style={{ fontSize: 13, fontWeight: 600, color: '#f87171' }}>Delete account</h2>
           </div>
           <p style={{ fontSize: 12, color: '#8899aa', marginBottom: 16 }}>Permanently delete your account and all business data. This cannot be undone.</p>
-
           {!showDeleteConfirm ? (
             <button
               onClick={() => setShowDeleteConfirm(true)}
