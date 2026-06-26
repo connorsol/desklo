@@ -239,7 +239,7 @@ export default function Onboarding() {
             <div>
               <h1 style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Customize your bot</h1>
               <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 32 }}>Give your AI receptionist a name and match it to your brand.</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr', gap: 24 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Bot name</label>
