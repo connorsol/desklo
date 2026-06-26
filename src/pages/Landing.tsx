@@ -203,7 +203,7 @@ function LiveDemo() {
 function HowItWorks() {
   const isMobile = useIsMobile();
   const steps = [
-    { num: '01', icon: UserPlus, title: 'Sign up', desc: 'Create your account in under 30 seconds. No credit card required to get started.' },
+    { num: '01', icon: UserPlus, title: 'Sign up', desc: 'Create your account in under 30 seconds and get your AI receptionist set up.' },
     { num: '02', icon: Settings, title: 'Train your bot in 5 minutes', desc: 'Tell us about your business, services, and hours. Our AI handles the rest.' },
     { num: '03', icon: Globe, title: 'Go live on your website', desc: 'Add a single line of code and your AI receptionist is ready to work immediately.' },
   ];
