@@ -15,6 +15,7 @@ import {
   Sparkles,
   DollarSign,
   UserCheck,
+  Star,
 } from 'lucide-react';
 
 function useIsMobile() {
@@ -145,6 +146,59 @@ function Stats() {
         </div>
       ))}
     </div>
+  );
+}
+
+function Testimonials() {
+  const isMobile = useIsMobile();
+  const testimonials = [
+    {
+      name: 'Mike R.',
+      business: 'Mike\'s Plumbing Co.',
+      location: 'Austin, TX',
+      text: 'I was losing customers every night because nobody was answering after 5pm. Desklo fixed that completely. It booked 3 jobs in the first week while I was asleep.',
+      stars: 5,
+    },
+    {
+      name: 'Sarah K.',
+      business: 'Bloom Hair Studio',
+      location: 'Denver, CO',
+      text: 'My clients love being able to book appointments at midnight. I\'ve had zero missed leads since installing Desklo. Honestly the best $99 I spend every month.',
+      stars: 5,
+    },
+    {
+      name: 'Dr. James T.',
+      business: 'Riverside Dental',
+      location: 'Phoenix, AZ',
+      text: 'Set it up in literally 2 minutes. The AI knows everything about our services and handles patient questions better than I expected. Highly recommend.',
+      stars: 5,
+    },
+
+  ];
+
+  return (
+    <section style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="testimonials-heading">
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Testimonials</p>
+        <h2 id="testimonials-heading" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 700, color: '#fff', marginBottom: 24 }}>Small businesses love Desklo</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 12 }}>
+          {testimonials.map((t) => (
+            <div key={t.name} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', gap: 2 }}>
+                {[...Array(t.stars)].map((_, i) => (
+                  <Star key={i} size={13} color="#fbbf24" fill="#fbbf24" aria-hidden="true" />
+                ))}
+              </div>
+              <p style={{ fontSize: 13, color: '#cdd9e8', lineHeight: 1.7, flex: 1 }}>"{t.text}"</p>
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{t.name}</p>
+                <p style={{ fontSize: 11, color: '#8899aa' }}>{t.business} · {t.location}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -344,11 +398,12 @@ export default function Landing() {
       <main id="main-content">
         <Hero />
         <Stats />
+        <Testimonials />
         <WhyUs />
         <LiveDemo />
         <HowItWorks />
-        <Features />
         <Pricing />
+        <Features />
       </main>
       <Footer />
     </div>
