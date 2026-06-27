@@ -114,6 +114,9 @@ function Hero() {
           Never Miss a<br />
           <span style={{ color: '#2563eb' }}>Lead Again</span>
         </h1>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 14px', borderRadius: 999, background: 'rgba(52,211,153,0.1)', border: '0.5px solid rgba(52,211,153,0.2)', fontSize: 12, color: '#34d399', marginBottom: 16 }}>
+          ✓ Join 100+ businesses using Desklo
+        </div>
         <p style={{ fontSize: isMobile ? 14 : 15, color: '#8899aa', maxWidth: 480, margin: '0 auto 32px', lineHeight: 1.7 }}>
           Desklo answers every customer question, captures leads, and books appointments — around the clock, so you don't have to.
         </p>
