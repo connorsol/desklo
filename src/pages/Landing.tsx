@@ -33,17 +33,8 @@ function SkipLink() {
     <a
       href="#main-content"
       style={{
-        position: 'absolute',
-        left: -9999,
-        top: 0,
-        background: '#2563eb',
-        color: '#fff',
-        padding: '12px 20px',
-        borderRadius: 8,
-        fontSize: 14,
-        fontWeight: 500,
-        textDecoration: 'none',
-        zIndex: 100,
+        position: 'absolute', left: -9999, top: 0, background: '#2563eb', color: '#fff',
+        padding: '12px 20px', borderRadius: 8, fontSize: 14, fontWeight: 500, textDecoration: 'none', zIndex: 100,
       }}
       onFocus={(e) => { e.currentTarget.style.left = '16px'; e.currentTarget.style.top = '16px'; }}
       onBlur={(e) => { e.currentTarget.style.left = '-9999px'; }}
@@ -56,7 +47,6 @@ function SkipLink() {
 function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useIsMobile();
-
   return (
     <nav style={{ background: 'rgba(10,10,15,0.95)', borderBottom: '0.5px solid #1e2a3a', position: 'sticky', top: 0, zIndex: 50 }} aria-label="Main navigation">
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 20px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -66,7 +56,6 @@ function Nav() {
           </div>
           <span style={{ fontSize: 15, fontWeight: 600, color: '#fff' }}>Desklo</span>
         </Link>
-
         {!isMobile && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <a href="#features" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Features</a>
@@ -75,21 +64,14 @@ function Nav() {
             <Link to="/onboarding" style={{ fontSize: 13, fontWeight: 500, color: '#fff', background: '#2563eb', padding: '6px 14px', borderRadius: 8, textDecoration: 'none' }}>Get Started</Link>
           </div>
         )}
-
         {isMobile && (
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', padding: 8 }}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileOpen}
-          >
+          <button onClick={() => setMobileOpen(!mobileOpen)} style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', padding: 8 }} aria-label={mobileOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileOpen}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
               {mobileOpen ? <path d="M5 5l10 10M15 5L5 15" /> : <path d="M3 6h14M3 10h14M3 14h14" />}
             </svg>
           </button>
         )}
       </div>
-
       {isMobile && mobileOpen && (
         <div style={{ borderTop: '0.5px solid #1e2a3a', background: '#0a0a0f', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
           <a href="#features" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Features</a>
@@ -155,30 +137,10 @@ function Stats() {
 function Testimonials() {
   const isMobile = useIsMobile();
   const testimonials = [
-    {
-      name: 'Mike R.',
-      business: 'Mike\'s Plumbing Co.',
-      location: 'Austin, TX',
-      text: 'I was losing customers every night because nobody was answering after 5pm. Desklo fixed that completely. It booked 3 jobs in the first week while I was asleep.',
-      stars: 5,
-    },
-    {
-      name: 'Sarah K.',
-      business: 'Bloom Hair Studio',
-      location: 'Denver, CO',
-      text: 'My clients love being able to book appointments at midnight. I\'ve had zero missed leads since installing Desklo. Honestly the best $99 I spend every month.',
-      stars: 5,
-    },
-    {
-      name: 'Dr. James T.',
-      business: 'Riverside Dental',
-      location: 'Phoenix, AZ',
-      text: 'Set it up in literally 2 minutes. The AI knows everything about our services and handles patient questions better than I expected. Highly recommend.',
-      stars: 5,
-    },
-
+    { name: 'Mike R.', business: "Mike's Plumbing Co.", location: 'Austin, TX', text: 'I was losing customers every night because nobody was answering after 5pm. Desklo fixed that completely. It booked 3 jobs in the first week while I was asleep.', stars: 5 },
+    { name: 'Sarah K.', business: 'Bloom Hair Studio', location: 'Denver, CO', text: "My clients love being able to book appointments at midnight. I've had zero missed leads since installing Desklo. Honestly the best $99 I spend every month.", stars: 5 },
+    { name: 'Dr. James T.', business: 'Riverside Dental', location: 'Phoenix, AZ', text: 'Set it up in literally 2 minutes. The AI knows everything about our services and handles patient questions better than I expected. Highly recommend.', stars: 5 },
   ];
-
   return (
     <section style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="testimonials-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -188,9 +150,7 @@ function Testimonials() {
           {testimonials.map((t) => (
             <div key={t.name} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div style={{ display: 'flex', gap: 2 }}>
-                {[...Array(t.stars)].map((_, i) => (
-                  <Star key={i} size={13} color="#fbbf24" fill="#fbbf24" aria-hidden="true" />
-                ))}
+                {[...Array(t.stars)].map((_, i) => (<Star key={i} size={13} color="#fbbf24" fill="#fbbf24" aria-hidden="true" />))}
               </div>
               <p style={{ fontSize: 13, color: '#cdd9e8', lineHeight: 1.7, flex: 1 }}>"{t.text}"</p>
               <div>
@@ -228,6 +188,39 @@ function WhyUs() {
               <p style={{ fontSize: 12, color: '#8899aa', lineHeight: 1.6 }}>{b.desc}</p>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function EmailPreview() {
+  const isMobile = useIsMobile();
+  return (
+    <section style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="email-preview-heading">
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>What you receive</p>
+        <h2 id="email-preview-heading" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Every lead lands straight in your inbox</h2>
+        <p style={{ fontSize: 14, color: '#8899aa', marginBottom: 32, maxWidth: 520 }}>When a customer books through your AI receptionist, you instantly receive a full contact card with everything you need to follow up.</p>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 40, alignItems: 'center' }}>
+          <div>
+            <img src="/appointment-email.png" alt="Appointment email example" style={{ width: '100%', borderRadius: 16, border: '0.5px solid #1e2a3a', boxShadow: '0 24px 48px rgba(0,0,0,0.4)' }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {[
+              { icon: '👤', title: 'Full customer details', desc: 'Name, phone, email, and home address — everything you need to confirm the appointment.' },
+              { icon: '📅', title: 'Service and timing', desc: 'Exactly what service they want and their preferred date and time.' },
+              { icon: '⚡', title: 'Instant delivery', desc: 'The email hits your inbox the second they confirm — day or night, even while you sleep.' },
+            ].map(item => (
+              <div key={item.title} style={{ display: 'flex', gap: 14 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>{item.icon}</div>
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{item.title}</p>
+                  <p style={{ fontSize: 12, color: '#8899aa', lineHeight: 1.6 }}>{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -361,10 +354,7 @@ function Footer() {
             <Link to="/terms" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Terms of Service</Link>
             <a href="https://mail.google.com/mail/?view=cm&to=desklosupport@gmail.com" target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#8899aa', textDecoration: 'none' }}>Contact</a>
           </nav>
-          <p style={{ fontSize: 12, color: '#8899aa' }}>
-            Need help?{' '}
-            <a href="mailto:desklosupport@gmail.com" style={{ color: '#60a5fa', textDecoration: 'none' }}>desklosupport@gmail.com</a>
-          </p>
+          <p style={{ fontSize: 12, color: '#8899aa' }}>Need help? <a href="mailto:desklosupport@gmail.com" style={{ color: '#60a5fa', textDecoration: 'none' }}>desklosupport@gmail.com</a></p>
           <p style={{ fontSize: 12, color: '#8899aa' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
         </div>
       ) : (
@@ -383,10 +373,7 @@ function Footer() {
             </nav>
             <p style={{ fontSize: 12, color: '#8899aa', justifySelf: 'end' }}>© {new Date().getFullYear()} Desklo. All rights reserved.</p>
           </div>
-          <p style={{ fontSize: 12, color: '#8899aa', textAlign: 'center' }}>
-            Need help?{' '}
-            <a href="mailto:desklosupport@gmail.com" style={{ color: '#60a5fa', textDecoration: 'none' }}>desklosupport@gmail.com</a>
-          </p>
+          <p style={{ fontSize: 12, color: '#8899aa', textAlign: 'center' }}>Need help? <a href="mailto:desklosupport@gmail.com" style={{ color: '#60a5fa', textDecoration: 'none' }}>desklosupport@gmail.com</a></p>
         </div>
       )}
     </footer>
@@ -403,6 +390,7 @@ export default function Landing() {
         <Stats />
         <Testimonials />
         <WhyUs />
+        <EmailPreview />
         <LiveDemo />
         <HowItWorks />
         <Pricing />
