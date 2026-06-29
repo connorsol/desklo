@@ -156,20 +156,19 @@ function FakeWebsite({ biz, onBack, messages, input, setInput, send, loading, me
       <style>{`@keyframes desklo-fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
 
       {/* TOP CONVERSION BANNER */}
-      <div style={{ background: 'linear-gradient(135deg, #0d1117, #0d1827)', borderBottom: '1px solid #1e3a5f', padding: '20px 24px', textAlign: 'center' }}>
+      <div style={{ background: 'linear-gradient(135deg, #0d1117, #0d1827)', borderBottom: '1px solid #1e3a5f', padding: '16px 20px', textAlign: 'center' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
-          <p style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 6 }}>
+          <p style={{ fontSize: window.innerWidth < 500 ? 16 : 22, fontWeight: 700, color: '#fff', marginBottom: 6 }}>
             🎉 Your personalized AI receptionist is ready.
           </p>
-          <p style={{ fontSize: 14, color: '#8899aa', marginBottom: 16, lineHeight: 1.6 }}>
-            Try asking it questions just like one of your customers would.<br />
-            Everything below is exactly how it will appear on your website.
+          <p style={{ fontSize: window.innerWidth < 500 ? 12 : 14, color: '#8899aa', marginBottom: 14, lineHeight: 1.6 }}>
+            Try asking it questions just like one of your customers would.{window.innerWidth >= 500 && <><br />Everything below is exactly how it will appear on your website.</>}
           </p>
           <Link
             to="/onboarding"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#2563eb', color: '#fff', fontSize: 14, fontWeight: 600, padding: '12px 28px', borderRadius: 10, textDecoration: 'none', boxShadow: '0 4px 20px rgba(37,99,235,0.4)' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#2563eb', color: '#fff', fontSize: window.innerWidth < 500 ? 13 : 14, fontWeight: 600, padding: window.innerWidth < 500 ? '10px 20px' : '12px 28px', borderRadius: 10, textDecoration: 'none', boxShadow: '0 4px 20px rgba(37,99,235,0.4)' }}
           >
-            Create My Account <ArrowRight size={16} />
+            Create My Account <ArrowRight size={15} />
           </Link>
         </div>
       </div>
