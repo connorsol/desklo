@@ -337,6 +337,98 @@ function Pricing() {
   );
 }
 
+function FAQ() {
+  const isMobile = useIsMobile();
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const faqs = [
+    {
+      q: 'Will it sound robotic to my customers?',
+      a: "No — Desklo is trained on your business's actual services, hours, and pricing so it answers naturally in conversation, not with scripted responses. Try the live demo above and judge for yourself.",
+    },
+    {
+      q: 'What if it tells a customer something wrong?',
+      a: "Desklo only answers using the information you give it. It never makes up prices, services, or availability — if it doesn't know something, it tells the customer the team will follow up, instead of guessing.",
+    },
+    {
+      q: 'Can I edit what it says?',
+      a: 'Yes. You control your services, hours, pricing, and tone from your dashboard at any time. Changes take effect immediately, no developer needed.',
+    },
+    {
+      q: 'Do I need to know how to code?',
+      a: 'Not at all. Setup takes about 5 minutes — tell us about your business and we handle the rest. Adding the widget to your website is one line of code, or we can do it for you.',
+    },
+    {
+      q: 'Is there a contract?',
+      a: 'No contract. Desklo is $99/month, cancel anytime from your dashboard with no fees or hoops to jump through.',
+    },
+    {
+      q: 'Does it work with my website builder?',
+      a: 'Yes — Desklo works with Wix, WordPress, Squarespace, Shopify, and any custom site. We provide step-by-step install guides for each platform.',
+    },
+  ];
+
+  return (
+    <section style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="faq-heading">
+      <div style={{ maxWidth: 700, margin: '0 auto' }}>
+        <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'center' }}>FAQ</p>
+        <h2 id="faq-heading" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 700, color: '#fff', marginBottom: 24, textAlign: 'center' }}>Common questions</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {faqs.map((item, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <div key={item.q} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, overflow: 'hidden' }}>
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  aria-expanded={isOpen}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    padding: '16px 18px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{item.q}</span>
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      flexShrink: 0,
+                      width: 20,
+                      height: 20,
+                      borderRadius: 6,
+                      background: 'rgba(37,99,235,0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 13,
+                      color: '#60a5fa',
+                      transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.15s ease',
+                    }}
+                  >
+                    +
+                  </span>
+                </button>
+                {isOpen && (
+                  <div style={{ padding: '0 18px 16px' }}>
+                    <p style={{ fontSize: 12, color: '#8899aa', lineHeight: 1.7 }}>{item.a}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   const isMobile = useIsMobile();
   return (
@@ -394,6 +486,7 @@ export default function Landing() {
         <LiveDemo />
         <HowItWorks />
         <Pricing />
+        <FAQ />
         <Features />
       </main>
       <Footer />
