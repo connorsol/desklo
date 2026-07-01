@@ -49,7 +49,7 @@ function Nav() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <a href="#pricing" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Pricing</a>
             <Link to="/login" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Login</Link>
-            <Link to="/onboarding" style={{ fontSize: 13, fontWeight: 500, color: '#fff', background: '#2563eb', padding: '6px 14px', borderRadius: 8, textDecoration: 'none' }}>Get Started</Link>
+            <Link to="/onboarding" style={{ fontSize: 13, fontWeight: 500, color: '#fff', background: '#2563eb', padding: '6px 14px', borderRadius: 8, textDecoration: 'none' }}>Start Free Trial</Link>
           </div>
         )}
         {isMobile && (
@@ -64,7 +64,7 @@ function Nav() {
         <div style={{ borderTop: '0.5px solid #1e2a3a', background: '#0a0a0f', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
           <a href="#pricing" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Pricing</a>
           <Link to="/login" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Login</Link>
-          <Link to="/onboarding" onClick={() => setMobileOpen(false)} style={{ display: 'block', textAlign: 'center', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 14, fontWeight: 500, borderRadius: 8, textDecoration: 'none' }}>Get Started</Link>
+          <Link to="/onboarding" onClick={() => setMobileOpen(false)} style={{ display: 'block', textAlign: 'center', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 14, fontWeight: 500, borderRadius: 8, textDecoration: 'none' }}>Start Free Trial</Link>
         </div>
       )}
     </nav>
@@ -90,12 +90,13 @@ function Hero() {
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link to="/onboarding" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
-            Get Started <ArrowRight size={16} aria-hidden="true" />
+            Start Free 7-Day Trial <ArrowRight size={16} aria-hidden="true" />
           </Link>
           <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', background: 'transparent', color: '#cdd9e8', fontSize: 13, border: '0.5px solid #1e2a3a', borderRadius: 10, textDecoration: 'none' }}>
             Try Live Demo
           </Link>
         </div>
+        <p style={{ fontSize: 12, color: '#8899aa', marginTop: 12 }}>7 days free, then $99/mo · No contract · Cancel anytime</p>
       </div>
     </section>
   );
@@ -289,9 +290,9 @@ function Pricing() {
             ))}
           </ul>
           <Link to="/onboarding" style={{ display: 'block', textAlign: 'center', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
-            Get Started
+            Start Free 7-Day Trial
           </Link>
-          <p style={{ fontSize: 11, color: '#8899aa', textAlign: 'center', marginTop: 12 }}>No contract · Cancel anytime</p>
+          <p style={{ fontSize: 11, color: '#8899aa', textAlign: 'center', marginTop: 12 }}>7 days free, then $99/mo · No contract · Cancel anytime</p>
         </div>
       </div>
     </section>
@@ -306,7 +307,7 @@ function FAQ() {
     { q: 'What if it tells a customer something wrong?', a: "Desklo only answers using the information you give it. It never makes up prices, services, or availability — if it doesn't know something, it tells the customer the team will follow up, instead of guessing." },
     { q: 'Can I edit what it says?', a: 'Yes. You control your services, hours, pricing, and tone from your dashboard at any time. Changes take effect immediately, no developer needed.' },
     { q: 'Do I need to know how to code?', a: 'Not at all. Setup takes about 5 minutes — tell us about your business and we handle the rest. Adding the widget to your website is one line of code, or we can do it for you.' },
-    { q: 'Is there a contract?', a: 'No contract. Desklo is $99/month, cancel anytime from your dashboard with no fees or hoops to jump through.' },
+    { q: 'Is there a contract?', a: 'No contract. Start with a 7-day free trial, then it\'s $99/month — cancel anytime from your dashboard with no fees or hoops to jump through.' },
     { q: 'Does it work with my website builder?', a: 'Yes — Desklo works with Wix, WordPress, Squarespace, Shopify, and any custom site. We provide step-by-step install guides for each platform.' },
   ];
   return (

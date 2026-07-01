@@ -325,7 +325,7 @@ export default function Onboarding() {
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 500, cursor: 'pointer', opacity: (!canNext() || saving) ? 0.4 : 1 }}
             >
               {saving && <Loader2 size={14} color="#fff" />}
-              {step === 3 ? 'Continue to Payment' : 'Continue'}
+              {step === 3 ? 'Start Free Trial' : 'Continue'}
               <ArrowRight size={15} />
             </button>
           </div>
