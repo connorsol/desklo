@@ -6,15 +6,10 @@ import {
   Check,
   Zap,
   Clock,
-  UserPlus,
-  MessageSquare,
-  BarChart3,
-  Moon,
-  Settings,
-  Globe,
   Sparkles,
   DollarSign,
   UserCheck,
+  Settings,
   Star,
 } from 'lucide-react';
 
@@ -30,15 +25,9 @@ function useIsMobile() {
 
 function SkipLink() {
   return (
-    <a
-      href="#main-content"
-      style={{
-        position: 'absolute', left: -9999, top: 0, background: '#2563eb', color: '#fff',
-        padding: '12px 20px', borderRadius: 8, fontSize: 14, fontWeight: 500, textDecoration: 'none', zIndex: 100,
-      }}
+    <a href="#main-content" style={{ position: 'absolute', left: -9999, top: 0, background: '#2563eb', color: '#fff', padding: '12px 20px', borderRadius: 8, fontSize: 14, fontWeight: 500, textDecoration: 'none', zIndex: 100 }}
       onFocus={(e) => { e.currentTarget.style.left = '16px'; e.currentTarget.style.top = '16px'; }}
-      onBlur={(e) => { e.currentTarget.style.left = '-9999px'; }}
-    >
+      onBlur={(e) => { e.currentTarget.style.left = '-9999px'; }}>
       Skip to main content
     </a>
   );
@@ -58,7 +47,6 @@ function Nav() {
         </Link>
         {!isMobile && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <a href="#features" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Features</a>
             <a href="#pricing" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Pricing</a>
             <Link to="/login" style={{ fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>Login</Link>
             <Link to="/onboarding" style={{ fontSize: 13, fontWeight: 500, color: '#fff', background: '#2563eb', padding: '6px 14px', borderRadius: 8, textDecoration: 'none' }}>Get Started</Link>
@@ -74,7 +62,6 @@ function Nav() {
       </div>
       {isMobile && mobileOpen && (
         <div style={{ borderTop: '0.5px solid #1e2a3a', background: '#0a0a0f', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <a href="#features" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Features</a>
           <a href="#pricing" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Pricing</a>
           <Link to="/login" onClick={() => setMobileOpen(false)} style={{ fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>Login</Link>
           <Link to="/onboarding" onClick={() => setMobileOpen(false)} style={{ display: 'block', textAlign: 'center', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 14, fontWeight: 500, borderRadius: 8, textDecoration: 'none' }}>Get Started</Link>
@@ -93,8 +80,7 @@ function Hero() {
           <Zap size={11} aria-hidden="true" /> 24/7 AI Receptionist
         </div>
         <h1 style={{ fontSize: isMobile ? 36 : 'clamp(36px, 6vw, 56px)', fontWeight: 700, lineHeight: 1.1, color: '#fff', marginBottom: 16 }}>
-          Never Miss a<br />
-          <span style={{ color: '#2563eb' }}>Lead Again</span>
+          Never Miss a<br /><span style={{ color: '#2563eb' }}>Lead Again</span>
         </h1>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 14px', borderRadius: 999, background: 'rgba(52,211,153,0.1)', border: '0.5px solid rgba(52,211,153,0.2)', fontSize: 12, color: '#34d399', marginBottom: 16 }}>
           ✓ Join 100+ businesses using Desklo
@@ -134,36 +120,43 @@ function Stats() {
   );
 }
 
+function LiveDemo() {
+  const isMobile = useIsMobile();
+  return (
+    <section style={{ padding: isMobile ? '0 16px 40px' : '0 24px 48px' }} aria-labelledby="live-demo-heading">
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ background: '#0d1827', border: '0.5px solid #1e3a5f', borderRadius: 16, padding: isMobile ? '28px 20px' : '40px 32px', textAlign: 'center' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 999, background: 'rgba(37,99,235,0.15)', border: '0.5px solid rgba(37,99,235,0.3)', fontSize: 11, color: '#60a5fa', marginBottom: 16 }}>
+            <Sparkles size={11} aria-hidden="true" /> No signup required
+          </div>
+          <h2 id="live-demo-heading" style={{ fontSize: isMobile ? 20 : 22, fontWeight: 700, color: '#fff', marginBottom: 10 }}>See it working for your business</h2>
+          <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 24, maxWidth: 420, margin: '0 auto 24px' }}>
+            Enter your business name, services, and hours. Your personalized AI receptionist is live in 30 seconds.
+          </p>
+          <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 22px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
+            Try it free — no signup needed <ArrowRight size={16} aria-hidden="true" />
+          </Link>
+          <p style={{ fontSize: 11, color: '#8899aa', marginTop: 12 }}>Works for any business type</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function CostOfInaction() {
   const isMobile = useIsMobile();
   const stats = [
-    {
-      num: '62%',
-      label: 'of visitors leave and never return',
-      desc: "When a website visitor can't get an instant answer to their question, more than half leave and go to a competitor who responds immediately.",
-    },
-    {
-      num: '$200+',
-      label: 'lost per unanswered message',
-      desc: 'The average unanswered website inquiry costs a small business over $200 in lost revenue — and most businesses miss dozens every month.',
-    },
-    {
-      num: '$75K',
-      label: 'lost per year after hours',
-      desc: 'Small businesses lose an estimated $75,000+ annually to website visitors who came after hours, got no response, and moved on.',
-    },
+    { num: '62%', label: 'of visitors leave and never return', desc: "When a website visitor can't get an instant answer to their question, more than half leave and go to a competitor who responds immediately." },
+    { num: '$200+', label: 'lost per unanswered message', desc: 'The average unanswered website inquiry costs a small business over $200 in lost revenue — and most businesses miss dozens every month.' },
+    { num: '$75K', label: 'lost per year after hours', desc: 'Small businesses lose an estimated $75,000+ annually to website visitors who came after hours, got no response, and moved on.' },
   ];
   return (
     <section style={{ padding: isMobile ? '36px 16px' : '48px 24px', background: '#0a0a0f' }} aria-labelledby="cost-heading">
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <p style={{ fontSize: 11, color: '#ef4444', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>The cost of doing nothing</p>
-          <h2 id="cost-heading" style={{ fontSize: isMobile ? 22 : 28, fontWeight: 700, color: '#fff', marginBottom: 10 }}>
-            Right now, your website is losing you money
-          </h2>
-          <p style={{ fontSize: isMobile ? 13 : 14, color: '#8899aa', maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>
-            Every hour your website sits without a live chat, potential customers are leaving and going to competitors who respond instantly.
-          </p>
+          <h2 id="cost-heading" style={{ fontSize: isMobile ? 22 : 28, fontWeight: 700, color: '#fff', marginBottom: 10 }}>Right now, your website is losing you money</h2>
+          <p style={{ fontSize: isMobile ? 13 : 14, color: '#8899aa', maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>Every hour your website sits without a live chat, potential customers are leaving and going to competitors who respond instantly.</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 16 }}>
           {stats.map((s) => (
@@ -175,7 +168,7 @@ function CostOfInaction() {
           ))}
         </div>
         <div style={{ textAlign: 'center', marginTop: 28 }}>
-          <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 24px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
+          <Link to="/onboarding" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 24px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
             Stop losing customers tonight <ArrowRight size={15} aria-hidden="true" />
           </Link>
         </div>
@@ -277,89 +270,6 @@ function EmailPreview() {
   );
 }
 
-function LiveDemo() {
-  const isMobile = useIsMobile();
-  return (
-    <section style={{ padding: isMobile ? '0 16px 40px' : '0 24px 48px' }} aria-labelledby="live-demo-heading">
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ background: '#0d1827', border: '0.5px solid #1e3a5f', borderRadius: 16, padding: isMobile ? '28px 20px' : '40px 32px', textAlign: 'center' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 999, background: 'rgba(37,99,235,0.15)', border: '0.5px solid rgba(37,99,235,0.3)', fontSize: 11, color: '#60a5fa', marginBottom: 16 }}>
-            <Sparkles size={11} aria-hidden="true" /> No signup required
-          </div>
-          <h2 id="live-demo-heading" style={{ fontSize: isMobile ? 20 : 22, fontWeight: 700, color: '#fff', marginBottom: 10 }}>See it working for your business</h2>
-          <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 24, maxWidth: 420, margin: '0 auto 24px' }}>
-            Enter your business name, services, and hours. Your personalized AI receptionist is live in 30 seconds.
-          </p>
-          <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 22px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
-            Try it free — no signup needed <ArrowRight size={16} aria-hidden="true" />
-          </Link>
-          <p style={{ fontSize: 11, color: '#8899aa', marginTop: 12 }}>Works for any business type</p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function HowItWorks() {
-  const isMobile = useIsMobile();
-  const steps = [
-    { num: '01', icon: UserPlus, title: 'Sign up', desc: 'Create your account in under 30 seconds and get your AI receptionist set up.' },
-    { num: '02', icon: Settings, title: 'Train your bot in 5 minutes', desc: 'Tell us about your business, services, and hours. Our AI handles the rest.' },
-    { num: '03', icon: Globe, title: 'Go live on your website', desc: 'Add a single line of code and your AI receptionist is ready to work immediately.' },
-  ];
-  return (
-    <section id="how-it-works" style={{ padding: isMobile ? '36px 16px' : '48px 24px', background: '#0d1117' }} aria-labelledby="how-it-works-heading">
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>How it works</p>
-        <h2 id="how-it-works-heading" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 700, color: '#fff', marginBottom: 24 }}>Live in 3 simple steps</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
-          {steps.map((s) => (
-            <div key={s.num} style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 20 }}>
-              <span style={{ fontSize: 11, color: '#2563eb', fontFamily: 'monospace', display: 'block', marginBottom: 10 }} aria-hidden="true">{s.num}</span>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-                <s.icon size={16} color="#60a5fa" aria-hidden="true" />
-              </div>
-              <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 6 }}>{s.title}</h3>
-              <p style={{ fontSize: 12, color: '#8899aa', lineHeight: 1.6 }}>{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Features() {
-  const isMobile = useIsMobile();
-  const features = [
-    { icon: Clock, title: '24/7 availability', desc: 'Every visitor gets an instant response, day or night.' },
-    { icon: UserPlus, title: 'Lead capture', desc: 'Automatically collect names, emails, and phone numbers.' },
-    { icon: MessageSquare, title: 'Chat widget', desc: 'Embed a professional chat widget on your site in minutes.' },
-    { icon: BarChart3, title: 'Monthly ROI reports', desc: 'See exactly how many leads your AI generates each month.' },
-    { icon: Moon, title: 'After-hours coverage', desc: 'Capture leads while you sleep — no missed inquiries.' },
-    { icon: Settings, title: 'Done-for-you setup', desc: "We handle everything so you don't lift a finger." },
-  ];
-  return (
-    <section id="features" style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="features-heading">
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <p style={{ fontSize: 11, color: '#2563eb', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Features</p>
-        <h2 id="features-heading" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 700, color: '#fff', marginBottom: 24 }}>Everything you need to capture leads</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-          {features.map((f) => (
-            <div key={f.title} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 16 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(37,99,235,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-                <f.icon size={16} color="#60a5fa" aria-hidden="true" />
-              </div>
-              <h3 style={{ fontSize: 12, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{f.title}</h3>
-              <p style={{ fontSize: 11, color: '#8899aa', lineHeight: 1.6 }}>{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Pricing() {
   const isMobile = useIsMobile();
   return (
@@ -381,6 +291,7 @@ function Pricing() {
           <Link to="/onboarding" style={{ display: 'block', textAlign: 'center', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
             Get Started
           </Link>
+          <p style={{ fontSize: 11, color: '#8899aa', textAlign: 'center', marginTop: 12 }}>No contract · Cancel anytime</p>
         </div>
       </div>
     </section>
@@ -478,15 +389,13 @@ export default function Landing() {
       <main id="main-content">
         <Hero />
         <Stats />
+        <LiveDemo />
         <CostOfInaction />
         <Testimonials />
         <WhyUs />
         <EmailPreview />
-        <LiveDemo />
-        <HowItWorks />
         <Pricing />
         <FAQ />
-        <Features />
       </main>
       <Footer />
     </div>
