@@ -77,7 +77,7 @@ function Hero() {
     <section style={{ padding: isMobile ? '56px 20px 40px' : '80px 24px 60px', textAlign: 'center' }} aria-label="Introduction">
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 999, background: 'rgba(37,99,235,0.15)', border: '0.5px solid rgba(37,99,235,0.3)', fontSize: 11, color: '#60a5fa', marginBottom: 24 }}>
-          <Zap size={11} aria-hidden="true" /> 24/7 AI Receptionist
+          <Zap size={11} aria-hidden="true" /> AI Chat Widget for Your Website
         </div>
         <h1 style={{ fontSize: isMobile ? 36 : 'clamp(36px, 6vw, 56px)', fontWeight: 700, lineHeight: 1.1, color: '#fff', marginBottom: 16 }}>
           Never Miss a<br /><span style={{ color: '#2563eb' }}>Lead Again</span>
@@ -85,8 +85,8 @@ function Hero() {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 14px', borderRadius: 999, background: 'rgba(52,211,153,0.1)', border: '0.5px solid rgba(52,211,153,0.2)', fontSize: 12, color: '#34d399', marginBottom: 16 }}>
           ✓ Join 100+ businesses using Desklo
         </div>
-        <p style={{ fontSize: isMobile ? 14 : 15, color: '#8899aa', maxWidth: 480, margin: '0 auto 32px', lineHeight: 1.7 }}>
-          Desklo answers every customer question, captures leads, and books appointments — around the clock, so you don't have to.
+        <p style={{ fontSize: isMobile ? 14 : 15, color: '#8899aa', maxWidth: 500, margin: '0 auto 32px', lineHeight: 1.7 }}>
+          Desklo is an AI receptionist that lives on your website and chats with visitors 24/7 — answering questions, capturing leads, and booking appointments automatically. From "what are your hours?" to "can I book Tuesday?" — it handles it all while you sleep.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link to="/onboarding" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
