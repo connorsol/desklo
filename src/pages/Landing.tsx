@@ -134,6 +134,56 @@ function Stats() {
   );
 }
 
+function CostOfInaction() {
+  const isMobile = useIsMobile();
+  const stats = [
+    {
+      num: '62%',
+      label: 'of visitors leave and never return',
+      desc: "When a website visitor can't get an instant answer to their question, more than half leave and go to a competitor who responds immediately.",
+    },
+    {
+      num: '$200+',
+      label: 'lost per unanswered message',
+      desc: 'The average unanswered website inquiry costs a small business over $200 in lost revenue — and most businesses miss dozens every month.',
+    },
+    {
+      num: '$75K',
+      label: 'lost per year after hours',
+      desc: 'Small businesses lose an estimated $75,000+ annually to website visitors who came after hours, got no response, and moved on.',
+    },
+  ];
+  return (
+    <section style={{ padding: isMobile ? '36px 16px' : '48px 24px', background: '#0a0a0f' }} aria-labelledby="cost-heading">
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <p style={{ fontSize: 11, color: '#ef4444', fontWeight: 600, marginBottom: 8, textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>The cost of doing nothing</p>
+          <h2 id="cost-heading" style={{ fontSize: isMobile ? 22 : 28, fontWeight: 700, color: '#fff', marginBottom: 10 }}>
+            Right now, your website is losing you money
+          </h2>
+          <p style={{ fontSize: isMobile ? 13 : 14, color: '#8899aa', maxWidth: 520, margin: '0 auto', lineHeight: 1.7 }}>
+            Every hour your website sits without a live chat, potential customers are leaving and going to competitors who respond instantly.
+          </p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 16 }}>
+          {stats.map((s) => (
+            <div key={s.num} style={{ background: 'rgba(239,68,68,0.04)', border: '0.5px solid rgba(239,68,68,0.2)', borderRadius: 14, padding: 24, textAlign: 'center' }}>
+              <div style={{ fontSize: isMobile ? 36 : 44, fontWeight: 800, color: '#ef4444', marginBottom: 6, lineHeight: 1 }}>{s.num}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 10 }}>{s.label}</div>
+              <p style={{ fontSize: 12, color: '#8899aa', lineHeight: 1.6 }}>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div style={{ textAlign: 'center', marginTop: 28 }}>
+          <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 24px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 10, textDecoration: 'none' }}>
+            Stop losing customers tonight <ArrowRight size={15} aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Testimonials() {
   const isMobile = useIsMobile();
   const testimonials = [
@@ -340,34 +390,14 @@ function Pricing() {
 function FAQ() {
   const isMobile = useIsMobile();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-
   const faqs = [
-    {
-      q: 'Will it sound robotic to my customers?',
-      a: "No — Desklo is trained on your business's actual services, hours, and pricing so it answers naturally in conversation, not with scripted responses. Try the live demo above and judge for yourself.",
-    },
-    {
-      q: 'What if it tells a customer something wrong?',
-      a: "Desklo only answers using the information you give it. It never makes up prices, services, or availability — if it doesn't know something, it tells the customer the team will follow up, instead of guessing.",
-    },
-    {
-      q: 'Can I edit what it says?',
-      a: 'Yes. You control your services, hours, pricing, and tone from your dashboard at any time. Changes take effect immediately, no developer needed.',
-    },
-    {
-      q: 'Do I need to know how to code?',
-      a: 'Not at all. Setup takes about 5 minutes — tell us about your business and we handle the rest. Adding the widget to your website is one line of code, or we can do it for you.',
-    },
-    {
-      q: 'Is there a contract?',
-      a: 'No contract. Desklo is $99/month, cancel anytime from your dashboard with no fees or hoops to jump through.',
-    },
-    {
-      q: 'Does it work with my website builder?',
-      a: 'Yes — Desklo works with Wix, WordPress, Squarespace, Shopify, and any custom site. We provide step-by-step install guides for each platform.',
-    },
+    { q: 'Will it sound robotic to my customers?', a: "No — Desklo is trained on your business's actual services, hours, and pricing so it answers naturally in conversation, not with scripted responses. Try the live demo above and judge for yourself." },
+    { q: 'What if it tells a customer something wrong?', a: "Desklo only answers using the information you give it. It never makes up prices, services, or availability — if it doesn't know something, it tells the customer the team will follow up, instead of guessing." },
+    { q: 'Can I edit what it says?', a: 'Yes. You control your services, hours, pricing, and tone from your dashboard at any time. Changes take effect immediately, no developer needed.' },
+    { q: 'Do I need to know how to code?', a: 'Not at all. Setup takes about 5 minutes — tell us about your business and we handle the rest. Adding the widget to your website is one line of code, or we can do it for you.' },
+    { q: 'Is there a contract?', a: 'No contract. Desklo is $99/month, cancel anytime from your dashboard with no fees or hoops to jump through.' },
+    { q: 'Does it work with my website builder?', a: 'Yes — Desklo works with Wix, WordPress, Squarespace, Shopify, and any custom site. We provide step-by-step install guides for each platform.' },
   ];
-
   return (
     <section style={{ padding: isMobile ? '36px 16px' : '48px 24px' }} aria-labelledby="faq-heading">
       <div style={{ maxWidth: 700, margin: '0 auto' }}>
@@ -378,42 +408,10 @@ function FAQ() {
             const isOpen = openIndex === i;
             return (
               <div key={item.q} style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, overflow: 'hidden' }}>
-                <button
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
-                  aria-expanded={isOpen}
-                  style={{
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 12,
-                    padding: '16px 18px',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                  }}
-                >
+                <button onClick={() => setOpenIndex(isOpen ? null : i)} aria-expanded={isOpen}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '16px 18px', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' as const }}>
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{item.q}</span>
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      flexShrink: 0,
-                      width: 20,
-                      height: 20,
-                      borderRadius: 6,
-                      background: 'rgba(37,99,235,0.15)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 13,
-                      color: '#60a5fa',
-                      transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
-                      transition: 'transform 0.15s ease',
-                    }}
-                  >
-                    +
-                  </span>
+                  <span aria-hidden="true" style={{ flexShrink: 0, width: 20, height: 20, borderRadius: 6, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: '#60a5fa', transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 0.15s ease' }}>+</span>
                 </button>
                 {isOpen && (
                   <div style={{ padding: '0 18px 16px' }}>
@@ -480,6 +478,7 @@ export default function Landing() {
       <main id="main-content">
         <Hero />
         <Stats />
+        <CostOfInaction />
         <Testimonials />
         <WhyUs />
         <EmailPreview />
