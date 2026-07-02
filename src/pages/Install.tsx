@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Bot, ArrowLeft, Copy, Check, ExternalLink, X, ZoomIn } from 'lucide-react';
+import { ArrowLeft, Copy, Check, ExternalLink, X, ZoomIn } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 const platforms = [
@@ -64,7 +64,18 @@ const steps: Record<string, { title: string; description: string; highlight?: st
   ],
 };
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 export default function Install() {
+  const isMobile = useIsMobile();
   const [activePlatform, setActivePlatform] = useState('wix');
   const [copied, setCopied] = useState(false);
   const [businessId, setBusinessId] = useState<string | null>(null);
@@ -95,7 +106,7 @@ export default function Install() {
   const currentImage = activePlatform === 'wix' ? wixStepImages[activeStep] : null;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
+    <div style={{ minHeight: '100vh', background: '#0A0A0A' }}>
 
       {/* LIGHTBOX */}
       {lightboxOpen && currentImage && (
@@ -105,7 +116,7 @@ export default function Install() {
         >
           <button
             onClick={() => setLightboxOpen(false)}
-            style={{ position: 'absolute', top: 20, right: 20, background: '#1e2a3a', border: 'none', borderRadius: 8, padding: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ position: 'absolute', top: 20, right: 20, background: '#242424', border: 'none', borderRadius: 8, padding: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
             <X size={20} color="#fff" />
           </button>
@@ -119,48 +130,48 @@ export default function Install() {
       )}
 
       {/* HEADER */}
-      <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 24px', position: 'sticky', top: 0, zIndex: 40 }}>
+      <header style={{ height: 56, borderBottom: '0.5px solid #242424', background: 'rgba(10,10,10,0.85)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', padding: isMobile ? '0 16px' : '0 24px', position: 'sticky', top: 0, zIndex: 40 }}>
         <div style={{ maxWidth: 900, margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Bot size={16} color="#fff" />
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span aria-hidden="true" style={{ fontSize: 14, fontWeight: 700, color: '#0A0A0A', fontFamily: "'Space Grotesk', sans-serif" }}>D</span>
             </div>
-            <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Desklo</span>
+            {!isMobile && <span style={{ fontSize: 15, fontWeight: 700, color: '#fff', fontFamily: "'Space Grotesk', sans-serif" }}>Desklo</span>}
           </Link>
-          <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>
-            <ArrowLeft size={14} /> Back to dashboard
+          <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#9A9A94', textDecoration: 'none' }}>
+            <ArrowLeft size={14} /> {!isMobile && 'Back to dashboard'}
           </Link>
         </div>
       </header>
 
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 24px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: isMobile ? '28px 16px' : '48px 24px' }}>
 
         {/* TITLE */}
-        <div style={{ marginBottom: 40 }}>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Install your AI receptionist</h1>
-          <p style={{ fontSize: 14, color: '#8899aa' }}>Follow the steps below to add your chatbot to your website. It takes less than 2 minutes.</p>
+        <div style={{ marginBottom: isMobile ? 28 : 40 }}>
+          <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: isMobile ? 22 : 28, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Install your AI receptionist</h1>
+          <p style={{ fontSize: 14, color: '#9A9A94' }}>Follow the steps below to add your chatbot to your website. It takes less than 2 minutes.</p>
         </div>
 
         {/* EMBED CODE */}
-        <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16, padding: 24, marginBottom: 32 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div style={{ background: '#131313', border: '0.5px solid #242424', borderRadius: 16, padding: isMobile ? 18 : 24, marginBottom: isMobile ? 24 : 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, gap: 10, flexWrap: 'wrap' }}>
             <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Your embed code</h2>
             <button
               onClick={handleCopy}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: copied ? 'rgba(52,211,153,0.1)' : '#1e2a3a', border: 'none', borderRadius: 8, fontSize: 12, color: copied ? '#34d399' : '#cdd9e8', cursor: 'pointer' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: copied ? 'rgba(52,211,153,0.1)' : '#242424', border: 'none', borderRadius: 8, fontSize: 12, color: copied ? '#34d399' : '#F5F5F3', cursor: 'pointer' }}
             >
               {copied ? <Check size={13} /> : <Copy size={13} />}
               {copied ? 'Copied!' : 'Copy code'}
             </button>
           </div>
-          <pre style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: 16, fontSize: 12, color: '#60a5fa', fontFamily: 'monospace', lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: 0 }}>
+          <pre style={{ background: '#0A0A0A', border: '0.5px solid #242424', borderRadius: 10, padding: 16, fontSize: 12, color: '#F5F5F3', fontFamily: 'monospace', lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: 0, overflowX: 'auto' }}>
             {embedCode}
           </pre>
-          <p style={{ fontSize: 11, color: '#8899aa', marginTop: 10 }}>⚠️ This code is unique to your business — don't share it publicly.</p>
+          <p style={{ fontSize: 11, color: '#9A9A94', marginTop: 10 }}>⚠️ This code is unique to your business — don't share it publicly.</p>
         </div>
 
         {/* PLATFORM TABS */}
-        <div style={{ marginBottom: 32 }}>
+        <div style={{ marginBottom: isMobile ? 24 : 32 }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 16 }}>Choose your platform</h2>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {platforms.map((p) => (
@@ -169,9 +180,9 @@ export default function Install() {
                 onClick={() => { setActivePlatform(p.id); setActiveStep(0); setLightboxOpen(false); }}
                 style={{
                   padding: '8px 16px', borderRadius: 10,
-                  border: activePlatform === p.id ? '2px solid #2563eb' : '0.5px solid #1e2a3a',
-                  background: activePlatform === p.id ? 'rgba(37,99,235,0.1)' : '#0d1117',
-                  color: activePlatform === p.id ? '#60a5fa' : '#8899aa',
+                  border: activePlatform === p.id ? '2px solid #fff' : '0.5px solid #242424',
+                  background: activePlatform === p.id ? 'rgba(255,255,255,0.06)' : '#131313',
+                  color: activePlatform === p.id ? '#fff' : '#9A9A94',
                   fontSize: 13, fontWeight: activePlatform === p.id ? 600 : 400,
                   cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
                 }}
@@ -183,59 +194,69 @@ export default function Install() {
         </div>
 
         {/* STEPS */}
-        <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16, overflow: 'hidden' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '0.5px solid #1e2a3a' }}>
+        <div style={{ background: '#131313', border: '0.5px solid #242424', borderRadius: 16, overflow: 'hidden' }}>
+          <div style={{ padding: isMobile ? '14px 16px' : '16px 20px', borderBottom: '0.5px solid #242424' }}>
             <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>
               {platforms.find(p => p.id === activePlatform)?.icon} Step-by-step for {platforms.find(p => p.id === activePlatform)?.name}
             </h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr' }}>
+          <div style={{ display: isMobile ? 'block' : 'grid', gridTemplateColumns: isMobile ? undefined : '240px 1fr' }}>
             {/* STEP LIST */}
-            <div style={{ borderRight: '0.5px solid #1e2a3a' }}>
+            <div style={isMobile
+              ? { display: 'flex', overflowX: 'auto', borderBottom: '0.5px solid #242424' }
+              : { borderRight: '0.5px solid #242424' }}
+            >
               {currentSteps.map((step, i) => (
                 <div
                   key={i}
                   onClick={() => { setActiveStep(i); setLightboxOpen(false); }}
-                  style={{
+                  style={isMobile ? {
+                    padding: '12px 14px', cursor: 'pointer', flexShrink: 0,
+                    borderBottom: activeStep === i ? '2px solid #fff' : '2px solid transparent',
+                    background: activeStep === i ? 'rgba(255,255,255,0.05)' : 'transparent',
+                    display: 'flex', alignItems: 'center', gap: 8,
+                  } : {
                     padding: '14px 20px', cursor: 'pointer',
-                    borderBottom: '0.5px solid #1e2a3a',
-                    background: activeStep === i ? 'rgba(37,99,235,0.08)' : 'transparent',
-                    borderLeft: activeStep === i ? '2px solid #2563eb' : '2px solid transparent',
+                    borderBottom: '0.5px solid #242424',
+                    background: activeStep === i ? 'rgba(255,255,255,0.05)' : 'transparent',
+                    borderLeft: activeStep === i ? '2px solid #fff' : '2px solid transparent',
                     display: 'flex', alignItems: 'center', gap: 12,
                   }}
                 >
                   <div style={{
                     width: 24, height: 24, borderRadius: '50%',
-                    background: activeStep === i ? '#2563eb' : i < activeStep ? 'rgba(52,211,153,0.2)' : '#1e2a3a',
+                    background: activeStep === i ? '#fff' : i < activeStep ? 'rgba(52,211,153,0.2)' : '#242424',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0, fontSize: 11, fontWeight: 700,
-                    color: activeStep === i ? '#fff' : i < activeStep ? '#34d399' : '#8899aa',
+                    color: activeStep === i ? '#0A0A0A' : i < activeStep ? '#34d399' : '#9A9A94',
                   }}>
                     {i < activeStep ? '✓' : i + 1}
                   </div>
-                  <span style={{ fontSize: 12, color: activeStep === i ? '#fff' : '#8899aa', fontWeight: activeStep === i ? 500 : 400, lineHeight: 1.4 }}>
-                    {step.title}
-                  </span>
+                  {!isMobile && (
+                    <span style={{ fontSize: 12, color: activeStep === i ? '#fff' : '#9A9A94', fontWeight: activeStep === i ? 500 : 400, lineHeight: 1.4 }}>
+                      {step.title}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
 
             {/* STEP DETAIL */}
-            <div style={{ padding: 32, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: 300 }}>
+            <div style={{ padding: isMobile ? 20 : 32, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: isMobile ? undefined : 300 }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: '#0A0A0A', flexShrink: 0 }}>
                     {activeStep + 1}
                   </div>
                   <h3 style={{ fontSize: 16, fontWeight: 600, color: '#fff' }}>{currentSteps[activeStep].title}</h3>
                 </div>
-                <p style={{ fontSize: 14, color: '#8899aa', lineHeight: 1.7, marginBottom: 20 }}>
+                <p style={{ fontSize: 14, color: '#9A9A94', lineHeight: 1.7, marginBottom: 20 }}>
                   {currentSteps[activeStep].description}
                 </p>
                 {currentSteps[activeStep].highlight && (
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 8, padding: '8px 14px', marginBottom: 20 }}>
-                    <span style={{ fontSize: 12, color: '#60a5fa' }}>Look for:</span>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.05)', border: '0.5px solid #3A3A3A', borderRadius: 8, padding: '8px 14px', marginBottom: 20, flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: 12, color: '#F5F5F3' }}>Look for:</span>
                     <code style={{ fontSize: 13, color: '#fff', fontFamily: 'monospace', fontWeight: 600 }}>{currentSteps[activeStep].highlight}</code>
                   </div>
                 )}
@@ -244,7 +265,7 @@ export default function Install() {
                 {currentImage && (
                   <div
                     onClick={() => setLightboxOpen(true)}
-                    style={{ position: 'relative', marginTop: 8, borderRadius: 12, overflow: 'hidden', border: '0.5px solid #1e2a3a', cursor: 'zoom-in' }}
+                    style={{ position: 'relative', marginTop: 8, borderRadius: 12, overflow: 'hidden', border: '0.5px solid #242424', cursor: 'zoom-in' }}
                   >
                     <img
                       src={currentImage}
@@ -259,18 +280,18 @@ export default function Install() {
                 )}
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 32 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 32, gap: 10, flexWrap: 'wrap' }}>
                 <button
                   onClick={() => { setActiveStep(Math.max(0, activeStep - 1)); setLightboxOpen(false); }}
                   disabled={activeStep === 0}
-                  style={{ padding: '8px 16px', background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 8, fontSize: 13, color: '#8899aa', cursor: activeStep === 0 ? 'not-allowed' : 'pointer', opacity: activeStep === 0 ? 0.4 : 1 }}
+                  style={{ padding: '8px 16px', background: '#0A0A0A', border: '0.5px solid #242424', borderRadius: 8, fontSize: 13, color: '#9A9A94', cursor: activeStep === 0 ? 'not-allowed' : 'pointer', opacity: activeStep === 0 ? 0.4 : 1 }}
                 >
                   ← Previous
                 </button>
                 {activeStep < currentSteps.length - 1 ? (
                   <button
                     onClick={() => { setActiveStep(activeStep + 1); setLightboxOpen(false); }}
-                    style={{ padding: '8px 20px', background: '#2563eb', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 500, color: '#fff', cursor: 'pointer' }}
+                    style={{ padding: '8px 20px', background: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 500, color: '#0A0A0A', cursor: 'pointer' }}
                   >
                     Next step →
                   </button>
@@ -285,9 +306,9 @@ export default function Install() {
         </div>
 
         {/* HELP */}
-        <div style={{ marginTop: 24, padding: '16px 20px', background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <p style={{ fontSize: 13, color: '#8899aa' }}>Need help? We'll set it up for you for free.</p>
-          <a href="https://mail.google.com/mail/?view=cm&to=desklosupport@gmail.com" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#60a5fa', textDecoration: 'none', fontWeight: 500 }}>
+        <div style={{ marginTop: 24, padding: isMobile ? '16px' : '16px 20px', background: '#131313', border: '0.5px solid #242424', borderRadius: 12, display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', gap: 12 }}>
+          <p style={{ fontSize: 13, color: '#9A9A94' }}>Need help? We'll set it up for you for free.</p>
+          <a href="https://mail.google.com/mail/?view=cm&to=desklosupport@gmail.com" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#F5F5F3', textDecoration: 'none', fontWeight: 500 }}>
             Contact support <ExternalLink size={12} />
           </a>
         </div>

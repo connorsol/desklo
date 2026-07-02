@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Loader2, Bot } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -31,64 +31,78 @@ export default function ResetPassword() {
     }
   }
 
+  const inputStyle = {
+    width: '100%',
+    background: '#0A0A0A',
+    border: '0.5px solid #242424',
+    borderRadius: 10,
+    padding: '10px 14px',
+    fontSize: 13,
+    color: '#fff',
+    outline: 'none',
+    boxSizing: 'border-box' as const,
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-50 to-white flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center">
-              <Bot size={18} className="text-white" />
+    <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <div style={{ width: '100%', maxWidth: 360 }}>
+
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span aria-hidden="true" style={{ fontSize: 17, fontWeight: 700, color: '#0A0A0A', fontFamily: "'Space Grotesk', sans-serif" }}>D</span>
             </div>
-            <span className="font-bold text-xl text-gray-900">Desklo</span>
+            <span style={{ fontSize: 20, fontWeight: 700, color: '#fff', fontFamily: "'Space Grotesk', sans-serif" }}>Desklo</span>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div style={{ background: '#131313', border: '0.5px solid #242424', borderRadius: 16, padding: 32 }}>
           {done ? (
-            <div className="text-center">
-              <div className="text-4xl mb-3">✅</div>
-              <h2 className="font-semibold text-gray-900 mb-1">Password updated!</h2>
-              <p className="text-sm text-gray-500">Redirecting you to your dashboard...</p>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 40, marginBottom: 12 }}>✅</div>
+              <h2 style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Password updated!</h2>
+              <p style={{ fontSize: 13, color: '#9A9A94' }}>Redirecting you to your dashboard...</p>
             </div>
           ) : (
             <>
-              <h2 className="font-semibold text-gray-900 mb-6">Set new password</h2>
-              <form onSubmit={handleReset} className="space-y-4">
+              <h2 style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 24 }}>Set new password</h2>
+              <form onSubmit={handleReset} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">New password</label>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>New password</label>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-400"
+                    style={inputStyle}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Confirm password</label>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Confirm password</label>
                   <input
                     type="password"
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
                     required
                     minLength={6}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-brand-400"
+                    style={inputStyle}
                   />
                 </div>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+                {error && <p style={{ fontSize: 12, color: '#f87171' }}>{error}</p>}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-brand-500 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-brand-600 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors"
+                  style={{ width: '100%', background: '#fff', color: '#0A0A0A', padding: '10px', borderRadius: 10, fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? 0.5 : 1 }}
                 >
-                  {loading && <Loader2 size={14} className="animate-spin" />}
+                  {loading && <Loader2 size={14} color="#0A0A0A" />}
                   Update password
                 </button>
               </form>
             </>
           )}
         </div>
+
       </div>
     </div>
   );

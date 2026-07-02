@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Loader2, Bot, ArrowLeft, Shield, Eye, EyeOff } from 'lucide-react';
+import { Loader2, ArrowLeft, Shield, Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -116,8 +116,8 @@ export default function Login() {
 
   const inputStyle = {
     width: '100%',
-    background: '#0a0a0f',
-    border: '0.5px solid #1e2a3a',
+    background: '#0A0A0A',
+    border: '0.5px solid #242424',
     borderRadius: 10,
     padding: '10px 14px',
     fontSize: 13,
@@ -127,30 +127,30 @@ export default function Login() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+    <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ width: '100%', maxWidth: 360 }}>
 
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 8 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Bot size={18} color="#fff" />
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span aria-hidden="true" style={{ fontSize: 17, fontWeight: 700, color: '#0A0A0A', fontFamily: "'Space Grotesk', sans-serif" }}>D</span>
             </div>
-            <span style={{ fontSize: 20, fontWeight: 700, color: '#fff' }}>Desklo</span>
+            <span style={{ fontSize: 20, fontWeight: 700, color: '#fff', fontFamily: "'Space Grotesk', sans-serif" }}>Desklo</span>
           </div>
-          <p style={{ fontSize: 13, color: '#8899aa' }}>Your 24/7 AI receptionist</p>
+          <p style={{ fontSize: 13, color: '#9A9A94' }}>Your 24/7 AI receptionist</p>
         </div>
 
-        <div style={{ background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16, padding: 32 }}>
+        <div style={{ background: '#131313', border: '0.5px solid #242424', borderRadius: 16, padding: 32 }}>
 
           {/* MFA SCREEN */}
           {mode === 'mfa' && (
             <div>
               <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
-                  <Shield size={22} color="#60a5fa" />
+                <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                  <Shield size={22} color="#fff" />
                 </div>
                 <h2 style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Two-factor authentication</h2>
-                <p style={{ fontSize: 13, color: '#8899aa' }}>Enter the 6-digit code from your authenticator app</p>
+                <p style={{ fontSize: 13, color: '#9A9A94' }}>Enter the 6-digit code from your authenticator app</p>
               </div>
               <form onSubmit={handleMfaVerify} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <input
@@ -166,15 +166,15 @@ export default function Login() {
                 <button
                   type="submit"
                   disabled={loading || mfaCode.length !== 6}
-                  style={{ width: '100%', background: '#2563eb', color: '#fff', padding: '10px', borderRadius: 10, fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (loading || mfaCode.length !== 6) ? 0.5 : 1 }}
+                  style={{ width: '100%', background: '#fff', color: '#0A0A0A', padding: '10px', borderRadius: 10, fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (loading || mfaCode.length !== 6) ? 0.5 : 1 }}
                 >
-                  {loading && <Loader2 size={14} color="#fff" />}
+                  {loading && <Loader2 size={14} color="#0A0A0A" />}
                   Verify
                 </button>
                 <button
                   type="button"
                   onClick={() => { setMode('login'); setMfaCode(''); setError(''); }}
-                  style={{ fontSize: 12, color: '#8899aa', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'center' }}
+                  style={{ fontSize: 12, color: '#9A9A94', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'center' }}
                 >
                   Back to sign in
                 </button>
@@ -189,14 +189,14 @@ export default function Login() {
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 40, marginBottom: 12 }}>📬</div>
                   <h2 style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Check your email</h2>
-                  <p style={{ fontSize: 13, color: '#8899aa' }}>
+                  <p style={{ fontSize: 13, color: '#9A9A94' }}>
                     {mode === 'forgot'
                       ? `We sent a password reset link to ${email}`
                       : `We sent a confirmation link to ${email}`}
                   </p>
                   <button
                     onClick={() => { setSent(false); setMode('login'); }}
-                    style={{ marginTop: 16, fontSize: 13, color: '#60a5fa', background: 'none', border: 'none', cursor: 'pointer' }}
+                    style={{ marginTop: 16, fontSize: 13, color: '#fff', background: 'none', border: 'none', cursor: 'pointer' }}
                   >
                     Back to sign in
                   </button>
@@ -204,15 +204,15 @@ export default function Login() {
               ) : (
                 <>
                   {fromOnboarding && mode === 'signup' && (
-                    <div style={{ background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 20, textAlign: 'center' }}>
-                      <p style={{ fontSize: 13, color: '#60a5fa', fontWeight: 500 }}>Almost there! 🎉</p>
-                      <p style={{ fontSize: 12, color: '#8899aa', marginTop: 4 }}>Create an account to save your bot and go live.</p>
+                    <div style={{ background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '12px 16px', marginBottom: 20, textAlign: 'center' }}>
+                      <p style={{ fontSize: 13, color: '#fff', fontWeight: 500 }}>Almost there! 🎉</p>
+                      <p style={{ fontSize: 12, color: '#9A9A94', marginTop: 4 }}>Create an account to save your bot and go live.</p>
                     </div>
                   )}
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
                     {mode === 'forgot' && (
-                      <button onClick={() => setMode('login')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8899aa', display: 'flex', alignItems: 'center' }}>
+                      <button onClick={() => setMode('login')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9A9A94', display: 'flex', alignItems: 'center' }}>
                         <ArrowLeft size={16} />
                       </button>
                     )}
@@ -223,13 +223,13 @@ export default function Login() {
 
                   <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
-                      <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Email</label>
+                      <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Email</label>
                       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required style={inputStyle} />
                     </div>
 
                     {mode !== 'forgot' && (
                       <div>
-                        <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Password</label>
+                        <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Password</label>
 
                         <div style={{ position: 'relative' }}>
                           <input
@@ -255,7 +255,7 @@ export default function Login() {
                               border: 'none',
                               padding: 0,
                               cursor: 'pointer',
-                              color: '#8899aa',
+                              color: '#9A9A94',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
@@ -271,7 +271,7 @@ export default function Login() {
                       <button
                         type="button"
                         onClick={() => { setMode('forgot'); setError(''); }}
-                        style={{ fontSize: 12, color: '#60a5fa', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                        style={{ fontSize: 12, color: '#fff', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
                       >
                         Forgot your password?
                       </button>
@@ -282,9 +282,9 @@ export default function Login() {
                     <button
                       type="submit"
                       disabled={loading}
-                      style={{ width: '100%', background: '#2563eb', color: '#fff', padding: '10px', borderRadius: 10, fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? 0.5 : 1 }}
+                      style={{ width: '100%', background: '#fff', color: '#0A0A0A', padding: '10px', borderRadius: 10, fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? 0.5 : 1 }}
                     >
-                      {loading && <Loader2 size={14} color="#fff" />}
+                      {loading && <Loader2 size={14} color="#0A0A0A" />}
                       {mode === 'login' ? 'Sign in' : mode === 'signup' ? 'Create account' : 'Send reset link'}
                     </button>
                   </form>
@@ -292,24 +292,24 @@ export default function Login() {
                   {mode !== 'forgot' && (
                     <>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
-                        <div style={{ flex: 1, height: '0.5px', background: '#1e2a3a' }} />
-                        <span style={{ fontSize: 12, color: '#8899aa' }}>or</span>
-                        <div style={{ flex: 1, height: '0.5px', background: '#1e2a3a' }} />
+                        <div style={{ flex: 1, height: '0.5px', background: '#242424' }} />
+                        <span style={{ fontSize: 12, color: '#9A9A94' }}>or</span>
+                        <div style={{ flex: 1, height: '0.5px', background: '#242424' }} />
                       </div>
 
                       <button
                         onClick={handleGoogleLogin}
-                        style={{ width: '100%', padding: '10px', background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, fontSize: 13, fontWeight: 500, color: '#cdd9e8', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                        style={{ width: '100%', padding: '10px', background: '#0A0A0A', border: '0.5px solid #242424', borderRadius: 10, fontSize: 13, fontWeight: 500, color: '#F5F5F3', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
                       >
                         <img src="https://www.google.com/favicon.ico" width={16} height={16} alt="Google" />
                         Continue with Google
                       </button>
 
-                      <p style={{ textAlign: 'center', fontSize: 13, color: '#8899aa', marginTop: 20 }}>
+                      <p style={{ textAlign: 'center', fontSize: 13, color: '#9A9A94', marginTop: 20 }}>
                         {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
                         <button
                           onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-                          style={{ fontSize: 13, color: '#60a5fa', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}
+                          style={{ fontSize: 13, color: '#fff', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}
                         >
                           {mode === 'login' ? 'Sign up' : 'Sign in'}
                         </button>
@@ -323,9 +323,9 @@ export default function Login() {
         </div>
 
         {/* SUPPORT EMAIL */}
-        <p style={{ textAlign: 'center', fontSize: 12, color: '#8899aa', marginTop: 20 }}>
+        <p style={{ textAlign: 'center', fontSize: 12, color: '#9A9A94', marginTop: 20 }}>
           Need help?{' '}
-          <a href="mailto:desklosupport@gmail.com" style={{ color: '#60a5fa', textDecoration: 'none' }}>
+          <a href="mailto:desklosupport@gmail.com" style={{ color: '#fff', textDecoration: 'none' }}>
             desklosupport@gmail.com
           </a>
         </p>

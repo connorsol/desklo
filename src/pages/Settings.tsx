@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bot, ArrowLeft, Loader2, Check, Sparkles, Mail, Lock, Trash2, Shield, Info } from 'lucide-react';
+import { ArrowLeft, Loader2, Check, Sparkles, Mail, Lock, Trash2, Shield, Info } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 function useIsMobile() {
@@ -28,7 +28,7 @@ export default function Settings() {
   const [booking, setBooking] = useState('');
   const [location, setLocation] = useState('');
   const [botName, setBotName] = useState('');
-  const [brandColor, setBrandColor] = useState('#2563eb');
+  const [brandColor, setBrandColor] = useState('#111827');
 
   const [currentEmail, setCurrentEmail] = useState('');
   const [newEmail, setNewEmail] = useState('');
@@ -71,7 +71,7 @@ export default function Settings() {
         setBooking(data.booking_info ?? '');
         setLocation(data.location ?? '');
         setBotName(data.bot_name ?? 'Assistant');
-        setBrandColor(data.widget_color ?? '#2563eb');
+        setBrandColor(data.widget_color ?? '#111827');
       }
 
       const { data: factorsData } = await supabase.auth.mfa.listFactors();
@@ -224,16 +224,16 @@ export default function Settings() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Loader2 size={24} color="#2563eb" />
+      <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Loader2 size={24} color="#fff" />
       </div>
     );
   }
 
   const inputStyle = {
     width: '100%',
-    background: '#0a0a0f',
-    border: '0.5px solid #1e2a3a',
+    background: '#0A0A0A',
+    border: '0.5px solid #242424',
     borderRadius: 10,
     padding: '10px 14px',
     fontSize: 13,
@@ -243,8 +243,8 @@ export default function Settings() {
   };
 
   const card = {
-    background: '#0d1117',
-    border: '0.5px solid #1e2a3a',
+    background: '#131313',
+    border: '0.5px solid #242424',
     borderRadius: 16,
     padding: isMobile ? 18 : 24,
     marginBottom: 16,
@@ -252,24 +252,24 @@ export default function Settings() {
 
   const helperText = {
     fontSize: 11,
-    color: '#8899aa',
+    color: '#9A9A94',
     marginTop: 5,
     lineHeight: 1.5,
   } as const;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f' }}>
+    <div style={{ minHeight: '100vh', background: '#0A0A0A' }}>
 
       {/* HEADER */}
-      <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 20px', position: 'sticky', top: 0, zIndex: 40 }}>
+      <header style={{ height: 56, borderBottom: '0.5px solid #242424', background: 'rgba(10,10,10,0.95)', display: 'flex', alignItems: 'center', padding: '0 20px', position: 'sticky', top: 0, zIndex: 40 }}>
         <div style={{ maxWidth: 760, margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Bot size={16} color="#fff" />
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span aria-hidden="true" style={{ fontSize: 14, fontWeight: 700, color: '#0A0A0A', fontFamily: "'Space Grotesk', sans-serif" }}>D</span>
             </div>
-            <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Desklo</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: '#fff', fontFamily: "'Space Grotesk', sans-serif" }}>Desklo</span>
           </Link>
-          <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>
+          <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#9A9A94', textDecoration: 'none' }}>
             <ArrowLeft size={14} /> Back to dashboard
           </Link>
         </div>
@@ -279,29 +279,29 @@ export default function Settings() {
 
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontSize: isMobile ? 20 : 24, fontWeight: 700, color: '#fff' }}>Settings</h1>
-          <p style={{ fontSize: 13, color: '#8899aa', marginTop: 4 }}>Update your business info, bot customization, and account details.</p>
+          <p style={{ fontSize: 13, color: '#9A9A94', marginTop: 4 }}>Update your business info, bot customization, and account details.</p>
         </div>
 
         {/* BUSINESS INFO */}
         <div style={card}>
           <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 8 }}>Business information</h2>
-          <p style={{ fontSize: 12, color: '#8899aa', marginBottom: 12, lineHeight: 1.6 }}>This is what your AI receptionist uses to answer customer questions. Keep it accurate and detailed — the more info you provide, the better your bot performs.</p>
+          <p style={{ fontSize: 12, color: '#9A9A94', marginBottom: 12, lineHeight: 1.6 }}>This is what your AI receptionist uses to answer customer questions. Keep it accurate and detailed — the more info you provide, the better your bot performs.</p>
 
-          <div style={{ display: 'flex', gap: 10, background: 'rgba(37,99,235,0.08)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 10, padding: '12px 14px', marginBottom: 20 }}>
-            <Info size={15} color="#60a5fa" style={{ flexShrink: 0, marginTop: 1 }} />
-            <p style={{ fontSize: 12, color: '#60a5fa', lineHeight: 1.6, margin: 0 }}>
+          <div style={{ display: 'flex', gap: 10, background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '12px 14px', marginBottom: 20 }}>
+            <Info size={15} color="#fff" style={{ flexShrink: 0, marginTop: 1 }} />
+            <p style={{ fontSize: 12, color: '#F5F5F3', lineHeight: 1.6, margin: 0 }}>
               💡 <strong>Tip:</strong> List every service you offer with its price, your exact hours for each day, and your full service area. If a customer asks something your bot doesn't have info on, it won't be able to answer accurately.
             </p>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business name</label>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Business name</label>
               <input value={businessName} onChange={(e) => setBusinessName(e.target.value)} style={inputStyle} />
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Services offered</label>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Services offered</label>
               <textarea
                 value={services}
                 onChange={(e) => setServices(e.target.value)}
@@ -314,12 +314,12 @@ export default function Settings() {
 
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Business hours</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Business hours</label>
                 <input value={hours} onChange={(e) => setHours(e.target.value)} placeholder="e.g. Mon–Fri 8am–6pm, Sat 9am–2pm, Closed Sunday" style={inputStyle} />
                 <p style={helperText}>Include every day so customers always get accurate hours.</p>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Pricing</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Pricing</label>
                 <input value={pricing} onChange={(e) => setPricing(e.target.value)} placeholder="e.g. Drain cleaning $150, Water heater install $800–$1,200, Free estimates" style={inputStyle} />
                 <p style={helperText}>List pricing per service so your bot can give accurate quotes.</p>
               </div>
@@ -327,12 +327,12 @@ export default function Settings() {
 
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>How to book / contact</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>How to book / contact</label>
                 <input value={booking} onChange={(e) => setBooking(e.target.value)} placeholder="e.g. Book through this chat, call 555-1234, or visit our website" style={inputStyle} />
                 <p style={helperText}>Let customers know how to reach you outside of this chat.</p>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Location / service area</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Location / service area</label>
                 <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Austin, TX — serving Travis and Williamson County" style={inputStyle} />
                 <p style={helperText}>Include your city and surrounding areas you serve.</p>
               </div>
@@ -346,26 +346,26 @@ export default function Settings() {
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 24 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Bot name</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Bot name</label>
                 <input value={botName} onChange={(e) => setBotName(e.target.value)} style={inputStyle} />
                 <p style={helperText}>Give your bot a friendly name like "Alex" or "Sarah".</p>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 10 }}>Brand color</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 10 }}>Brand color</label>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} style={{ width: 40, height: 40, borderRadius: 8, cursor: 'pointer', border: '0.5px solid #1e2a3a', flexShrink: 0 }} />
+                  <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} style={{ width: 40, height: 40, borderRadius: 8, cursor: 'pointer', border: '0.5px solid #242424', flexShrink: 0 }} />
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    {['#2563EB', '#7B61FF', '#059669', '#EA580C', '#DC2626', '#7C3AED'].map((c) => (
+                    {['#111827', '#2563EB', '#7B61FF', '#059669', '#EA580C', '#DC2626', '#7C3AED'].map((c) => (
                       <button key={c} onClick={() => setBrandColor(c)} style={{ width: 28, height: 28, borderRadius: 8, background: c, border: brandColor === c ? '2px solid #fff' : '2px solid transparent', cursor: 'pointer' }} />
                     ))}
                   </div>
                 </div>
               </div>
             </div>
-            <div style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 12, padding: 16 }}>
+            <div style={{ background: '#0A0A0A', border: '0.5px solid #242424', borderRadius: 12, padding: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
-                <Sparkles size={12} color="#8899aa" />
-                <span style={{ fontSize: 11, color: '#8899aa', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Preview</span>
+                <Sparkles size={12} color="#9A9A94" />
+                <span style={{ fontSize: 11, color: '#9A9A94', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Preview</span>
               </div>
               <div style={{ borderRadius: 10, overflow: 'hidden' }}>
                 <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 8, background: brandColor }}>
@@ -375,9 +375,9 @@ export default function Settings() {
                     <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>Online now</p>
                   </div>
                 </div>
-                <div style={{ background: '#0d1117', padding: 12 }}>
-                  <div style={{ background: '#1e2a3a', borderRadius: '10px 10px 10px 2px', padding: '8px 12px', display: 'inline-block', maxWidth: '100%' }}>
-                    <p style={{ fontSize: 12, color: '#cdd9e8', lineHeight: 1.5, wordBreak: 'break-word' }}>
+                <div style={{ background: '#131313', padding: 12 }}>
+                  <div style={{ background: '#242424', borderRadius: '10px 10px 10px 2px', padding: '8px 12px', display: 'inline-block', maxWidth: '100%' }}>
+                    <p style={{ fontSize: 12, color: '#F5F5F3', lineHeight: 1.5, wordBreak: 'break-word' }}>
                       Hi! 👋 I'm {botName || 'your assistant'} for {businessName || 'your business'}. How can I help?
                     </p>
                   </div>
@@ -389,26 +389,26 @@ export default function Settings() {
           <button
             onClick={handleSaveBusiness}
             disabled={saving}
-            style={{ width: '100%', marginTop: 20, padding: '12px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: saving ? 0.5 : 1 }}
+            style={{ width: '100%', marginTop: 20, padding: '12px', background: '#fff', color: '#0A0A0A', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: saving ? 0.5 : 1 }}
           >
-            {saving && <Loader2 size={14} color="#fff" />}
-            {saved ? <><Check size={14} color="#fff" /> Saved!</> : 'Save changes'}
+            {saving && <Loader2 size={14} color="#0A0A0A" />}
+            {saved ? <><Check size={14} color="#0A0A0A" /> Saved!</> : 'Save changes'}
           </button>
         </div>
 
         {/* CHANGE EMAIL */}
         <div style={card}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-            <Mail size={15} color="#8899aa" />
+            <Mail size={15} color="#9A9A94" />
             <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Change email</h2>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Current email</label>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Current email</label>
               <input value={currentEmail} disabled style={{ ...inputStyle, opacity: 0.5, cursor: 'not-allowed' }} />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>New email</label>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>New email</label>
               <input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} style={inputStyle} />
             </div>
             {emailError && <p style={{ fontSize: 12, color: '#f87171' }}>{emailError}</p>}
@@ -416,9 +416,9 @@ export default function Settings() {
             <button
               onClick={handleChangeEmail}
               disabled={emailSaving || newEmail === currentEmail}
-              style={{ width: '100%', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (emailSaving || newEmail === currentEmail) ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '10px', background: '#fff', color: '#0A0A0A', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (emailSaving || newEmail === currentEmail) ? 0.5 : 1 }}
             >
-              {emailSaving && <Loader2 size={14} color="#fff" />}
+              {emailSaving && <Loader2 size={14} color="#0A0A0A" />}
               Update email
             </button>
           </div>
@@ -427,16 +427,16 @@ export default function Settings() {
         {/* CHANGE PASSWORD */}
         <div style={card}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-            <Lock size={15} color="#8899aa" />
+            <Lock size={15} color="#9A9A94" />
             <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Change password</h2>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>New password</label>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>New password</label>
               <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Min 6 characters" style={inputStyle} />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Confirm new password</label>
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Confirm new password</label>
               <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repeat new password" style={inputStyle} />
             </div>
             {passwordError && <p style={{ fontSize: 12, color: '#f87171' }}>{passwordError}</p>}
@@ -444,9 +444,9 @@ export default function Settings() {
             <button
               onClick={handleChangePassword}
               disabled={passwordSaving || !newPassword}
-              style={{ width: '100%', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (passwordSaving || !newPassword) ? 0.5 : 1 }}
+              style={{ width: '100%', padding: '10px', background: '#fff', color: '#0A0A0A', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (passwordSaving || !newPassword) ? 0.5 : 1 }}
             >
-              {passwordSaving && <Loader2 size={14} color="#fff" />}
+              {passwordSaving && <Loader2 size={14} color="#0A0A0A" />}
               Update password
             </button>
           </div>
@@ -455,7 +455,7 @@ export default function Settings() {
         {/* TWO-FACTOR AUTHENTICATION */}
         <div style={card}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <Shield size={15} color="#8899aa" />
+            <Shield size={15} color="#9A9A94" />
             <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Two-factor authentication</h2>
             {mfaEnabled && (
               <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 600, color: '#34d399', background: 'rgba(52,211,153,0.1)', border: '0.5px solid rgba(52,211,153,0.3)', padding: '2px 8px', borderRadius: 999 }}>
@@ -463,14 +463,14 @@ export default function Settings() {
               </span>
             )}
           </div>
-          <p style={{ fontSize: 13, color: '#8899aa', marginBottom: 16, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 13, color: '#9A9A94', marginBottom: 16, lineHeight: 1.6 }}>
             {mfaEnabled
               ? 'Your account is protected with two-factor authentication.'
               : 'Add an extra layer of security. Requires Google Authenticator or any TOTP app.'}
           </p>
           {mfaStep === 'setup' && qrCode && (
             <div style={{ marginBottom: 8 }}>
-              <p style={{ fontSize: 12, color: '#cdd9e8', marginBottom: 12, lineHeight: 1.6 }}>
+              <p style={{ fontSize: 12, color: '#F5F5F3', marginBottom: 12, lineHeight: 1.6 }}>
                 1. Open Google Authenticator or Authy<br />
                 2. Scan the QR code below<br />
                 3. Enter the 6-digit code to confirm
@@ -479,7 +479,7 @@ export default function Settings() {
                 <img src={qrCode} alt="QR Code" style={{ width: 160, height: 160, display: 'block' }} />
               </div>
               <div style={{ marginBottom: 12 }}>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#cdd9e8', marginBottom: 6 }}>Enter the 6-digit code</label>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: '#F5F5F3', marginBottom: 6 }}>Enter the 6-digit code</label>
                 <input
                   type="text"
                   value={mfaCode}
@@ -495,13 +495,13 @@ export default function Settings() {
                 <button
                   onClick={handleVerifyMfa}
                   disabled={mfaLoading || mfaCode.length !== 6}
-                  style={{ flex: 1, padding: '10px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 10, cursor: 'pointer', opacity: (mfaLoading || mfaCode.length !== 6) ? 0.5 : 1 }}
+                  style={{ flex: 1, padding: '10px', background: '#fff', color: '#0A0A0A', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 10, cursor: 'pointer', opacity: (mfaLoading || mfaCode.length !== 6) ? 0.5 : 1 }}
                 >
                   {mfaLoading ? 'Verifying...' : 'Enable 2FA'}
                 </button>
                 <button
                   onClick={handleCancelMfa}
-                  style={{ padding: '10px 16px', background: 'transparent', border: '0.5px solid #1e2a3a', color: '#8899aa', fontSize: 13, borderRadius: 10, cursor: 'pointer' }}
+                  style={{ padding: '10px 16px', background: 'transparent', border: '0.5px solid #242424', color: '#9A9A94', fontSize: 13, borderRadius: 10, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -514,9 +514,9 @@ export default function Settings() {
               disabled={mfaLoading}
               style={{
                 padding: '8px 16px',
-                background: mfaEnabled ? 'transparent' : '#2563eb',
+                background: mfaEnabled ? 'transparent' : '#fff',
                 border: mfaEnabled ? '0.5px solid #3a1e1e' : 'none',
-                color: mfaEnabled ? '#f87171' : '#fff',
+                color: mfaEnabled ? '#f87171' : '#0A0A0A',
                 fontSize: 13, fontWeight: 500, borderRadius: 10, cursor: 'pointer',
                 opacity: mfaLoading ? 0.5 : 1,
               }}
@@ -532,7 +532,7 @@ export default function Settings() {
             <Trash2 size={15} color="#f87171" />
             <h2 style={{ fontSize: 13, fontWeight: 600, color: '#f87171' }}>Delete account</h2>
           </div>
-          <p style={{ fontSize: 12, color: '#8899aa', marginBottom: 16 }}>Permanently delete your account and all business data. This cannot be undone.</p>
+          <p style={{ fontSize: 12, color: '#9A9A94', marginBottom: 16 }}>Permanently delete your account and all business data. This cannot be undone.</p>
           {!showDeleteConfirm ? (
             <button
               onClick={() => setShowDeleteConfirm(true)}
@@ -554,7 +554,7 @@ export default function Settings() {
                 </button>
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  style={{ padding: '8px 16px', background: 'transparent', border: '0.5px solid #1e2a3a', color: '#8899aa', fontSize: 13, fontWeight: 500, borderRadius: 8, cursor: 'pointer' }}
+                  style={{ padding: '8px 16px', background: 'transparent', border: '0.5px solid #242424', color: '#9A9A94', fontSize: 13, fontWeight: 500, borderRadius: 8, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

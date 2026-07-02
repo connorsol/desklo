@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Bot,
   MessageSquare,
   UserPlus,
   Moon,
@@ -43,7 +42,7 @@ function useIsMobile() {
 export default function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [business, setBusiness] = useState<Business | null>(null);
-  const [widgetColor, setWidgetColor] = useState('#2563eb');
+  const [widgetColor, setWidgetColor] = useState('#111827');
   const [loading, setLoading] = useState(true);
   const [redirecting, setRedirecting] = useState(false);
   const [userName, setUserName] = useState('');
@@ -128,7 +127,7 @@ export default function Dashboard() {
         bot_name: data.bot_name ?? 'Assistant',
       });
 
-      setWidgetColor(data.widget_color ?? '#2563eb');
+      setWidgetColor(data.widget_color ?? '#111827');
       setBusinessId(data.id);
       setPlan(businessPlan);
       await loadConversations(data.id);
@@ -223,9 +222,9 @@ export default function Dashboard() {
 
   if (loading || redirecting) {
     return (
-      <div style={{ minHeight: '100vh', background: '#0a0a0f', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
-        <Loader2 size={24} color="#2563eb" style={{ animation: 'spin 1s linear infinite' }} />
-        {redirecting && <p style={{ fontSize: 13, color: '#8899aa' }}>Redirecting to checkout...</p>}
+      <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+        <Loader2 size={24} color="#fff" style={{ animation: 'spin 1s linear infinite' }} />
+        {redirecting && <p style={{ fontSize: 13, color: '#9A9A94' }}>Redirecting to checkout...</p>}
       </div>
     );
   }
@@ -247,7 +246,7 @@ export default function Dashboard() {
     { label: 'Total All Time', value: stats.allTime, icon: BarChart3 },
   ];
 
-  const card = { background: '#0d1117', border: '0.5px solid #1e2a3a', borderRadius: 16 };
+  const card = { background: '#131313', border: '0.5px solid #242424', borderRadius: 16 };
 
   const embedCode = businessId
     ? `<script>window.DESKLO_KEY = '${businessId}';</script>\n<script src="https://deskloai.com/widget.js"></script>`
@@ -264,22 +263,22 @@ export default function Dashboard() {
   const isAdmin = ADMIN_EMAILS.includes(userName);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0f', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: '#0A0A0A', overflowX: 'hidden' }}>
 
       {/* HEADER */}
-      <header style={{ height: 56, borderBottom: '0.5px solid #1e2a3a', background: 'rgba(10,10,15,0.95)', display: 'flex', alignItems: 'center', padding: '0 16px', position: 'sticky', top: 0, zIndex: 40 }}>
+      <header style={{ height: 56, borderBottom: '0.5px solid #242424', background: 'rgba(10,10,10,0.95)', display: 'flex', alignItems: 'center', padding: '0 16px', position: 'sticky', top: 0, zIndex: 40 }}>
         <div style={{ width: '100%', maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', flexShrink: 0 }}>
-              <div style={{ width: 30, height: 30, borderRadius: 8, background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Bot size={16} color="#fff" />
+              <div style={{ width: 30, height: 30, borderRadius: 8, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span aria-hidden="true" style={{ fontSize: 14, fontWeight: 700, color: '#0A0A0A', fontFamily: "'Space Grotesk', sans-serif" }}>D</span>
               </div>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Desklo</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: '#fff', fontFamily: "'Space Grotesk', sans-serif" }}>Desklo</span>
             </Link>
             {!isMobile && (
               <>
-                <span style={{ color: '#1e2a3a', fontSize: 18, flexShrink: 0 }}>|</span>
-                <span style={{ fontSize: 13, fontWeight: 500, color: '#8899aa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 180 }}>
+                <span style={{ color: '#242424', fontSize: 18, flexShrink: 0 }}>|</span>
+                <span style={{ fontSize: 13, fontWeight: 500, color: '#9A9A94', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 180 }}>
                   {activeBusiness.name}
                 </span>
               </>
@@ -288,14 +287,14 @@ export default function Dashboard() {
 
           {!isMobile && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <span style={{ fontSize: 12, color: '#8899aa', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>{userName}</span>
+              <span style={{ fontSize: 12, color: '#9A9A94', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>{userName}</span>
               {isAdmin && (
                 <Link to="/admin" style={{ fontSize: 13, color: '#f87171', fontWeight: 500, textDecoration: 'none' }}>Admin</Link>
               )}
-              <Link to="/settings" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: '#8899aa', textDecoration: 'none' }}>
+              <Link to="/settings" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 13, color: '#9A9A94', textDecoration: 'none' }}>
                 <Settings size={14} /> Settings
               </Link>
-              <button onClick={handleSignOut} style={{ fontSize: 13, color: '#8899aa', background: 'none', border: 'none', cursor: 'pointer' }}>
+              <button onClick={handleSignOut} style={{ fontSize: 13, color: '#9A9A94', background: 'none', border: 'none', cursor: 'pointer' }}>
                 Sign out
               </button>
             </div>
@@ -304,7 +303,7 @@ export default function Dashboard() {
           {isMobile && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              style={{ background: 'none', border: 'none', color: '#8899aa', cursor: 'pointer', padding: 6 }}
+              style={{ background: 'none', border: 'none', color: '#9A9A94', cursor: 'pointer', padding: 6 }}
               aria-label="Menu"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -315,16 +314,16 @@ export default function Dashboard() {
 
       {/* Mobile dropdown menu */}
       {isMobile && mobileMenuOpen && (
-        <div style={{ background: '#0d1117', borderBottom: '0.5px solid #1e2a3a', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 56, zIndex: 39 }}>
-          <div style={{ fontSize: 12, color: '#8899aa', wordBreak: 'break-all' }}>{userName}</div>
-          <div style={{ height: '0.5px', background: '#1e2a3a' }} />
+        <div style={{ background: '#131313', borderBottom: '0.5px solid #242424', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 56, zIndex: 39 }}>
+          <div style={{ fontSize: 12, color: '#9A9A94', wordBreak: 'break-all' }}>{userName}</div>
+          <div style={{ height: '0.5px', background: '#242424' }} />
           {isAdmin && (
             <Link to="/admin" onClick={() => setMobileMenuOpen(false)} style={{ fontSize: 14, color: '#f87171', fontWeight: 500, textDecoration: 'none' }}>Admin Panel</Link>
           )}
-          <Link to="/settings" onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#8899aa', textDecoration: 'none' }}>
+          <Link to="/settings" onClick={() => setMobileMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#9A9A94', textDecoration: 'none' }}>
             <Settings size={15} /> Settings
           </Link>
-          <button onClick={handleSignOut} style={{ textAlign: 'left', fontSize: 14, color: '#8899aa', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+          <button onClick={handleSignOut} style={{ textAlign: 'left', fontSize: 14, color: '#9A9A94', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
             Sign out
           </button>
         </div>
@@ -334,12 +333,12 @@ export default function Dashboard() {
 
         {/* SETUP BANNER */}
         {!business && (
-          <div style={{ background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 14, padding: '16px', marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.15)', borderRadius: 14, padding: '16px', marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div>
-              <p style={{ fontSize: 14, fontWeight: 600, color: '#60a5fa' }}>Welcome to Desklo! 👋</p>
-              <p style={{ fontSize: 13, color: '#8899aa', marginTop: 2 }}>Complete your setup to get your AI receptionist live.</p>
+              <p style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>Welcome to Desklo! 👋</p>
+              <p style={{ fontSize: 13, color: '#9A9A94', marginTop: 2 }}>Complete your setup to get your AI receptionist live.</p>
             </div>
-            <Link to="/onboarding" style={{ padding: '8px 16px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, borderRadius: 8, textDecoration: 'none', textAlign: 'center' }}>
+            <Link to="/onboarding" style={{ padding: '8px 16px', background: '#fff', color: '#0A0A0A', fontSize: 13, fontWeight: 500, borderRadius: 8, textDecoration: 'none', textAlign: 'center' }}>
               Complete setup →
             </Link>
           </div>
@@ -349,11 +348,11 @@ export default function Dashboard() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 16 }}>
           {statCards.map((s) => (
             <div key={s.label} style={{ ...card, padding: isMobile ? 16 : 20 }}>
-              <div style={{ width: 34, height: 34, borderRadius: 8, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-                <s.icon size={17} color="#60a5fa" />
+              <div style={{ width: 34, height: 34, borderRadius: 8, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                <s.icon size={17} color="#fff" />
               </div>
               <p style={{ fontSize: isMobile ? 20 : 24, fontWeight: 700, color: '#fff' }}>{s.value}</p>
-              <p style={{ fontSize: 10, color: '#8899aa', marginTop: 2, lineHeight: 1.4 }}>{s.label}</p>
+              <p style={{ fontSize: 10, color: '#9A9A94', marginTop: 2, lineHeight: 1.4 }}>{s.label}</p>
             </div>
           ))}
         </div>
@@ -363,46 +362,46 @@ export default function Dashboard() {
 
           {/* CONVERSATIONS */}
           <div style={{ ...card, overflow: 'hidden' }}>
-            <div style={{ padding: '14px 16px', borderBottom: '0.5px solid #1e2a3a', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: '14px 16px', borderBottom: '0.5px solid #242424', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h2 style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Recent Conversations</h2>
-              <span style={{ fontSize: 11, color: '#8899aa', flexShrink: 0 }}>{conversations.length} conversations</span>
+              <span style={{ fontSize: 11, color: '#9A9A94', flexShrink: 0 }}>{conversations.length} conversations</span>
             </div>
             <div>
               {conversations.length === 0 && (
-                <div style={{ padding: '32px 16px', textAlign: 'center', fontSize: 13, color: '#8899aa' }}>
+                <div style={{ padding: '32px 16px', textAlign: 'center', fontSize: 13, color: '#9A9A94' }}>
                   No conversations yet — embed the widget on your site to get started!
                 </div>
               )}
               {conversations.map((c) => (
-                <div key={c.id} style={{ borderBottom: '0.5px solid #1e2a3a' }}>
+                <div key={c.id} style={{ borderBottom: '0.5px solid #242424' }}>
                   <div
                     onClick={() => loadMessages(c.id)}
                     style={{ padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}
                   >
-                    <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#1e2a3a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <span style={{ fontSize: 12, fontWeight: 600, color: '#8899aa' }}>V</span>
+                    <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#242424', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#9A9A94' }}>V</span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4, gap: 6 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', minWidth: 0 }}>
                           <span style={{ fontSize: 13, fontWeight: 500, color: '#fff', flexShrink: 0 }}>{c.name}</span>
-                          <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', padding: '2px 6px', borderRadius: 4, background: '#1e2a3a', color: '#8899aa', flexShrink: 0 }}>
+                          <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', padding: '2px 6px', borderRadius: 4, background: '#242424', color: '#9A9A94', flexShrink: 0 }}>
                             {c.channel}
                           </span>
                           {c.lead && (
-                            <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', padding: '2px 6px', borderRadius: 4, background: 'rgba(37,99,235,0.15)', color: '#60a5fa', flexShrink: 0 }}>
+                            <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', padding: '2px 6px', borderRadius: 4, background: 'rgba(255,255,255,0.06)', color: '#fff', flexShrink: 0 }}>
                               Lead
                             </span>
                           )}
                         </div>
-                        <span style={{ fontSize: 11, color: '#8899aa', flexShrink: 0 }}>{c.time}</span>
+                        <span style={{ fontSize: 11, color: '#9A9A94', flexShrink: 0 }}>{c.time}</span>
                       </div>
-                      <p style={{ fontSize: 12, color: '#8899aa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.message}</p>
+                      <p style={{ fontSize: 12, color: '#9A9A94', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.message}</p>
                     </div>
                   </div>
 
                   {selectedConvo === c.id && convoMessages[c.id] && (
-                    <div style={{ padding: '12px 16px 16px', background: '#0a0a0f', borderTop: '0.5px solid #1e2a3a', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div style={{ padding: '12px 16px 16px', background: '#0A0A0A', borderTop: '0.5px solid #242424', display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {convoMessages[c.id].map((msg, i) => (
                         <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
                           <div style={{
@@ -411,9 +410,9 @@ export default function Dashboard() {
                             padding: '8px 12px',
                             fontSize: 12,
                             lineHeight: 1.5,
-                            background: msg.role === 'user' ? '#2563eb' : '#0d1117',
-                            color: msg.role === 'user' ? '#fff' : '#cdd9e8',
-                            border: msg.role === 'user' ? 'none' : '0.5px solid #1e2a3a',
+                            background: msg.role === 'user' ? '#fff' : '#131313',
+                            color: msg.role === 'user' ? '#0A0A0A' : '#F5F5F3',
+                            border: msg.role === 'user' ? 'none' : '0.5px solid #242424',
                             wordBreak: 'break-word',
                           }}>
                             {msg.content}
@@ -434,18 +433,18 @@ export default function Dashboard() {
             <div style={{ ...card, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 12 }}>Embed Code</h3>
               <div style={{ position: 'relative' }}>
-                <pre style={{ background: '#0a0a0f', border: '0.5px solid #1e2a3a', borderRadius: 10, padding: 14, fontSize: 11, color: '#8899aa', overflow: 'auto', fontFamily: 'monospace', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>
+                <pre style={{ background: '#0A0A0A', border: '0.5px solid #242424', borderRadius: 10, padding: 14, fontSize: 11, color: '#9A9A94', overflow: 'auto', fontFamily: 'monospace', lineHeight: 1.6, whiteSpace: 'pre-wrap', margin: 0 }}>
                   {embedCode}
                 </pre>
                 <button
                   onClick={handleCopy}
-                  style={{ position: 'absolute', top: 10, right: 10, padding: 6, borderRadius: 6, background: '#1e2a3a', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ position: 'absolute', top: 10, right: 10, padding: 6, borderRadius: 6, background: '#242424', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  {copied ? <Check size={13} color="#34d399" /> : <Copy size={13} color="#8899aa" />}
+                  {copied ? <Check size={13} color="#34d399" /> : <Copy size={13} color="#9A9A94" />}
                 </button>
               </div>
-              <p style={{ fontSize: 11, color: '#8899aa', marginTop: 10 }}>Add this before the closing &lt;/body&gt; tag on your website.</p>
-              <Link to="/install" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 12, color: '#60a5fa', textDecoration: 'none' }}>
+              <p style={{ fontSize: 11, color: '#9A9A94', marginTop: 10 }}>Add this before the closing &lt;/body&gt; tag on your website.</p>
+              <Link to="/install" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 12, color: '#fff', textDecoration: 'none' }}>
                 📖 View installation guide →
               </Link>
             </div>
@@ -456,21 +455,21 @@ export default function Dashboard() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                 <div>
                   <p style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>{isPaid ? 'Starter' : 'Free Trial'}</p>
-                  <p style={{ fontSize: 12, color: '#8899aa' }}>{isPaid ? '$99/mo' : 'Upgrade to unlock'}</p>
+                  <p style={{ fontSize: 12, color: '#9A9A94' }}>{isPaid ? '$99/mo' : 'Upgrade to unlock'}</p>
                 </div>
-                <CreditCard size={18} color="#1e2a3a" />
+                <CreditCard size={18} color="#242424" />
               </div>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
                 {['Chat widget', 'Lead capture', 'Dashboard', 'Monthly reports'].map((f) => (
-                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#8899aa' }}>
-                    <Check size={12} color="#2563eb" /> {f}
+                  <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#9A9A94' }}>
+                    <Check size={12} color="#fff" /> {f}
                   </li>
                 ))}
               </ul>
               <button
                 onClick={handleManagePlan}
                 disabled={checkoutLoading}
-                style={{ width: '100%', padding: '10px', background: '#2563eb', color: '#fff', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 8, cursor: 'pointer', opacity: checkoutLoading ? 0.6 : 1 }}
+                style={{ width: '100%', padding: '10px', background: '#fff', color: '#0A0A0A', fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 8, cursor: 'pointer', opacity: checkoutLoading ? 0.6 : 1 }}
               >
                 {checkoutLoading ? 'Loading...' : isPaid ? 'Manage Plan' : 'Subscribe Now'}
               </button>
@@ -479,10 +478,10 @@ export default function Dashboard() {
             {/* TEST BOT */}
             <div style={{ ...card, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Test Your Bot</h3>
-              <p style={{ fontSize: 12, color: '#8899aa', marginBottom: 12 }}>Click the chat bubble to test your AI receptionist live.</p>
-              <div style={{ background: 'rgba(37,99,235,0.1)', border: '0.5px solid rgba(37,99,235,0.3)', borderRadius: 10, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <p style={{ fontSize: 12, color: '#9A9A94', marginBottom: 12 }}>Click the chat bubble to test your AI receptionist live.</p>
+              <div style={{ background: 'rgba(255,255,255,0.05)', border: '0.5px solid rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
-                <span style={{ fontSize: 12, color: '#60a5fa', fontWeight: 500 }}>{activeBusiness.bot_name} is online</span>
+                <span style={{ fontSize: 12, color: '#fff', fontWeight: 500 }}>{activeBusiness.bot_name} is online</span>
               </div>
             </div>
 
